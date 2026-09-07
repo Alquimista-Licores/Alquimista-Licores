@@ -1,0 +1,603 @@
+---
+// Rituais de Degustação — Grimório Interativo Alquímico
+interface Ritual {
+  id: string;
+  numeral: string;
+  title: string;
+  desc: string;
+  image: string;
+  alt: string;
+  glyph: string;
+  ambientNotes: string;
+  suggestedPotions: { name: string; id: string }[];
+}
+
+const RITUALS: Ritual[] = [
+  {
+    id: "puro-gelado",
+    numeral: "I",
+    title: "PURO & GELADO",
+    desc: "Preserve a essência da poção.",
+    image: "/assets/rituals/ritual-puro-gelado.jpg",
+    alt: "Ritual Puro e Gelado — Licor servido em cálice de cristal gelado",
+    glyph: "🜄",
+    ambientNotes: "Servido bem gelado em pequenos cálices de cristal, mantendo a textura aveludada e a densidade aromática pura.",
+    suggestedPotions: [
+      { name: "Poção Néctar Místico (Butiá)", id: "6fe04098-9cd1-4cb7-a903-1e3ae1147671" },
+      { name: "Poção Silvestre (Jabuticaba)", id: "37758861-8dc5-4a9d-8995-b341c91ba200" }
+    ]
+  },
+  {
+    id: "sobre-gelo",
+    numeral: "II",
+    title: "SOBRE GELO",
+    desc: "Deixe aromas e sabores se revelarem lentamente.",
+    image: "/assets/rituals/ritual-sobre-gelo.jpg",
+    alt: "Ritual Sobre Gelo — Licor sobre esfera de gelo em copo de cristal",
+    glyph: "🜃",
+    ambientNotes: "Uma pedra de gelo translúcido suaviza a intensidade e abre notas aromáticas ocultas conforme o licor respira.",
+    suggestedPotions: [
+      { name: "Poção Tropical (Abacaxi)", id: "9e6a58a9-8d88-4613-9ce7-2dfb8afca29e" },
+      { name: "Poção da Serenidade (Maracujá)", id: "b679b884-73a2-48cc-81af-2bc99abecee1" }
+    ]
+  },
+  {
+    id: "a-mesa",
+    numeral: "III",
+    title: "À MESA",
+    desc: "Encontre novas notas através da harmonização.",
+    image: "/assets/rituals/ritual-a-mesa.jpg",
+    alt: "Ritual À Mesa — Licor harmonizado com queijos finos, chocolate e figos frescos",
+    glyph: "🜁",
+    ambientNotes: "O fecho nobre para banquetes e encontros: harmoniza com queijos curados, trufas de cacau e frutas frescas.",
+    suggestedPotions: [
+      { name: "Poção da Conexão (Figo)", id: "f57e85ca-3e25-4885-a9b8-8febeac0421a" },
+      { name: "Poção da Alegria (Banana)", id: "b0d77291-b5ed-4548-8837-887f674c1b4c" }
+    ]
+  },
+  {
+    id: "em-alquimia",
+    numeral: "IV",
+    title: "EM ALQUIMIA",
+    desc: "Transforme a poção em uma nova criação.",
+    image: "/assets/rituals/ritual-em-alquimia.jpg",
+    alt: "Ritual Em Alquimia — Coquetelaria autoral com infusão de botânicos e especiarias",
+    glyph: "🜂",
+    ambientNotes: "Como elixir base em mixologia artesanal: unas gotas adicionam camadas místicas a tônicas e coquetéis clássicos.",
+    suggestedPotions: [
+      { name: "Poção do Aconchego (Canela)", id: "631512a9-16dc-4e4f-8f07-98278a207c0a" },
+      { name: "Poção da Inspiração (Café & Laranja)", id: "c1245fd9-cb5b-43e8-bf20-1495ff5c1aee" }
+    ]
+  }
+];
+---
+
+<section id="rituais" class="rituals-section relative z-10 py-20 md:py-32 bg-transparent scroll-mt-20">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    
+    <!-- 1. SECTION HEADER (REVEAL ENTRANCE) -->
+    <div class="text-center mb-16 md:mb-24 rituals-header reveal-item">
+      <div class="inline-flex items-center justify-center gap-3 mb-3">
+        <span class="w-8 md:w-12 h-px bg-[var(--gold)]/40"></span>
+        <span class="font-sans font-medium text-[11px] md:text-xs tracking-[0.3em] uppercase text-[var(--gold)]">
+          Grimório de Servir
+        </span>
+        <span class="w-8 md:w-12 h-px bg-[var(--gold)]/40"></span>
+      </div>
+
+      <h2 class="text-3xl md:text-5xl lg:text-6xl font-medium text-[var(--cream)] tracking-wide mb-4 font-decorative">
+        RITUAIS DE DEGUSTAÇÃO
+      </h2>
+
+      <p class="font-sans italic text-base md:text-xl text-[var(--text-soft)] max-w-xl mx-auto">
+        Cada poção revela uma experiência diferente.
+      </p>
+    </div>
+
+    <!-- 2. ASYMMETRIC SPLIT COMPOSITION (IMAGE LEFT / LIST RIGHT) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+      
+      <!-- LEFT: CINEMATIC IMAGE FRAME WITH DELICATE ALCHEMICAL CORNER MARKS -->
+      <div class="lg:col-span-6 xl:col-span-6 relative reveal-item" style="transition-delay: 150ms;">
+        <div class="ritual-frame-container" id="ritualFrame">
+          
+          <!-- Delicate Antique Corner Brackets -->
+          <span class="corner-bracket corner-tl" aria-hidden="true"></span>
+          <span class="corner-bracket corner-tr" aria-hidden="true"></span>
+          <span class="corner-bracket corner-bl" aria-hidden="true"></span>
+          <span class="corner-bracket corner-br" aria-hidden="true"></span>
+
+          <!-- Image Visual Canvas -->
+          <div class="ritual-image-deck aspect-[3/4] sm:aspect-[4/3] lg:aspect-[3/4] rounded-sm overflow-hidden relative">
+            
+            <!-- Vignette & Glow Overlay -->
+            <div class="absolute inset-0 z-10 pointer-events-none ritual-inner-vignette"></div>
+
+            <!-- Preloaded Layered Image Stack for Smooth Crossfade -->
+            {RITUALS.map((ritual, index) => (
+              <img
+                src={ritual.image}
+                alt={ritual.alt}
+                data-ritual-index={index}
+                class={`ritual-deck-img absolute inset-0 w-full h-full object-cover will-change-transform ${
+                  index === 0 ? "is-active" : ""
+                }`}
+                loading={index === 0 ? "eager" : "lazy"}
+                decoding="async"
+              />
+            ))}
+
+            <!-- Discreet Alchemical Watermark & Seal -->
+            <div class="absolute bottom-4 left-4 z-20 pointer-events-none flex items-center gap-2.5 px-3 py-1.5 rounded-sm bg-black/40 backdrop-blur-md border border-[var(--gold)]/20">
+              <span id="activeGlyph" class="text-[var(--gold-bright)] text-sm font-serif transition-all duration-500">🜄</span>
+              <span id="activeBadgeText" class="font-sans text-[10px] tracking-[0.2em] uppercase text-[var(--gold-light)] font-light transition-all duration-500">
+                Ritual I · Puro & Gelado
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: VERTICAL INTERACTIVE RITUALS LIST -->
+      <div class="lg:col-span-6 xl:col-span-6 space-y-4 md:space-y-6">
+        
+        {RITUALS.map((ritual, index) => (
+          <div
+            class={`ritual-card group cursor-pointer transition-all duration-500 relative p-5 md:p-6 rounded-sm border border-transparent reveal-item ${
+              index === 0 ? "is-active" : ""
+            }`}
+            data-index={index}
+            role="button"
+            tabindex="0"
+            aria-label={`Selecionar ${ritual.title}`}
+            style={`transition-delay: ${200 + index * 90}ms;`}
+          >
+            <!-- Background Subtle Aura on Active -->
+            <div class="ritual-active-highlight" aria-hidden="true"></div>
+
+            <!-- Top Row: Roman Numeral + Title + Glyph -->
+            <div class="flex items-baseline justify-between gap-4 mb-2">
+              <div class="flex items-baseline gap-3 md:gap-4">
+                <span class="ritual-numeral font-decorative text-lg md:text-xl font-bold transition-all duration-400">
+                  {ritual.numeral}
+                </span>
+                <span class="ritual-title font-decorative text-lg md:text-2xl font-semibold tracking-wide transition-colors duration-400">
+                  {ritual.title}
+                </span>
+              </div>
+              <span class="ritual-glyph font-serif text-sm opacity-50 transition-opacity duration-300">
+                {ritual.glyph}
+              </span>
+            </div>
+
+            <!-- Thin Expanding Gold Underline -->
+            <div class="ritual-ornament-line" aria-hidden="true"></div>
+
+            <!-- Short Main Description -->
+            <p class="ritual-quote font-sans italic text-sm md:text-base text-[var(--cream)]/90 leading-relaxed mt-3 transition-all duration-400">
+              “{ritual.desc}”
+            </p>
+
+            <!-- Expanded Details & Suggested Potions (Visible on Active) -->
+            <div class="ritual-expanded-content transition-all duration-500">
+              <p class="text-xs md:text-sm text-[var(--text-soft)] font-light leading-relaxed mt-2.5 mb-4">
+                {ritual.ambientNotes}
+              </p>
+
+              <!-- Discreet Suggested Potions -->
+              <div class="ritual-potions-strip pt-3 border-t border-[var(--gold)]/15 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                <span class="text-[10px] uppercase font-sans tracking-[0.2em] text-[var(--gold)]/80 font-medium">
+                  Poções indicadas:
+                </span>
+                {ritual.suggestedPotions.map((potion, pIdx) => (
+                  <button
+                    type="button"
+                    class="potion-suggestion-link text-xs font-sans text-[var(--cream)]/90 hover:text-[var(--gold-bright)] transition-all flex items-center gap-1 group/link"
+                    data-potion-id={potion.id}
+                  >
+                    <span>{potion.name}</span>
+                    <span class="text-[var(--gold)] text-[10px] transform group-hover/link:translate-x-0.5 transition-transform">→</span>
+                    {pIdx < ritual.suggestedPotions.length - 1 && (
+                      <span class="text-[var(--gold)]/30 ml-1.5">·</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        ))}
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* ==========================================================================
+     RITUAIS DE DEGUSTAÇÃO — PURE TRANSPARENCY & ALCHEMICAL REFINEMENT
+     ========================================================================== */
+  .rituals-section {
+    background: transparent !important;
+  }
+
+  /* 1. Corner Marks / Moldura Ornamental Sutil */
+  .ritual-frame-container {
+    position: relative;
+    padding: 10px;
+  }
+
+  .corner-bracket {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: var(--gold);
+    opacity: 0.45;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+    z-index: 25;
+  }
+  .corner-tl { top: 0; left: 0; border-top: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); }
+  .corner-tr { top: 0; right: 0; border-top: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); }
+  .corner-bl { bottom: 0; left: 0; border-bottom: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); }
+  .corner-br { bottom: 0; right: 0; border-bottom: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); }
+
+  .ritual-frame-container:hover .corner-bracket {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+
+  /* 2. Image Stack & Cinematic Crossfade */
+  .ritual-image-deck {
+    border: 1px solid rgba(200, 169, 126, 0.22);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(200, 169, 126, 0.08);
+  }
+
+  .ritual-inner-vignette {
+    background: radial-gradient(circle at center, transparent 45%, rgba(0, 0, 0, 0.45) 90%),
+                linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 35%);
+  }
+
+  .ritual-deck-img {
+    opacity: 0;
+    transform: scale(1.02);
+    filter: blur(3px);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+  }
+
+  .ritual-deck-img.is-active {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+    z-index: 2;
+  }
+
+  /* 3. Interactive Ritual Item Card */
+  .ritual-card {
+    background: transparent;
+    border-left: 1.5px solid rgba(200, 169, 126, 0.15);
+    padding-left: 1.25rem;
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    user-select: none;
+  }
+
+  .ritual-card:focus-visible {
+    border-left-color: var(--gold-bright);
+    outline: 1px dashed rgba(200, 169, 126, 0.5);
+    outline-offset: 4px;
+  }
+
+  .ritual-active-highlight {
+    position: absolute;
+    inset: 0;
+    left: -1px;
+    background: linear-gradient(90deg, rgba(200, 169, 126, 0.06) 0%, transparent 100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Inactive typography defaults */
+  .ritual-numeral {
+    color: rgba(200, 169, 126, 0.55);
+    transform: translateX(0);
+  }
+
+  .ritual-title {
+    color: var(--text-soft);
+  }
+
+  .ritual-glyph {
+    color: var(--gold);
+    opacity: 0.35;
+  }
+
+  .ritual-ornament-line {
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold) 0%, rgba(200, 169, 126, 0) 100%);
+    box-shadow: 0 0 6px rgba(200, 169, 126, 0.4);
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ritual-quote {
+    color: var(--text-faded);
+  }
+
+  .ritual-expanded-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(6px);
+    transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.4s ease,
+                transform 0.4s ease;
+  }
+
+  /* Hover state */
+  .ritual-card:hover .ritual-title {
+    color: var(--gold-light);
+  }
+  .ritual-card:hover .ritual-numeral {
+    color: var(--gold);
+  }
+
+  /* Active state */
+  .ritual-card.is-active {
+    border-left-color: var(--gold);
+  }
+
+  .ritual-card.is-active .ritual-active-highlight {
+    opacity: 1;
+  }
+
+  .ritual-card.is-active .ritual-numeral {
+    color: var(--gold-bright);
+    transform: translateX(3px);
+  }
+
+  .ritual-card.is-active .ritual-title {
+    background: linear-gradient(135deg, #FFFFFF 15%, var(--gold-light) 60%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ritual-card.is-active .ritual-glyph {
+    opacity: 0.9;
+    color: var(--gold-bright);
+    text-shadow: 0 0 10px rgba(200, 169, 126, 0.5);
+  }
+
+  .ritual-card.is-active .ritual-ornament-line {
+    width: 100%;
+  }
+
+  .ritual-card.is-active .ritual-quote {
+    color: var(--cream);
+  }
+
+  .ritual-card.is-active .ritual-expanded-content {
+    max-height: 180px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 4. Reveal Animation */
+  .reveal-item {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+
+  .reveal-item.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-item {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+    .ritual-deck-img {
+      transition: opacity 0.2s ease !important;
+      transform: none !important;
+      filter: none !important;
+    }
+    .ritual-expanded-content {
+      transition: opacity 0.2s ease !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<script>
+  function setupRituaisSection() {
+    const section = document.getElementById("rituais");
+    if (!section) return;
+
+    const cards = section.querySelectorAll<HTMLElement>(".ritual-card");
+    const images = section.querySelectorAll<HTMLImageElement>(".ritual-deck-img");
+    const frame = document.getElementById("ritualFrame");
+    const activeGlyph = document.getElementById("activeGlyph");
+    const activeBadgeText = document.getElementById("activeBadgeText");
+
+    const badges = [
+      { glyph: "🜄", text: "Ritual I · Puro & Gelado" },
+      { glyph: "🜃", text: "Ritual II · Sobre Gelo" },
+      { glyph: "🜁", text: "Ritual III · À Mesa" },
+      { glyph: "🜂", text: "Ritual IV · Em Alquimia" }
+    ];
+
+    let currentIndex = 0;
+
+    function activateRitual(index: number) {
+      if (index === currentIndex) return;
+      currentIndex = index;
+
+      // Update active cards
+      cards.forEach((card, idx) => {
+        if (idx === index) {
+          card.classList.add("is-active");
+          card.setAttribute("aria-selected", "true");
+        } else {
+          card.classList.remove("is-active");
+          card.setAttribute("aria-selected", "false");
+        }
+      });
+
+      // Crossfade images
+      images.forEach((img, idx) => {
+        if (idx === index) {
+          img.classList.add("is-active");
+        } else {
+          img.classList.remove("is-active");
+        }
+      });
+
+      // Update watermark badge
+      if (activeGlyph && activeBadgeText && badges[index]) {
+        activeGlyph.textContent = badges[index].glyph;
+        activeBadgeText.textContent = badges[index].text;
+      }
+    }
+
+    // Event listeners on cards (Hover, Click, Touch & Keyboard)
+    cards.forEach((card, index) => {
+      // Desktop hover
+      card.addEventListener("mouseenter", () => {
+        activateRitual(index);
+      });
+
+      // Click / Touch
+      card.addEventListener("click", () => {
+        activateRitual(index);
+      });
+
+      // Keyboard
+      card.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          activateRitual(index);
+        } else if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+          e.preventDefault();
+          const nextIndex = (index + 1) % cards.length;
+          cards[nextIndex]?.focus();
+          activateRitual(nextIndex);
+        } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          const prevIndex = (index - 1 + cards.length) % cards.length;
+          cards[prevIndex]?.focus();
+          activateRitual(prevIndex);
+        }
+      });
+    });
+
+    // Subtle image parallax on mousemove (Max ±3px in X, ±2px in Y)
+    const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!isTouch && !isReducedMotion && frame) {
+      let rect: DOMRect | null = null;
+      let rafId: number | null = null;
+      let targetX = 0;
+      let targetY = 0;
+      let currentX = 0;
+      let currentY = 0;
+
+      const updateRect = () => {
+        if (frame) rect = frame.getBoundingClientRect();
+      };
+      updateRect();
+      window.addEventListener("resize", updateRect, { passive: true });
+
+      frame.addEventListener("mousemove", (e: MouseEvent) => {
+        if (!rect) updateRect();
+        if (!rect) return;
+
+        const relX = (e.clientX - rect.left) / rect.width - 0.5;
+        const relY = (e.clientY - rect.top) / rect.height - 0.5;
+
+        targetX = relX * 6; // ±3px
+        targetY = relY * 4; // ±2px
+
+        if (!rafId) {
+          rafId = requestAnimationFrame(animateParallax);
+        }
+      });
+
+      frame.addEventListener("mouseleave", () => {
+        targetX = 0;
+        targetY = 0;
+      });
+
+      function animateParallax() {
+        currentX += (targetX - currentX) * 0.1;
+        currentY += (targetY - currentY) * 0.1;
+
+        images.forEach((img) => {
+          if (img.classList.contains("is-active")) {
+            img.style.transform = `scale(1.03) translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0)`;
+          }
+        });
+
+        if (Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05) {
+          rafId = requestAnimationFrame(animateParallax);
+        } else {
+          rafId = null;
+        }
+      }
+    }
+
+    // Suggested potions click -> opens product modal or navigates
+    const potionButtons = section.querySelectorAll<HTMLButtonElement>(".potion-suggestion-link");
+    potionButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const potionId = btn.getAttribute("data-potion-id");
+        if (potionId) {
+          window.dispatchEvent(
+            new CustomEvent("open-product-modal", {
+              detail: { productId: potionId }
+            })
+          );
+        }
+      });
+    });
+
+    // Scroll Entrance Observer
+    const revealElements = section.querySelectorAll(".reveal-item");
+    if (typeof IntersectionObserver !== "undefined") {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-revealed");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+      );
+
+      revealElements.forEach((el) => observer.observe(el));
+    } else {
+      revealElements.forEach((el) => el.classList.add("is-revealed"));
+    }
+  }
+
+  setupRituaisSection();
+  document.addEventListener("astro:page-load", setupRituaisSection);
+</script>

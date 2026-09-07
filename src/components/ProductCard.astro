@@ -1,0 +1,101 @@
+---
+import type { Product } from '../lib/data';
+import { fmtPrice, categoriaLabel, needsPrep } from '../lib/data';
+import CauldronIcon from './CauldronIcon.astro';
+
+interface Props {
+  product: Product;
+}
+
+const { product: p } = Astro.props;
+const isOutOfStock = p.estoque <= 0;
+const hasPrep = needsPrep(p);
+---
+
+<div
+  class="product-card group relative flex flex-col md:block aspect-auto md:aspect-[3/4] bg-[var(--surface)] border border-[var(--gold)]/20 rounded-sm overflow-hidden transition-all duration-500 hover:-translate-y-1.5 gold-glow-hover cursor-pointer"
+  data-product={JSON.stringify(p)}
+>
+  <!-- IMAGE LAYER -->
+  <div
+    class={`relative w-full aspect-square md:absolute md:inset-x-0 md:top-0 md:h-[62%] md:aspect-auto md:w-auto bg-gradient-to-b from-[var(--surface-elevated)] to-[var(--background)] overflow-hidden transition-[height,opacity] duration-700 ease-out md:group-hover:h-full md:group-hover:opacity-35 ${
+      isOutOfStock ? "opacity-50" : ""
+    }`}
+  >
+    <div class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[radial-gradient(circle_at_50%_0%,_rgba(184,111,42,0.35)_0%,_transparent_60%)] z-10"></div>
+    
+    {p.foto_url ? (
+      <img
+        src={p.foto_url}
+        alt={p.nome}
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+      />
+    ) : (
+      <div class="w-full h-full flex items-center justify-center text-[var(--gold)]/30 text-7xl">⚗</div>
+    )}
+
+    {hasPrep && !isOutOfStock && (
+      <div class="absolute top-0 inset-x-0 bg-[var(--amber-warm)]/90 text-[var(--background)] text-[10px] md:text-xs font-display tracking-widest uppercase text-center py-1 backdrop-blur-sm z-20 font-bold">
+        Sob encomenda · 2 dias
+      </div>
+    )}
+
+    {isOutOfStock && (
+      <div class="absolute inset-0 z-20 flex items-center justify-center bg-[var(--background)]/60 backdrop-blur-[1px]">
+        <span class="px-5 py-2 bg-[var(--gold)] text-[var(--background)] text-xs md:text-sm font-display tracking-widest uppercase rounded-sm shadow-xl font-bold">
+          Esgotado
+        </span>
+      </div>
+    )}
+
+    <!-- MOBILE: Overlay inside image square -->
+    <div class="md:hidden absolute inset-x-0 bottom-0 pt-8 px-3 pb-2 bg-gradient-to-t from-black/90 via-black/60 to-transparent pointer-events-none">
+      <div class="font-display text-[10px] text-[var(--gold)] tracking-widest uppercase">
+        {categoriaLabel(p.categoria)}
+      </div>
+      <div class="font-body text-xs text-[var(--cream)] mt-0.5 leading-tight font-medium">
+        {p.sabor}
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE: Bottom bar with price & quick add -->
+  <div class="md:hidden relative h-12 px-3 flex items-center justify-between bg-[var(--surface)] border-t border-[var(--gold)]/15">
+    <div class="font-display font-bold text-lg text-[var(--gold)]">{fmtPrice(p.preco)}</div>
+    {!isOutOfStock && (
+      <button
+        type="button"
+        class="quick-add-btn w-8 h-8 flex items-center justify-center border border-[var(--gold)]/40 text-[var(--gold)] hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-sm"
+        title="Adicionar ao caldeirão"
+        aria-label="Adicionar ao caldeirão"
+        data-id={p.id}
+      >
+        <CauldronIcon className="w-4 h-4" />
+      </button>
+    )}
+  </div>
+
+  <!-- DESKTOP: Bottom Info Layer -->
+  <div class="hidden md:block absolute inset-x-0 bottom-0 p-5 bg-[var(--surface)] transition-colors duration-700 md:group-hover:bg-transparent">
+    <div class="font-display font-bold text-base lg:text-lg text-[var(--gold)] tracking-wider uppercase leading-tight">
+      {p.nome}
+    </div>
+    <div class="font-body text-sm text-[var(--text-soft)] mt-1.5">{p.sabor}</div>
+    <div class="flex items-end justify-between mt-4 pt-3 border-t border-[var(--gold)]/15">
+      <div class="font-display font-bold text-2xl lg:text-3xl text-[var(--gold)]">{fmtPrice(p.preco)}</div>
+      {!isOutOfStock && (
+        <button
+          type="button"
+          class="quick-add-btn w-9 h-9 flex items-center justify-center border border-[var(--gold)]/40 text-[var(--gold)] bg-[var(--surface)]/80 hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-sm backdrop-blur-sm shadow-md"
+          title="Adicionar ao caldeirão"
+          aria-label="Adicionar ao caldeirão"
+          data-id={p.id}
+        >
+          <CauldronIcon className="w-4 h-4" />
+        </button>
+      )}
+    </div>
+  </div>
+</div>

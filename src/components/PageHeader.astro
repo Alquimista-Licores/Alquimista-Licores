@@ -1,0 +1,24 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+}
+
+const { title, subtitle } = Astro.props;
+---
+
+<div class="text-center pt-24 pb-12 md:pt-32 md:pb-16 max-w-3xl mx-auto px-4 reveal">
+  <div class="inline-flex items-center justify-center gap-3 text-[var(--gold)]/50 mb-3 text-sm">
+    <span class="h-px w-8 bg-[var(--gold)]/40"></span>
+    <span class="text-base font-serif">✦</span>
+    <span class="h-px w-8 bg-[var(--gold)]/40"></span>
+  </div>
+  <h1 class="text-3xl md:text-5xl lg:text-6xl font-medium tracking-wide text-[var(--gold)] leading-tight">
+    {title}
+  </h1>
+  {subtitle && (
+    <p class="font-sans italic text-base md:text-xl text-[var(--text-soft)] mt-4 leading-relaxed max-w-xl mx-auto">
+      {subtitle}
+    </p>
+  )}
+</div>

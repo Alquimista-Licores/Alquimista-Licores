@@ -1,0 +1,90 @@
+---
+// Age Gate 18+ Verification Modal
+---
+
+<div id="age-gate-modal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-[var(--background)]/95 backdrop-blur-lg px-4">
+  <div class="max-w-md w-full text-center border border-[var(--gold)]/35 bg-[var(--surface)] p-8 md:p-10 rounded-sm gold-glow shadow-2xl relative">
+    <div class="flex justify-center mb-6">
+      <img
+        src="/assets/logo-agegate.png"
+        alt="Alquimista Licores"
+        class="h-16 lg:h-20 w-auto select-none"
+        draggable="false"
+      />
+    </div>
+
+    <div id="age-gate-question">
+      <p class="font-body text-lg md:text-xl mb-8 text-[var(--cream)] leading-relaxed">
+        Você tem 18 anos ou mais?
+      </p>
+
+      <div class="flex gap-3 justify-center">
+        <button
+          id="age-gate-yes"
+          class="px-7 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold hover:bg-[var(--gold-hover)] transition-colors rounded-sm shadow-md"
+        >
+          Sim, tenho 18+
+        </button>
+        <button
+          id="age-gate-no"
+          class="px-7 py-3 border border-[var(--gold)]/40 text-[var(--cream)] font-display tracking-widest text-xs uppercase font-bold hover:bg-[var(--surface-elevated)] transition-colors rounded-sm"
+        >
+          Não
+        </button>
+      </div>
+
+      <p class="mt-8 text-[11px] text-[var(--text-faded)] font-body tracking-wider">
+        Venda e consumo proibidos para menores de 18 anos.
+      </p>
+    </div>
+
+    <div id="age-gate-denied" class="hidden py-6">
+      <p class="font-body text-base text-[var(--text-soft)] leading-relaxed">
+        O acesso a este site é restrito a maiores de 18 anos. Redirecionando...
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupAgeGate() {
+    const KEY = "alquimista-age-ok";
+    const modal = document.getElementById("age-gate-modal");
+    const question = document.getElementById("age-gate-question");
+    const denied = document.getElementById("age-gate-denied");
+    const yesBtn = document.getElementById("age-gate-yes");
+    const noBtn = document.getElementById("age-gate-no");
+
+    if (!localStorage.getItem(KEY)) {
+      modal?.classList.remove("hidden");
+      modal?.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    yesBtn?.addEventListener("click", () => {
+      localStorage.setItem(KEY, "1");
+      modal?.classList.add("hidden");
+      modal?.classList.remove("flex");
+      document.body.style.overflow = "";
+
+      // Broadcast unlock event to refresh ScrollTrigger, Lenis and viewport measurements
+      window.dispatchEvent(new CustomEvent("age-gate-unlocked"));
+      window.dispatchEvent(new Event("resize"));
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent("age-gate-unlocked"));
+        window.dispatchEvent(new Event("resize"));
+      }, 100);
+    });
+
+    noBtn?.addEventListener("click", () => {
+      question?.classList.add("hidden");
+      denied?.classList.remove("hidden");
+      setTimeout(() => {
+        window.location.href = "https://www.google.com";
+      }, 2500);
+    });
+  }
+
+  setupAgeGate();
+  document.addEventListener("astro:page-load", setupAgeGate);
+</script>

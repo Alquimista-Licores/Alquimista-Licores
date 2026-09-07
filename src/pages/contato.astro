@@ -1,0 +1,187 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { SITE, waUrl } from '../lib/data';
+
+const FAQ = [
+  {
+    q: "Os licores são realmente artesanais?",
+    a: "Sim. Todos são produzidos manualmente pelo Alquimista, em pequenos lotes, com ingredientes naturais e sem corantes artificiais.",
+  },
+  {
+    q: "Como funciona o pedido?",
+    a: "Você monta seu pedido aqui no site e finalizamos pelo WhatsApp com confirmação de disponibilidade, endereço e prazo.",
+  },
+  {
+    q: "Posso personalizar o kit?",
+    a: "Sim! Você escolhe o sabor do licor, o acompanhamento artesanal e o tipo de embalagem.",
+  },
+  {
+    q: "Qual o prazo de entrega?",
+    a: "Confirmado via WhatsApp conforme disponibilidade. Licores cremosos exigem 2 dias de preparo e kits ao menos 1 dia.",
+  },
+  {
+    q: "Vocês entregam onde?",
+    a: "Atendemos Criciúma e região via motoboy. Informe seu endereço no carrinho para calcularmos a rota.",
+  },
+  {
+    q: "Posso retirar pessoalmente?",
+    a: "Sim! A retirada é gratuita no endereço: Rod. Antonio Darós, 1105 - São João, Criciúma - SC.",
+  },
+];
+---
+
+<Layout
+  title="Contato — Alquimista Licores"
+  description="Fale com o Alquimista pelo WhatsApp ou Instagram. Endereço em Criciúma/SC e respostas para perguntas frequentes."
+>
+  <div class="max-w-4xl mx-auto px-6 pb-24">
+    <PageHeader
+      title="Fale com o Alquimista"
+      subtitle="Toda poção começa com uma conversa."
+    />
+
+    <!-- CONTACT CHANNELS -->
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- WHATSAPP -->
+      <a
+        href={waUrl(SITE.whatsappMsg)}
+        target="_blank"
+        rel="noreferrer"
+        class="p-8 border border-[var(--gold)]/25 rounded-sm hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-all duration-300 text-center group gold-glow-hover bg-[var(--surface)]/40 flex flex-col items-center justify-center"
+      >
+        <div class="w-12 h-12 rounded-full border border-[var(--gold)]/40 flex items-center justify-center text-[var(--gold)] mb-4 group-hover:scale-110 transition-transform bg-[var(--surface-elevated)]">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+          </svg>
+        </div>
+        <div class="font-display text-base tracking-[0.2em] uppercase text-[var(--gold)] font-bold">
+          WhatsApp
+        </div>
+        <div class="text-sm text-[var(--text-soft)] mt-2">
+          (48) 99173-7692
+        </div>
+      </a>
+
+      <!-- INSTAGRAM -->
+      <a
+        href={SITE.instagram}
+        target="_blank"
+        rel="noreferrer"
+        class="p-8 border border-[var(--gold)]/25 rounded-sm hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-all duration-300 text-center group gold-glow-hover bg-[var(--surface)]/40 flex flex-col items-center justify-center"
+      >
+        <div class="w-12 h-12 rounded-full border border-[var(--gold)]/40 flex items-center justify-center text-[var(--gold)] mb-4 group-hover:scale-110 transition-transform bg-[var(--surface-elevated)]">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+          </svg>
+        </div>
+        <div class="font-display text-base tracking-[0.2em] uppercase text-[var(--gold)] font-bold">
+          Instagram
+        </div>
+        <div class="text-sm text-[var(--text-soft)] mt-2">
+          @alquimistalicores
+        </div>
+      </a>
+
+      <!-- ENDEREÇO / RETIRADA -->
+      <a
+        href={SITE.mapsUrl}
+        target="_blank"
+        rel="noreferrer"
+        class="p-8 border border-[var(--gold)]/25 rounded-sm hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-all duration-300 text-center group gold-glow-hover bg-[var(--surface)]/40 flex flex-col items-center justify-center"
+      >
+        <div class="w-12 h-12 rounded-full border border-[var(--gold)]/40 flex items-center justify-center text-[var(--gold)] mb-4 group-hover:scale-110 transition-transform bg-[var(--surface-elevated)]">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+          </svg>
+        </div>
+        <div class="font-display text-base tracking-[0.2em] uppercase text-[var(--gold)] font-bold">
+          Retirada
+        </div>
+        <div class="text-xs text-[var(--text-soft)] mt-2 leading-relaxed">
+          Rod. Antonio Darós, 1105<br />São João, Criciúma — SC
+        </div>
+      </a>
+    </div>
+
+    <!-- FAQ ACCORDION -->
+    <div class="mt-24">
+      <div class="text-center mb-10">
+        <div class="text-[var(--gold)]/50 text-base mb-2 font-serif">✦</div>
+        <h2 class="text-3xl md:text-4xl text-[#D9C9B0] tracking-wide font-medium">
+          Perguntas Frequentes
+        </h2>
+      </div>
+
+      <div class="border-t border-[var(--gold)]/15 divide-y divide-[var(--gold)]/10">
+        {FAQ.map((f, i) => (
+          <div class="faq-item">
+            <button
+              type="button"
+              class="faq-trigger w-full py-5 flex justify-between items-center text-left group transition-colors"
+              aria-expanded={i === 0 ? "true" : "false"}
+            >
+              <span class="font-body text-base md:text-lg text-[var(--cream)] group-hover:text-[var(--gold)] transition-colors pr-4 font-medium">
+                {f.q}
+              </span>
+              <svg
+                class="faq-chevron w-5 h-5 text-[var(--gold)] shrink-0 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class={`faq-content overflow-hidden transition-all duration-300 ${i === 0 ? "max-h-60 opacity-100" : "max-h-0 opacity-0"}`}>
+              <p class="pb-6 font-sans italic text-sm md:text-base text-[var(--text-soft)] leading-relaxed">
+                {f.a}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  function setupFAQ() {
+    const items = document.querySelectorAll(".faq-item");
+
+    items.forEach((item) => {
+      const trigger = item.querySelector(".faq-trigger");
+      const content = item.querySelector(".faq-content");
+      const chevron = item.querySelector(".faq-chevron");
+
+      trigger?.addEventListener("click", () => {
+        const isExpanded = trigger.getAttribute("aria-expanded") === "true";
+
+        // Close all
+        items.forEach((other) => {
+          const oTrig = other.querySelector(".faq-trigger");
+          const oCont = other.querySelector(".faq-content");
+          const oChev = other.querySelector(".faq-chevron");
+          oTrig?.setAttribute("aria-expanded", "false");
+          oCont?.classList.remove("max-h-60", "opacity-100");
+          oCont?.classList.add("max-h-0", "opacity-0");
+          oChev?.classList.remove("rotate-180");
+        });
+
+        if (!isExpanded) {
+          trigger.setAttribute("aria-expanded", "true");
+          content?.classList.remove("max-h-0", "opacity-0");
+          content?.classList.add("max-h-60", "opacity-100");
+          chevron?.classList.add("rotate-180");
+        }
+      });
+    });
+  }
+
+  setupFAQ();
+  document.addEventListener("astro:page-load", setupFAQ);
+</script>

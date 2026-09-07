@@ -1,0 +1,91 @@
+---
+interface Props {
+  class?: string;
+  speedSeconds?: number;
+}
+
+const { class: className = '', speedSeconds = 28 } = Astro.props;
+
+const items = [
+  "Produção artesanal",
+  "Sem corantes artificiais",
+  "Garrafas reutilizadas",
+  "Pequenos lotes",
+];
+
+// Repetimos os itens várias vezes em cada conjunto para garantir preenchimento fluido em qualquer resolução
+const repeatedItems = [...items, ...items];
+---
+
+<section 
+  class={`marquee-container relative z-10 border-y border-[var(--border)] bg-[#120E0A]/70 backdrop-blur-xs py-4 md:py-5 overflow-hidden select-none ${className}`}
+  aria-label="Destaques da Alquimia"
+>
+  <!-- Fade gradiente nas extremidades para transição suave -->
+  <div class="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-[var(--background)] to-transparent z-10"></div>
+  <div class="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-[var(--background)] to-transparent z-10"></div>
+
+  <div class="marquee-wrapper flex overflow-hidden">
+    <div 
+      class="marquee-track flex shrink-0 items-center whitespace-nowrap will-change-transform"
+      style={`--marquee-speed: ${speedSeconds}s;`}
+    >
+      <!-- Conjunto 1 -->
+      <div class="marquee-group flex shrink-0 items-center">
+        {repeatedItems.map((text) => (
+          <div class="marquee-item inline-flex items-center mx-4 md:mx-6 lg:mx-8 group cursor-default">
+            <span class="font-display font-medium text-base sm:text-lg md:text-xl lg:text-2xl tracking-[0.2em] md:tracking-[0.25em] uppercase text-[var(--gold-soft)]/90 group-hover:text-[var(--gold)] transition-colors duration-300">
+              {text}
+            </span>
+            <span class="marquee-star ml-8 md:ml-12 lg:ml-16 text-[var(--gold)] text-sm md:text-base lg:text-lg opacity-80 group-hover:opacity-100 group-hover:scale-125 transition-all duration-300" aria-hidden="true">
+              ✦
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <!-- Conjunto 2 (clone para loop infinito contínuo) -->
+      <div class="marquee-group flex shrink-0 items-center" aria-hidden="true">
+        {repeatedItems.map((text) => (
+          <div class="marquee-item inline-flex items-center mx-4 md:mx-6 lg:mx-8 group cursor-default">
+            <span class="font-display font-medium text-base sm:text-lg md:text-xl lg:text-2xl tracking-[0.2em] md:tracking-[0.25em] uppercase text-[var(--gold-soft)]/90 group-hover:text-[var(--gold)] transition-colors duration-300">
+              {text}
+            </span>
+            <span class="marquee-star ml-8 md:ml-12 lg:ml-16 text-[var(--gold)] text-sm md:text-base lg:text-lg opacity-80 group-hover:opacity-100 group-hover:scale-125 transition-all duration-300" aria-hidden="true">
+              ✦
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .marquee-track {
+    animation: scrollMarquee var(--marquee-speed, 28s) linear infinite;
+  }
+
+  .marquee-container:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .marquee-star {
+    text-shadow: 0 0 10px rgba(200, 169, 126, 0.4);
+  }
+
+  @keyframes scrollMarquee {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation-duration: 60s;
+    }
+  }
+</style>

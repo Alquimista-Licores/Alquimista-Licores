@@ -1,0 +1,181 @@
+---
+import CauldronIcon from './CauldronIcon.astro';
+
+const currentPath = Astro.url.pathname;
+
+const NAV = [
+  { href: "/", label: "Início" },
+  { href: "/pocoes", label: "As Poções" },
+  { href: "/kits", label: "Kits & Presentes" },
+  { href: "/monte-seu-kit", label: "Monte seu Kit" },
+  { href: "/sobre", label: "Sobre" },
+  { href: "/contato", label: "Contato" },
+];
+---
+
+<header id="site-header" class="fixed top-0 inset-x-0 z-40 transition-all duration-500 bg-transparent">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 h-16 lg:h-20 flex items-center justify-between gap-6">
+    <!-- LOGO -->
+    <a href="/" class="flex items-center group">
+      <img src="/assets/logo-alquimista.png" alt="Alquimista Licores" class="h-10 lg:h-12 w-auto" />
+    </a>
+
+    <!-- DESKTOP NAV -->
+    <nav class="hidden lg:flex items-center gap-8">
+      {NAV.map((n) => {
+        const isActive = currentPath === n.href || (n.href !== '/' && currentPath.startsWith(n.href));
+        return (
+          <a
+            href={n.href}
+            class={`header-nav-link text-[0.80rem] uppercase relative py-1 transition-colors duration-300 ${
+              isActive ? "active text-[var(--gold-light)] font-normal" : "text-[var(--text-soft)] hover:text-[var(--gold-light)] font-light"
+            }`}
+          >
+            {n.label}
+          </a>
+        );
+      })}
+    </nav>
+
+    <!-- ACTIONS -->
+    <div class="flex items-center gap-3">
+      <!-- CALDEIRÃO CART BUTTON -->
+      <button
+        id="cart-toggle-btn"
+        title="Meu Caldeirão"
+        class="relative p-2 text-[var(--cream)] hover:text-[var(--gold)] transition-colors flex items-center justify-center"
+        aria-label="Meu Caldeirão"
+      >
+        <CauldronIcon className="w-5 h-5" />
+        <span
+          id="cart-badge"
+          class="hidden absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[var(--gold)] text-[var(--background)] text-[10px] font-bold items-center justify-center shadow-md animate-pulse"
+        >
+          0
+        </span>
+      </button>
+
+      <!-- MOBILE HAMBURGER -->
+      <button
+        id="mobile-menu-btn"
+        class="lg:hidden p-2 text-[var(--cream)] hover:text-[var(--gold)] transition-colors"
+        aria-label="Abrir Menu"
+      >
+        <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+        <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MOBILE MENU DRAWER -->
+  <div id="mobile-menu" class="hidden lg:hidden bg-[var(--background)]/95 backdrop-blur-xl border-t border-[var(--gold)]/15 shadow-2xl">
+    <nav class="flex flex-col px-6 py-4 space-y-1">
+      {NAV.map((n) => {
+        const isActive = currentPath === n.href || (n.href !== '/' && currentPath.startsWith(n.href));
+        return (
+          <a
+            href={n.href}
+            class={`header-nav-link py-3.5 uppercase text-xs border-b border-[var(--gold)]/10 last:border-0 transition-colors ${
+              isActive ? "text-[var(--gold)] font-medium" : "text-[var(--text-soft)] hover:text-[var(--gold)] font-light"
+            }`}
+          >
+            {n.label}
+          </a>
+        );
+      })}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header-nav-link {
+    font-family: 'Century Gothic', 'Questrial', 'Outfit', -apple-system, sans-serif;
+    letter-spacing: 0.22em;
+    font-weight: 300;
+  }
+
+  .header-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 1.5px;
+    background: var(--gold);
+    box-shadow: 0 0 8px var(--gold);
+    transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .header-nav-link:hover::after,
+  .header-nav-link.active::after {
+    width: 100%;
+  }
+</style>
+
+<script>
+  function setupHeader() {
+    const header = document.getElementById("site-header");
+    const mobileBtn = document.getElementById("mobile-menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const hamburgerIcon = document.getElementById("hamburger-icon");
+    const closeIcon = document.getElementById("close-icon");
+    const cartBtn = document.getElementById("cart-toggle-btn");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 30) {
+        header?.classList.add("bg-[var(--background)]/90", "backdrop-blur-xl", "border-b", "border-[var(--gold)]/15", "shadow-lg");
+        header?.classList.remove("bg-transparent");
+      } else {
+        header?.classList.remove("bg-[var(--background)]/90", "backdrop-blur-xl", "border-b", "border-[var(--gold)]/15", "shadow-lg");
+        header?.classList.add("bg-transparent");
+      }
+    });
+
+    mobileBtn?.addEventListener("click", () => {
+      const isHidden = mobileMenu?.classList.contains("hidden");
+      if (isHidden) {
+        mobileMenu?.classList.remove("hidden");
+        hamburgerIcon?.classList.add("hidden");
+        closeIcon?.classList.remove("hidden");
+      } else {
+        mobileMenu?.classList.add("hidden");
+        hamburgerIcon?.classList.remove("hidden");
+        closeIcon?.classList.add("hidden");
+      }
+    });
+
+    cartBtn?.addEventListener("click", () => {
+      window.dispatchEvent(new CustomEvent("open-cart"));
+    });
+
+    // Update cart badge from local storage
+    function updateBadge() {
+      try {
+        const raw = localStorage.getItem("alquimista-cart");
+        const items = raw ? JSON.parse(raw) : [];
+        const count = items.reduce((acc: number, item: any) => acc + (item.qty || 1), 0);
+        const badge = document.getElementById("cart-badge");
+        if (badge) {
+          badge.textContent = String(count);
+          if (count > 0) {
+            badge.classList.remove("hidden");
+            badge.classList.add("flex");
+          } else {
+            badge.classList.add("hidden");
+            badge.classList.remove("flex");
+          }
+        }
+      } catch (e) {}
+    }
+
+    window.addEventListener("cart-updated", updateBadge);
+    updateBadge();
+  }
+
+  setupHeader();
+  document.addEventListener("astro:page-load", setupHeader);
+</script>

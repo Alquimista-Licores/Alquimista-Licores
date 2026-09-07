@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Página Não Encontrada — Alquimista Licores"
+  description="A página que você procura não existe ou foi transmutada."
+>
+  <div class="flex min-h-[75vh] items-center justify-center px-6 text-center py-20">
+    <div class="max-w-md mx-auto reveal">
+      <div class="font-decorative text-7xl md:text-9xl text-[var(--gold)] font-bold mb-4 opacity-80">
+        404
+      </div>
+      <h1 class="text-2xl md:text-3xl font-medium text-[var(--cream)] mb-4">
+        Poção não encontrada
+      </h1>
+      <p class="font-sans italic text-sm md:text-base text-[var(--text-soft)] mb-8 leading-relaxed">
+        A fórmula ou página que você está buscando não existe ou foi transmutada para outro lugar.
+      </p>
+      <a
+        href="/"
+        class="inline-block px-8 py-3.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase hover:bg-[var(--gold-hover)] transition-all rounded-sm font-bold shadow-md"
+      >
+        Voltar ao início
+      </a>
+    </div>
+  </div>
+</Layout>

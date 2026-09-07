@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { fetchProducts } from '../lib/data';
+
+const products = await fetchProducts();
+
+const TABS = [
+  { id: "all", label: "Todas" },
+  { id: "fino", label: "Licores Finos" },
+  { id: "cremoso", label: "Licores Cremosos" },
+  { id: "especial", label: "Licores Especiais" },
+];
+---
+
+<Layout
+  title="As Poções — Alquimista Licores"
+  description="Licores artesanais finos, cremosos e especiais. Cada poção do Alquimista é feita à mão, em pequenos lotes, em Criciúma/SC."
+>
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 pb-20">
+    <PageHeader title="As Poções" subtitle="Cada garrafa carrega um ritual." />
+
+    <!-- FILTER TABS -->
+    <div class="flex flex-wrap justify-center gap-2.5 mb-12">
+      {TABS.map((t) => (
+        <button
+          type="button"
+          class={`filter-tab-btn px-6 py-2.5 rounded-full text-xs font-display tracking-widest uppercase transition-all duration-300 font-bold ${
+            t.id === "all"
+              ? "bg-[var(--gold)] text-[var(--background)] shadow-md"
+              : "border border-[var(--gold)]/30 text-[var(--cream)]/80 hover:border-[var(--gold)] hover:text-[var(--gold)]"
+          }`}
+          data-category={t.id}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+
+    <!-- PRODUCTS GRID -->
+    <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 gap-5 lg:gap-7">
+      {products.map((p) => (
+        <div class="product-item-wrap" data-category={p.categoria}>
+          <ProductCard product={p} />
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<script>
+  function setupFilterTabs() {
+    const tabs = document.querySelectorAll(".filter-tab-btn");
+    const items = document.querySelectorAll(".product-item-wrap");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const cat = tab.getAttribute("data-category");
+
+        // Update active tab styles
+        tabs.forEach((t) => {
+          t.classList.remove("bg-[var(--gold)]", "text-[var(--background)]", "shadow-md");
+          t.classList.add("border", "border-[var(--gold)]/30", "text-[var(--cream)]/80");
+        });
+        tab.classList.add("bg-[var(--gold)]", "text-[var(--background)]", "shadow-md");
+        tab.classList.remove("border", "border-[var(--gold)]/30", "text-[var(--cream)]/80");
+
+        // Filter product items
+        items.forEach((item) => {
+          const itemCat = item.getAttribute("data-category");
+          if (cat === "all" || itemCat === cat) {
+            (item as HTMLElement).style.display = "";
+          } else {
+            (item as HTMLElement).style.display = "none";
+          }
+        });
+      });
+    });
+  }
+
+  setupFilterTabs();
+  document.addEventListener("astro:page-load", setupFilterTabs);
+</script>

@@ -1,0 +1,329 @@
+---
+// ProductModal component for Astro
+---
+
+<div id="product-modal-container" class="fixed inset-0 z-[100] hidden items-stretch md:items-center justify-center bg-[var(--background)]/85 backdrop-blur-md md:p-4">
+  <div id="product-modal-card" class="bg-[var(--surface)] md:border md:border-[var(--gold)]/30 w-full md:w-[min(1100px,95vw)] md:max-w-[1100px] h-[100dvh] md:h-[85vh] md:rounded-sm flex flex-col md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] overflow-hidden shadow-2xl relative">
+    
+    <!-- LEFT: IMAGE GALLERY -->
+    <div class="relative shrink-0 aspect-square md:aspect-auto md:h-full bg-gradient-to-b from-[var(--surface-elevated)] to-[var(--background)] overflow-hidden">
+      <img
+        id="modal-product-img"
+        src=""
+        alt=""
+        class="w-full h-full object-cover object-center transition-all duration-500"
+      />
+      <div id="modal-smoke" class="smoke-layer hidden"></div>
+      <div id="modal-category-badge" class="absolute top-3 left-3 px-3 py-1 bg-[var(--gold)] text-[var(--background)] text-xs font-serif-soft font-bold tracking-widest uppercase z-10 rounded-sm">
+        Fino
+      </div>
+      <button
+        id="modal-close-mobile"
+        class="md:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-[var(--background)]/80 text-[var(--cream)] hover:text-[var(--gold)] z-20"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- RIGHT: PRODUCT INFO -->
+    <div class="flex-1 min-w-0 min-h-0 flex flex-col text-[var(--cream)]">
+      <div class="flex-1 min-h-0 overflow-y-auto px-6 pt-6 pb-4 md:px-8 md:pt-8">
+        <button id="modal-close-desktop" class="hidden md:block float-right text-[var(--text-soft)] hover:text-[var(--gold)] text-xl transition-colors">
+          ✕
+        </button>
+        <h2 id="modal-product-name" class="text-2xl md:text-3xl lg:text-4xl text-[var(--gold)] font-medium"></h2>
+        <p id="modal-product-sabor" class="font-sans italic text-sm md:text-base text-[var(--text-soft)] mt-1"></p>
+
+        <!-- ALCHEMY SEPARATOR -->
+        <div class="flex items-center gap-3 my-4 text-[var(--gold)]/40">
+          <span class="h-px flex-1 bg-[var(--gold)]/30"></span>
+          <span class="text-xl leading-none font-serif">☥</span>
+          <span class="h-px flex-1 bg-[var(--gold)]/30"></span>
+        </div>
+
+        <div class="flex items-baseline gap-4 mb-2">
+          <div id="modal-product-price" class="font-display text-3xl md:text-4xl text-[var(--gold)] font-bold"></div>
+          <div id="modal-product-vol" class="text-xs md:text-sm text-[var(--text-soft)]">Volume: 500ml</div>
+        </div>
+
+        <div id="modal-product-notas" class="font-serif-soft text-base md:text-lg italic text-[var(--cream)]/90 mb-3"></div>
+        <p id="modal-product-desc" class="text-sm md:text-base text-[var(--text-soft)] leading-relaxed"></p>
+
+        <div id="modal-prep-alert" class="hidden mt-4 p-3 border border-[var(--amber-warm)]/50 bg-[var(--amber-warm)]/10 text-xs md:text-sm text-[var(--cream)]/90 rounded-sm">
+          ⚠️ Esta poção é preparada sob demanda e precisa de 2 dias de maceração após o pedido.
+        </div>
+
+        <!-- TECH STATS -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 text-xs text-[var(--text-soft)] border-t border-[var(--gold)]/15 pt-4">
+          <div class="p-2 border border-[var(--gold)]/15 rounded-sm bg-[var(--surface-elevated)]/40">
+            <div class="text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Graduação</div>
+            <div id="modal-stat-grad" class="text-[var(--cream)] text-sm font-medium mt-0.5">--</div>
+          </div>
+          <div class="p-2 border border-[var(--gold)]/15 rounded-sm bg-[var(--surface-elevated)]/40">
+            <div class="text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Brix (Açúcar)</div>
+            <div id="modal-stat-brix" class="text-[var(--cream)] text-sm font-medium mt-0.5">--</div>
+          </div>
+          <div class="p-2 border border-[var(--gold)]/15 rounded-sm bg-[var(--surface-elevated)]/40">
+            <div class="text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Classificação</div>
+            <div id="modal-stat-class" class="text-[var(--cream)] text-sm font-medium mt-0.5">--</div>
+          </div>
+          <div class="p-2 border border-[var(--gold)]/15 rounded-sm bg-[var(--surface-elevated)]/40">
+            <div class="text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Ingredientes</div>
+            <div id="modal-stat-ingr" class="text-[var(--gold)] text-xs underline cursor-pointer mt-0.5" title="Ver ingredientes">Ver lista</div>
+          </div>
+        </div>
+
+        <!-- INGREDIENTS EXPANDABLE -->
+        <div id="modal-ingr-box" class="hidden mt-3 p-3 border border-[var(--gold)]/30 bg-[var(--surface-elevated)] text-xs text-[var(--cream)]/90 leading-relaxed rounded-sm"></div>
+
+        <!-- SUGGESTIONS -->
+        <div id="modal-sugestoes-wrap" class="mt-4 hidden">
+          <div class="text-xs uppercase tracking-wider text-[var(--gold)]/80 font-bold mb-1">Sugestão de consumo:</div>
+          <div id="modal-sugestoes-text" class="p-3 border-l-2 border-[var(--gold)]/50 bg-[var(--surface-elevated)]/30 text-xs md:text-sm text-[var(--cream)]/90 italic leading-relaxed"></div>
+        </div>
+      </div>
+
+      <!-- FOOTER / ACTIONS -->
+      <div class="shrink-0 border-t border-[var(--gold)]/15 bg-[var(--surface)] px-6 py-4">
+        <div id="modal-in-stock-actions" class="space-y-2">
+          <div class="flex gap-3">
+            <div class="inline-flex items-center border border-[var(--gold)]/30 rounded-sm bg-[var(--background)]">
+              <button id="modal-qty-minus" class="px-3 py-2 text-base text-[var(--gold)] hover:bg-[var(--gold)]/10">−</button>
+              <span id="modal-qty-val" class="px-3 text-sm font-bold min-w-[2rem] text-center">1</span>
+              <button id="modal-qty-plus" class="px-3 py-2 text-base text-[var(--gold)] hover:bg-[var(--gold)]/10">+</button>
+            </div>
+            <button
+              id="modal-add-btn"
+              class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display font-bold tracking-widest uppercase text-xs hover:bg-[var(--gold-hover)] transition-colors rounded-sm shadow-md"
+            >
+              Adicionar ao Caldeirão
+            </button>
+          </div>
+          <p id="modal-stock-notice" class="text-[11px] text-[var(--text-soft)] text-center"></p>
+        </div>
+
+        <div id="modal-out-of-stock-actions" class="hidden space-y-3">
+          <button disabled class="w-full py-3 bg-[var(--text-faded)]/20 text-[var(--text-faded)] font-display tracking-widest uppercase text-xs cursor-not-allowed rounded-sm">
+            Sem estoque no momento
+          </button>
+          <a
+            id="modal-wa-btn"
+            href=""
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block text-center w-full py-3 border border-[var(--gold)]/40 text-[var(--gold)] font-display font-bold tracking-widest uppercase text-xs hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-sm"
+          >
+            Falar com o Alquimista no WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupProductModal() {
+    const container = document.getElementById("product-modal-container");
+    const closeMobile = document.getElementById("modal-close-mobile");
+    const closeDesktop = document.getElementById("modal-close-desktop");
+    const img = document.getElementById("modal-product-img") as HTMLImageElement;
+    const catBadge = document.getElementById("modal-category-badge");
+    const name = document.getElementById("modal-product-name");
+    const sabor = document.getElementById("modal-product-sabor");
+    const price = document.getElementById("modal-product-price");
+    const notas = document.getElementById("modal-product-notas");
+    const desc = document.getElementById("modal-product-desc");
+    const prepAlert = document.getElementById("modal-prep-alert");
+    const statGrad = document.getElementById("modal-stat-grad");
+    const statBrix = document.getElementById("modal-stat-brix");
+    const statClass = document.getElementById("modal-stat-class");
+    const statIngr = document.getElementById("modal-stat-ingr");
+    const ingrBox = document.getElementById("modal-ingr-box");
+    const sugestoesWrap = document.getElementById("modal-sugestoes-wrap");
+    const sugestoesText = document.getElementById("modal-sugestoes-text");
+    const inStockActions = document.getElementById("modal-in-stock-actions");
+    const outOfStockActions = document.getElementById("modal-out-of-stock-actions");
+    const qtyVal = document.getElementById("modal-qty-val");
+    const qtyMinus = document.getElementById("modal-qty-minus");
+    const qtyPlus = document.getElementById("modal-qty-plus");
+    const addBtn = document.getElementById("modal-add-btn");
+    const stockNotice = document.getElementById("modal-stock-notice");
+    const waBtn = document.getElementById("modal-wa-btn") as HTMLAnchorElement;
+
+    let currentProduct: any = null;
+    let currentQty = 1;
+
+    function closeModal() {
+      container?.classList.add("hidden");
+      container?.classList.remove("flex");
+      document.body.style.overflow = "";
+      if (ingrBox) ingrBox.classList.add("hidden");
+    }
+
+    closeMobile?.addEventListener("click", closeModal);
+    closeDesktop?.addEventListener("click", closeModal);
+    container?.addEventListener("click", (e) => {
+      if (e.target === container) closeModal();
+    });
+
+    statIngr?.addEventListener("click", () => {
+      if (ingrBox) {
+        ingrBox.classList.toggle("hidden");
+      }
+    });
+
+    function openModalWithProduct(p: any) {
+      currentProduct = p;
+      currentQty = 1;
+      if (qtyVal) qtyVal.textContent = "1";
+
+      if (img) img.src = p.foto_url || "/assets/logo-alquimista.png";
+      if (catBadge) catBadge.textContent = p.categoria === 'fino' ? 'Licor Fino' : p.categoria === 'cremoso' ? 'Licor Cremoso' : 'Licor Especial';
+      if (name) name.textContent = p.nome;
+      if (sabor) sabor.textContent = p.sabor;
+      if (price) price.textContent = Number.isInteger(p.preco) ? `R$ ${p.preco}` : `R$ ${Number(p.preco).toFixed(2).replace('.', ',')}`;
+      if (notas) notas.textContent = p.notas_aromaticas || "";
+      if (desc) desc.textContent = p.descricao || "";
+
+      const needsPrep = p.categoria === 'cremoso' && !(p.sabor || "").toLowerCase().includes("doce de leite");
+      if (prepAlert) {
+        if (needsPrep) prepAlert.classList.remove("hidden");
+        else prepAlert.classList.add("hidden");
+      }
+
+      if (statGrad) statGrad.textContent = `${p.graduacao_gl || 24}°GL`;
+      if (statBrix) statBrix.textContent = `${p.brix || 28}°Bx`;
+      
+      const brix = Number(p.brix || 28);
+      const klass = brix <= 9 ? "Seco" : brix <= 30 ? "Fino / Doce" : brix <= 45 ? "Creme" : "Escarchado";
+      if (statClass) statClass.textContent = klass;
+
+      if (ingrBox) {
+        ingrBox.textContent = p.ingredientes || "Ingredientes selecionados artesanalmente com álcool de cereais e frutas/especiarias naturais.";
+        ingrBox.classList.add("hidden");
+      }
+
+      if (sugestoesWrap && sugestoesText) {
+        if (p.sugestoes) {
+          sugestoesText.textContent = p.sugestoes;
+          sugestoesWrap.classList.remove("hidden");
+        } else {
+          sugestoesWrap.classList.add("hidden");
+        }
+      }
+
+      const isOut = p.estoque <= 0;
+      if (isOut) {
+        inStockActions?.classList.add("hidden");
+        outOfStockActions?.classList.remove("hidden");
+        if (waBtn) {
+          const msg = encodeURIComponent(`Olá! Tenho interesse em ${p.nome}. Está disponível?`);
+          waBtn.href = `https://api.whatsapp.com/send?phone=5548991737692&text=${msg}`;
+        }
+      } else {
+        inStockActions?.classList.remove("hidden");
+        outOfStockActions?.classList.add("hidden");
+        if (stockNotice) {
+          stockNotice.textContent = `Restam ${p.estoque} ${p.estoque === 1 ? 'unidade disponível' : 'unidades disponíveis'} em estoque.`;
+        }
+      }
+
+      container?.classList.remove("hidden");
+      container?.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    qtyMinus?.addEventListener("click", () => {
+      if (currentQty > 1) {
+        currentQty--;
+        if (qtyVal) qtyVal.textContent = String(currentQty);
+      }
+    });
+
+    qtyPlus?.addEventListener("click", () => {
+      const max = currentProduct ? currentProduct.estoque : 99;
+      if (currentQty < max) {
+        currentQty++;
+        if (qtyVal) qtyVal.textContent = String(currentQty);
+      }
+    });
+
+    addBtn?.addEventListener("click", () => {
+      if (!currentProduct) return;
+      window.dispatchEvent(new CustomEvent("add-to-cart", {
+        detail: {
+          tipo: "avulso",
+          id: currentProduct.id,
+          nome: currentProduct.nome,
+          sabor: currentProduct.sabor,
+          preco: Number(currentProduct.preco),
+          foto_url: currentProduct.foto_url,
+          categoria: currentProduct.categoria,
+          qty: currentQty
+        }
+      }));
+      closeModal();
+    });
+
+    // Delegate click on any card to open modal
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest(".quick-add-btn")) {
+        // Handled separately
+        return;
+      }
+      const card = target.closest(".product-card") as HTMLElement;
+      if (card && card.dataset.product) {
+        try {
+          const productData = JSON.parse(card.dataset.product);
+          openModalWithProduct(productData);
+        } catch (err) {}
+      }
+    });
+
+    // Custom event to open product modal by data or ID
+    window.addEventListener("open-product-modal", (e: any) => {
+      const p = e.detail?.product;
+      if (p) {
+        openModalWithProduct(p);
+      } else if (e.detail?.productId) {
+        const card = document.querySelector(`.product-card[data-product*="${e.detail.productId}"]`) as HTMLElement;
+        if (card && card.dataset.product) {
+          try {
+            openModalWithProduct(JSON.parse(card.dataset.product));
+          } catch (err) {}
+        }
+      }
+    });
+
+    // Quick add button event
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const quickBtn = target.closest(".quick-add-btn") as HTMLElement;
+      if (quickBtn) {
+        e.stopPropagation();
+        const card = quickBtn.closest(".product-card") as HTMLElement;
+        if (card && card.dataset.product) {
+          try {
+            const productData = JSON.parse(card.dataset.product);
+            window.dispatchEvent(new CustomEvent("add-to-cart", {
+              detail: {
+                tipo: "avulso",
+                id: productData.id,
+                nome: productData.nome,
+                sabor: productData.sabor,
+                preco: Number(productData.preco),
+                foto_url: productData.foto_url,
+                categoria: productData.categoria,
+                qty: 1
+              }
+            }));
+          } catch (err) {}
+        }
+      }
+    });
+  }
+
+  setupProductModal();
+  document.addEventListener("astro:page-load", setupProductModal);
+</script>

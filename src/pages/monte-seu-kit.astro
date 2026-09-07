@@ -1,0 +1,671 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { fetchProducts, fetchKitPrices } from '../lib/data';
+
+const products = await fetchProducts();
+const kitPrices = await fetchKitPrices();
+---
+
+<Layout
+  title="Monte seu Kit — Alquimista Licores"
+  description="Monte seu kit Degustação ou Presenteável de licores artesanais e adicione ao caldeirão."
+>
+  <div class="max-w-4xl mx-auto px-6 pb-20">
+    <!-- MODE SELECTOR VIEW (DEFAULT IF NO QUERY) -->
+    <div id="view-mode-select">
+      <PageHeader title="Monte seu Kit" subtitle="Escolha o caminho da sua poção." />
+
+      <div class="grid sm:grid-cols-2 gap-6 mt-6">
+        <button
+          type="button"
+          id="pick-degustacao-btn"
+          class="p-6 border border-[var(--gold)]/30 rounded-sm hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-all text-left gold-glow-hover group bg-[var(--surface)]/40"
+        >
+          <div class="aspect-[4/3] mb-4 overflow-hidden rounded-sm bg-[var(--surface-elevated)] border border-[var(--gold)]/10">
+            <img
+              src="/assets/kits-degustacao.jpg"
+              alt="Kit Degustação"
+              loading="lazy"
+              decoding="async"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+          <div class="font-display text-[var(--gold)] tracking-widest uppercase text-2xl md:text-3xl font-medium">
+            Kit Degustação
+          </div>
+          <div class="font-sans italic text-[var(--text-soft)] text-sm mt-2">
+            3 mini-poções (50ml) por R$ 20,00
+          </div>
+        </button>
+
+        <button
+          type="button"
+          id="pick-presenteavel-btn"
+          class="p-6 border border-[var(--gold)]/30 rounded-sm hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-all text-left gold-glow-hover group bg-[var(--surface)]/40"
+        >
+          <div class="aspect-[4/3] mb-4 overflow-hidden rounded-sm bg-[var(--surface-elevated)] border border-[var(--gold)]/10">
+            <img
+              src="/assets/kits-caixa-premium.jpg"
+              alt="Kit Presenteável"
+              loading="lazy"
+              decoding="async"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+          <div class="font-display text-[var(--gold)] tracking-widest uppercase text-2xl md:text-3xl font-medium">
+            Kit Presenteável
+          </div>
+          <div class="font-sans italic text-[var(--text-soft)] text-sm mt-2">
+            Licor 500ml + acompanhamento + caixa personalizada
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- WIZARD CONTAINER -->
+    <div id="view-wizard" class="hidden">
+      <div class="text-center pt-20 pb-6">
+        <h1 id="wizard-title" class="text-3xl md:text-5xl font-medium tracking-wide text-[var(--gold)]"></h1>
+        <button id="wizard-switch-mode" class="text-xs text-[var(--text-faded)] underline hover:text-[var(--gold)] mt-3">
+          ← Trocar tipo de kit
+        </button>
+      </div>
+
+      <!-- STEP INDICATOR -->
+      <div id="stepper" class="flex items-center justify-center gap-3 my-8"></div>
+
+      <!-- DEGUSTAÇÃO FLOW -->
+      <div id="flow-degustacao" class="hidden space-y-8">
+        <!-- DEG STEP 1: SABORES -->
+        <div id="deg-step-1" class="space-y-6">
+          <p class="font-sans italic text-[var(--text-soft)] text-center text-sm md:text-base">
+            Escolha 3 sabores (pode repetir). Cada um vem em mini-garrafa de 50ml.
+          </p>
+
+          <div id="deg-counter" class="text-center text-sm md:text-base text-[var(--gold)] font-display tracking-widest uppercase font-bold">
+            Você escolheu 0 de 3
+          </div>
+
+          <div id="deg-selected-chips" class="flex flex-wrap gap-2 justify-center min-h-[2rem]"></div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {products.map((p) => (
+              <button
+                type="button"
+                class={`deg-product-pick p-3 border rounded-sm text-left transition-all relative ${
+                  p.estoque <= 0 ? "opacity-40 cursor-not-allowed border-[var(--border)]" : "border-[var(--gold)]/20 hover:border-[var(--gold)] bg-[var(--surface)]/40 hover:bg-[var(--gold)]/5"
+                }`}
+                data-id={p.id}
+                data-name={p.nome}
+                data-sabor={p.sabor}
+                data-stock={p.estoque}
+                disabled={p.estoque <= 0}
+              >
+                <div class="aspect-square bg-[var(--surface-elevated)] rounded-sm overflow-hidden mb-2">
+                  {p.foto_url ? (
+                    <img src={p.foto_url} alt={p.nome} class="w-full h-full object-cover" />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center text-2xl text-[var(--gold)]/30">⚗</div>
+                  )}
+                </div>
+                <div class="font-display font-bold text-xs md:text-sm text-[var(--gold)] uppercase truncate">{p.nome}</div>
+                <div class="font-body text-xs text-[var(--text-soft)] italic truncate">{p.sabor}</div>
+                {p.estoque <= 0 && (
+                  <div class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-sm">
+                    <span class="text-[9px] font-display uppercase tracking-wider text-[var(--gold)] font-bold">Esgotado</span>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div class="flex justify-end pt-4">
+            <button
+              id="deg-next-btn"
+              disabled
+              class="w-full sm:w-auto px-8 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] transition-colors rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+            >
+              Continuar →
+            </button>
+          </div>
+        </div>
+
+        <!-- DEG STEP 2: RESUMO -->
+        <div id="deg-step-2" class="hidden space-y-6">
+          <div class="p-6 border border-[var(--gold)]/30 rounded-sm bg-[var(--surface)]/60 space-y-4">
+            <div class="font-display tracking-widest uppercase text-base text-[var(--gold)] font-bold">
+              Resumo do Kit Degustação
+            </div>
+            <ul id="deg-summary-list" class="space-y-2 text-sm text-[var(--cream)]"></ul>
+            <div class="flex justify-between items-baseline pt-4 border-t border-[var(--gold)]/20 text-base font-display">
+              <span>Total do Kit</span>
+              <span class="text-3xl text-[var(--gold)] font-bold">R$ 20,00</span>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button id="deg-prev-btn" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
+              ← Voltar
+            </button>
+            <button id="deg-add-cart-btn" class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs rounded-sm hover:bg-[var(--gold-hover)] font-bold shadow-md">
+              Adicionar ao Caldeirão
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRESENTEÁVEL FLOW -->
+      <div id="flow-presenteavel" class="hidden space-y-8">
+        <!-- PRES STEP 1: LICOR 500ML -->
+        <div id="pres-step-1" class="space-y-6">
+          <p class="font-sans italic text-[var(--text-soft)] text-center text-sm md:text-base">
+            Escolha o licor (500ml) que será o centro do seu kit.
+          </p>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {products.map((p) => (
+              <button
+                type="button"
+                class={`pres-liquor-pick p-3 border rounded-sm text-left transition-all relative ${
+                  p.estoque <= 0 ? "opacity-40 cursor-not-allowed border-[var(--border)]" : "border-[var(--gold)]/20 hover:border-[var(--gold)] bg-[var(--surface)]/40 hover:bg-[var(--gold)]/5"
+                }`}
+                data-id={p.id}
+                data-name={p.nome}
+                data-sabor={p.sabor}
+                data-cat={p.categoria}
+                disabled={p.estoque <= 0}
+              >
+                <div class="aspect-square bg-[var(--surface-elevated)] rounded-sm overflow-hidden mb-2">
+                  {p.foto_url ? (
+                    <img src={p.foto_url} alt={p.nome} class="w-full h-full object-cover" />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center text-2xl text-[var(--gold)]/30">⚗</div>
+                  )}
+                </div>
+                <div class="font-display font-bold text-xs md:text-sm text-[var(--gold)] uppercase truncate">{p.nome}</div>
+                <div class="font-body text-xs text-[var(--text-soft)] italic truncate">{p.sabor}</div>
+              </button>
+            ))}
+          </div>
+
+          <div class="flex justify-end pt-4">
+            <button
+              id="pres-next-1"
+              disabled
+              class="w-full sm:w-auto px-8 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] transition-colors rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+            >
+              Continuar →
+            </button>
+          </div>
+        </div>
+
+        <!-- PRES STEP 2: ACOMPANHAMENTO -->
+        <div id="pres-step-2" class="hidden space-y-6">
+          <p class="font-sans italic text-[var(--text-soft)] text-center text-sm md:text-base">
+            Escolha o acompanhamento doce (incluso no kit).
+          </p>
+
+          <div class="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              class="pres-acomp-pick p-5 border border-[var(--gold)]/25 rounded-sm text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
+              data-id="brownies"
+              data-label="3 Brownies Artesanais"
+            >
+              <div class="aspect-square mb-3 overflow-hidden rounded-sm bg-[var(--surface-elevated)]">
+                <img src="/assets/kits-brownies.jpg" alt="3 Brownies" class="w-full h-full object-cover" />
+              </div>
+              <div class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
+                3 Brownies
+              </div>
+            </button>
+
+            <button
+              type="button"
+              class="pres-acomp-pick p-5 border border-[var(--gold)]/25 rounded-sm text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
+              data-id="paes-mel"
+              data-label="3 Pães de Mel Artesanais"
+            >
+              <div class="aspect-square mb-3 overflow-hidden rounded-sm bg-[var(--surface-elevated)]">
+                <img src="/assets/kits-paes-mel.jpg" alt="3 Pães de Mel" class="w-full h-full object-cover" />
+              </div>
+              <div class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
+                3 Pães de Mel
+              </div>
+            </button>
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button id="pres-prev-2" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
+              ← Voltar
+            </button>
+            <button id="pres-next-2" disabled class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
+              Continuar →
+            </button>
+          </div>
+        </div>
+
+        <!-- PRES STEP 3: EMBALAGEM / CAIXA -->
+        <div id="pres-step-3" class="hidden space-y-6">
+          <p class="font-sans italic text-[var(--text-soft)] text-center text-sm md:text-base">
+            Escolha o tipo de embalagem para presentear.
+          </p>
+
+          <div class="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              class="pres-box-pick p-5 border border-[var(--gold)]/25 rounded-sm text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
+              data-id="mdf"
+              data-label="Box MDF Artesanal"
+            >
+              <div class="aspect-square mb-3 overflow-hidden rounded-sm bg-[var(--surface-elevated)]">
+                <img src="/assets/kits-mdf.jpg" alt="Box MDF" class="w-full h-full object-cover" />
+              </div>
+              <div class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
+                Box MDF
+              </div>
+              <div id="price-mdf-label" class="text-xs text-[var(--text-soft)] mt-1.5"></div>
+            </button>
+
+            <button
+              type="button"
+              class="pres-box-pick p-5 border border-[var(--gold)]/25 rounded-sm text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
+              data-id="acrilico"
+              data-label="Box Premium Luxo"
+            >
+              <div class="aspect-square mb-3 overflow-hidden rounded-sm bg-[var(--surface-elevated)]">
+                <img src="/assets/kits-caixa-premium.jpg" alt="Box Premium" class="w-full h-full object-cover" />
+              </div>
+              <div class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
+                Box Premium
+              </div>
+              <div id="price-acrilico-label" class="text-xs text-[var(--text-soft)] mt-1.5"></div>
+            </button>
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button id="pres-prev-3" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
+              ← Voltar
+            </button>
+            <button id="pres-next-3" disabled class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
+              Continuar →
+            </button>
+          </div>
+        </div>
+
+        <!-- PRES STEP 4: RESUMO & DEDICATÓRIA -->
+        <div id="pres-step-4" class="hidden space-y-6">
+          <div class="p-6 border border-[var(--gold)]/30 rounded-sm bg-[var(--surface)]/60 space-y-4">
+            <div class="font-display tracking-widest uppercase text-base text-[var(--gold)] font-bold">
+              Resumo do Kit Presenteável
+            </div>
+            <ul id="pres-summary-list" class="space-y-2 text-sm text-[var(--cream)]"></ul>
+            
+            <div class="pt-2">
+              <label class="block text-xs uppercase tracking-wider text-[var(--gold)]/80 mb-1">
+                Dedicatória personalizada (opcional):
+              </label>
+              <textarea
+                id="pres-dedicatoria"
+                rows="2"
+                placeholder="Escreva uma mensagem especial para quem vai receber o presente..."
+                class="w-full bg-[var(--background)] border border-[var(--gold)]/30 px-3 py-2 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)] resize-none"
+              ></textarea>
+            </div>
+
+            <div class="flex justify-between items-baseline pt-4 border-t border-[var(--gold)]/20 text-base font-display">
+              <span>Total do Kit</span>
+              <span id="pres-total-price" class="text-3xl text-[var(--gold)] font-bold">R$ 0,00</span>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button id="pres-prev-4" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
+              ← Voltar
+            </button>
+            <button id="pres-add-cart-btn" class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs rounded-sm hover:bg-[var(--gold-hover)] font-bold shadow-md">
+              Adicionar ao Caldeirão
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- POST-ADD CTA -->
+      <div id="post-add-cta" class="hidden mt-8 p-6 border border-[var(--gold)]/35 rounded-sm bg-[var(--gold)]/5 text-center space-y-4 gold-glow">
+        <div class="text-[var(--gold)] font-display tracking-widest uppercase text-sm font-bold">
+          ✦ Kit adicionado com sucesso ao seu caldeirão!
+        </div>
+        <p class="text-sm text-[var(--text-soft)] font-sans italic">
+          Deseja adicionar mais poções ou já deseja finalizar seu pedido?
+        </p>
+        <div class="grid sm:grid-cols-3 gap-3 pt-2">
+          <button id="post-add-new-btn" class="py-3 border border-[var(--gold)]/40 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
+            Montar outro kit
+          </button>
+          <a href="/pocoes" class="py-3 border border-[var(--gold)]/40 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold text-center">
+            Ver as poções
+          </a>
+          <button id="post-add-open-cart-btn" class="py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs rounded-sm hover:bg-[var(--gold-hover)] font-bold shadow-md">
+            Ir para o caldeirão
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script define:vars={{ kitPrices }}>
+  function setupMonteKit() {
+    const viewModeSelect = document.getElementById("view-mode-select");
+    const viewWizard = document.getElementById("view-wizard");
+    const wizardTitle = document.getElementById("wizard-title");
+    const switchModeBtn = document.getElementById("wizard-switch-mode");
+    const stepper = document.getElementById("stepper");
+    const postAddCta = document.getElementById("post-add-cta");
+
+    const flowDegustacao = document.getElementById("flow-degustacao");
+    const flowPresenteavel = document.getElementById("flow-presenteavel");
+
+    const pickDegBtn = document.getElementById("pick-degustacao-btn");
+    const pickPresBtn = document.getElementById("pick-presenteavel-btn");
+
+    // Degustação state
+    let degSelected = [];
+    const degCounter = document.getElementById("deg-counter");
+    const degChips = document.getElementById("deg-selected-chips");
+    const degNextBtn = document.getElementById("deg-next-btn");
+    const degPrevBtn = document.getElementById("deg-prev-btn");
+    const degAddCartBtn = document.getElementById("deg-add-cart-btn");
+    const degStep1 = document.getElementById("deg-step-1");
+    const degStep2 = document.getElementById("deg-step-2");
+    const degSummaryList = document.getElementById("deg-summary-list");
+
+    // Presenteavel state
+    let presProduct = null;
+    let presAcomp = null;
+    let presBox = null;
+    const presStep1 = document.getElementById("pres-step-1");
+    const presStep2 = document.getElementById("pres-step-2");
+    const presStep3 = document.getElementById("pres-step-3");
+    const presStep4 = document.getElementById("pres-step-4");
+    const presNext1 = document.getElementById("pres-next-1");
+    const presNext2 = document.getElementById("pres-next-2");
+    const presNext3 = document.getElementById("pres-next-3");
+    const presPrev2 = document.getElementById("pres-prev-2");
+    const presPrev3 = document.getElementById("pres-prev-3");
+    const presPrev4 = document.getElementById("pres-prev-4");
+    const presAddCartBtn = document.getElementById("pres-add-cart-btn");
+    const presSummaryList = document.getElementById("pres-summary-list");
+    const presTotalPrice = document.getElementById("pres-total-price");
+    const presDedicatoria = document.getElementById("pres-dedicatoria");
+    const priceMdfLabel = document.getElementById("price-mdf-label");
+    const priceAcrilicoLabel = document.getElementById("price-acrilico-label");
+
+    let currentMode = "";
+    let currentStep = 1;
+
+    function renderStepper(total, current, labels) {
+      if (!stepper) return;
+      stepper.innerHTML = "";
+      for (let i = 1; i <= total; i++) {
+        const active = i === current;
+        const done = i < current;
+        const item = document.createElement("div");
+        item.className = "flex items-center gap-2";
+        item.innerHTML = `
+          <div class="flex flex-col items-center">
+            <div class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full border text-xs font-bold ${
+              active
+                ? "bg-[var(--gold)] text-[var(--background)] border-[var(--gold)] scale-110 shadow-md"
+                : done
+                ? "bg-[var(--gold)]/20 border-[var(--gold)] text-[var(--gold)]"
+                : "border-[var(--gold)]/30 text-[var(--text-faded)]"
+            }">
+              ${done ? "✓" : i}
+            </div>
+            <div class="text-[10px] mt-1 tracking-widest uppercase ${active ? "text-[var(--gold)] font-bold" : "text-[var(--text-faded)]"}">
+              ${labels[i - 1] || ""}
+            </div>
+          </div>
+          ${i < total ? `<div class="w-6 h-px ${done ? "bg-[var(--gold)]" : "bg-[var(--gold)]/20"}"></div>` : ""}
+        `;
+        stepper.appendChild(item);
+      }
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      currentStep = 1;
+      postAddCta?.classList.add("hidden");
+
+      if (!mode) {
+        viewModeSelect?.classList.remove("hidden");
+        viewWizard?.classList.add("hidden");
+        history.replaceState(null, "", "/monte-seu-kit");
+        return;
+      }
+
+      viewModeSelect?.classList.add("hidden");
+      viewWizard?.classList.remove("hidden");
+      history.replaceState(null, "", `/monte-seu-kit?kit=${mode}`);
+
+      if (mode === "degustacao") {
+        if (wizardTitle) wizardTitle.textContent = "Kit Degustação";
+        flowDegustacao?.classList.remove("hidden");
+        flowPresenteavel?.classList.add("hidden");
+        showDegStep(1);
+      } else if (mode === "presenteavel") {
+        if (wizardTitle) wizardTitle.textContent = "Kit Presenteável";
+        flowDegustacao?.classList.add("hidden");
+        flowPresenteavel?.classList.remove("hidden");
+        showPresStep(1);
+      }
+    }
+
+    pickDegBtn?.addEventListener("click", () => setMode("degustacao"));
+    pickPresBtn?.addEventListener("click", () => setMode("presenteavel"));
+    switchModeBtn?.addEventListener("click", () => setMode(""));
+
+    // DEGUSTAÇÃO LOGIC
+    function updateDegChips() {
+      if (degChips) {
+        degChips.innerHTML = "";
+        degSelected.forEach((item, idx) => {
+          const chip = document.createElement("span");
+          chip.className = "inline-flex items-center gap-2 px-3 py-1 bg-[var(--gold)]/15 border border-[var(--gold)]/40 rounded-sm text-xs text-[var(--gold)] font-medium";
+          chip.innerHTML = `${item.name} <button type="button" class="hover:text-red-400 font-bold ml-1" data-idx="${idx}">✕</button>`;
+          chip.querySelector("button")?.addEventListener("click", () => {
+            degSelected.splice(idx, 1);
+            updateDegChips();
+          });
+          degChips.appendChild(chip);
+        });
+      }
+
+      if (degCounter) {
+        degCounter.textContent = `Você escolheu ${degSelected.length} de 3`;
+      }
+
+      if (degNextBtn) {
+        degNextBtn.disabled = degSelected.length !== 3;
+      }
+    }
+
+    document.querySelectorAll(".deg-product-pick").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (degSelected.length < 3) {
+          const id = btn.getAttribute("data-id");
+          const name = btn.getAttribute("data-name");
+          const sabor = btn.getAttribute("data-sabor");
+          degSelected.push({ id, name, sabor });
+          updateDegChips();
+        }
+      });
+    });
+
+    function showDegStep(step) {
+      currentStep = step;
+      renderStepper(2, step, ["Sabores", "Resumo"]);
+      if (step === 1) {
+        degStep1?.classList.remove("hidden");
+        degStep2?.classList.add("hidden");
+      } else {
+        degStep1?.classList.add("hidden");
+        degStep2?.classList.remove("hidden");
+        if (degSummaryList) {
+          degSummaryList.innerHTML = degSelected.map((s, idx) => `
+            <li class="flex justify-between py-1 border-b border-[var(--gold)]/10">
+              <span>Garrafinha ${idx + 1}: <strong>${s.name}</strong> (${s.sabor})</span>
+              <span class="text-[var(--text-soft)]">50ml</span>
+            </li>
+          `).join("");
+        }
+      }
+    }
+
+    degNextBtn?.addEventListener("click", () => showDegStep(2));
+    degPrevBtn?.addEventListener("click", () => showDegStep(1));
+
+    degAddCartBtn?.addEventListener("click", () => {
+      window.dispatchEvent(new CustomEvent("add-to-cart", {
+        detail: {
+          tipo: "kit-degustacao",
+          id: `kit-degustacao-${Date.now()}`,
+          nome: "Kit Degustação",
+          preco: 20,
+          qty: 1,
+          saboresIds: degSelected.map(s => s.id),
+          saboresLabels: degSelected.map(s => ({ nome: s.name, sabor: s.sabor }))
+        }
+      }));
+      flowDegustacao?.classList.add("hidden");
+      postAddCta?.classList.remove("hidden");
+    });
+
+    // PRESENTEÁVEL LOGIC
+    function showPresStep(step) {
+      currentStep = step;
+      renderStepper(4, step, ["Licor", "Acomp.", "Caixa", "Resumo"]);
+      presStep1?.classList.toggle("hidden", step !== 1);
+      presStep2?.classList.toggle("hidden", step !== 2);
+      presStep3?.classList.toggle("hidden", step !== 3);
+      presStep4?.classList.toggle("hidden", step !== 4);
+
+      if (step === 3 && presProduct) {
+        const cat = presProduct.cat;
+        const priceMdf = kitPrices.find(k => k.kit_type === 'presenteavel' && k.licor_categoria === cat && k.embalagem === 'mdf')?.preco || 110;
+        const priceAcrilico = kitPrices.find(k => k.kit_type === 'presenteavel' && k.licor_categoria === cat && k.embalagem === 'acrilico')?.preco || 130;
+        if (priceMdfLabel) priceMdfLabel.textContent = `Total: R$ ${priceMdf},00`;
+        if (priceAcrilicoLabel) priceAcrilicoLabel.textContent = `Total: R$ ${priceAcrilico},00`;
+      }
+
+      if (step === 4 && presProduct && presAcomp && presBox) {
+        const cat = presProduct.cat;
+        const finalPrice = kitPrices.find(k => k.kit_type === 'presenteavel' && k.licor_categoria === cat && k.embalagem === presBox.id)?.preco || 120;
+        if (presSummaryList) {
+          presSummaryList.innerHTML = `
+            <li class="py-1">✦ Licor 500ml: <strong>${presProduct.name}</strong> (${presProduct.sabor})</li>
+            <li class="py-1">✦ Acompanhamento: <strong>${presAcomp.label}</strong></li>
+            <li class="py-1">✦ Embalagem: <strong>${presBox.label}</strong></li>
+          `;
+        }
+        if (presTotalPrice) {
+          presTotalPrice.textContent = `R$ ${finalPrice},00`;
+        }
+      }
+    }
+
+    document.querySelectorAll(".pres-liquor-pick").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".pres-liquor-pick").forEach(b => b.classList.remove("border-[var(--gold)]", "bg-[var(--gold)]/15"));
+        btn.classList.add("border-[var(--gold)]", "bg-[var(--gold)]/15");
+        presProduct = {
+          id: btn.getAttribute("data-id"),
+          name: btn.getAttribute("data-name"),
+          sabor: btn.getAttribute("data-sabor"),
+          cat: btn.getAttribute("data-cat")
+        };
+        if (presNext1) presNext1.disabled = false;
+      });
+    });
+
+    document.querySelectorAll(".pres-acomp-pick").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".pres-acomp-pick").forEach(b => b.classList.remove("border-[var(--gold)]", "bg-[var(--gold)]/15"));
+        btn.classList.add("border-[var(--gold)]", "bg-[var(--gold)]/15");
+        presAcomp = {
+          id: btn.getAttribute("data-id"),
+          label: btn.getAttribute("data-label")
+        };
+        if (presNext2) presNext2.disabled = false;
+      });
+    });
+
+    document.querySelectorAll(".pres-box-pick").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".pres-box-pick").forEach(b => b.classList.remove("border-[var(--gold)]", "bg-[var(--gold)]/15"));
+        btn.classList.add("border-[var(--gold)]", "bg-[var(--gold)]/15");
+        presBox = {
+          id: btn.getAttribute("data-id"),
+          label: btn.getAttribute("data-label")
+        };
+        if (presNext3) presNext3.disabled = false;
+      });
+    });
+
+    presNext1?.addEventListener("click", () => showPresStep(2));
+    presPrev2?.addEventListener("click", () => showPresStep(1));
+    presNext2?.addEventListener("click", () => showPresStep(3));
+    presPrev3?.addEventListener("click", () => showPresStep(2));
+    presNext3?.addEventListener("click", () => showPresStep(4));
+    presPrev4?.addEventListener("click", () => showPresStep(3));
+
+    presAddCartBtn?.addEventListener("click", () => {
+      if (!presProduct || !presAcomp || !presBox) return;
+      const cat = presProduct.cat;
+      const finalPrice = kitPrices.find(k => k.kit_type === 'presenteavel' && k.licor_categoria === cat && k.embalagem === presBox.id)?.preco || 120;
+      const ded = presDedicatoria ? presDedicatoria.value.trim() : "";
+
+      window.dispatchEvent(new CustomEvent("add-to-cart", {
+        detail: {
+          tipo: "kit-presenteavel",
+          id: `kit-presenteavel-${Date.now()}`,
+          nome: "Kit Presenteável",
+          preco: finalPrice,
+          qty: 1,
+          licor: { id: presProduct.id, nome: presProduct.name, sabor: presProduct.sabor },
+          acompanhamento: presAcomp.label,
+          embalagem: presBox.label,
+          dedicatoria: ded
+        }
+      }));
+
+      flowPresenteavel?.classList.add("hidden");
+      postAddCta?.classList.remove("hidden");
+    });
+
+    // POST-ADD BUTTONS
+    document.getElementById("post-add-new-btn")?.addEventListener("click", () => {
+      degSelected = [];
+      presProduct = null;
+      presAcomp = null;
+      presBox = null;
+      setMode("");
+    });
+
+    document.getElementById("post-add-open-cart-btn")?.addEventListener("click", () => {
+      window.dispatchEvent(new CustomEvent("open-cart"));
+    });
+
+    // Check initial search param
+    const params = new URLSearchParams(window.location.search);
+    const initialKit = params.get("kit") || params.get("modo");
+    if (initialKit === "degustacao" || initialKit === "presenteavel") {
+      setMode(initialKit);
+    }
+  }
+
+  setupMonteKit();
+  document.addEventListener("astro:page-load", setupMonteKit);
+</script>

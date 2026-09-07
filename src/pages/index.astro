@@ -1,11 +1,144 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import HeroCinematic from '../components/HeroCinematic.astro';
+import ProductCard from '../components/ProductCard.astro';
+import RituaisDegustacao from '../components/RituaisDegustacao.astro';
+import InfiniteMarquee from '../components/InfiniteMarquee.astro';
+import { fetchProducts, fetchTestimonials } from '../lib/data';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const products = await fetchProducts();
+const testimonials = await fetchTestimonials();
+
+// Get top 4 featured potions (either by orders count or first 4 active)
+const featured = [...products]
+  .sort((a, b) => (b.pedidos_count || 0) - (a.pedidos_count || 0))
+  .slice(0, 4);
+
+const doubledTestimonials = [...testimonials, ...testimonials];
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Alquimista Licores — Licores artesanais de Criciúma">
+  <div>
+    <!-- HERO SECTION (CINEMATIC SCROLL-DRIVEN VIDEO) -->
+    <HeroCinematic />
+
+    <!-- INFINITE MARQUEE BAR -->
+    <InfiniteMarquee />
+
+    <!-- STORY QUOTE -->
+    <section class="py-28 md:py-36 px-6 text-center relative z-10">
+      <div class="max-w-3xl mx-auto reveal">
+        <p class="font-sans italic text-xl md:text-2xl text-[var(--text-soft)] leading-relaxed mb-8">
+          Na alquimia, transformar o simples em extraordinário é arte. Cada garrafa que sai daqui carrega intenção, ingredientes naturais e cuidado especial.
+        </p>
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-medium text-[var(--cream)] mb-12">
+          Feito com (c)alma.
+        </h2>
+        <a
+          href="/sobre"
+          class="inline-block px-10 py-4 border border-[var(--gold)]/30 text-[var(--gold)] text-xs md:text-sm tracking-widest uppercase font-sans font-bold hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-all rounded-sm gold-glow-hover"
+        >
+          Conheça a história do Alquimista
+        </a>
+      </div>
+    </section>
+
+    <!-- FEATURED POTIONS SECTION -->
+    <section id="pocoes" class="max-w-7xl mx-auto px-6 lg:px-10 py-16 relative z-10 scroll-mt-24">
+      <div class="text-center mb-12">
+        <div class="text-[var(--gold)]/50 text-sm mb-2 font-serif">✦</div>
+        <h2 class="text-3xl md:text-5xl font-medium text-[var(--cream)] tracking-wide">
+          Poções em destaque
+        </h2>
+        <div class="w-16 h-px bg-[var(--gold)]/40 mx-auto mt-4"></div>
+        <p class="font-sans italic text-base md:text-lg text-[var(--text-soft)] mt-3">
+          Os preferidos do Alquimista.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+        {featured.map((p) => (
+          <ProductCard product={p} />
+        ))}
+      </div>
+
+      <div class="text-center mt-12">
+        <a
+          href="/pocoes"
+          class="inline-block px-12 py-5 bg-transparent border border-[var(--gold)] text-[var(--gold)] font-sans font-bold tracking-[0.2em] uppercase hover:bg-[var(--gold)] hover:text-[var(--background)] transition-all rounded-sm text-xs gold-glow shadow-md"
+        >
+          Ver todas as poções
+        </a>
+      </div>
+    </section>
+
+    <!-- RITUAIS DE DEGUSTAÇÃO (GRIMÓRIO INTERATIVO // 100% TRANSPARENTE) -->
+    <RituaisDegustacao />
+
+    <!-- KITS BANNER -->
+    <section class="px-6 py-20 relative z-10">
+      <div
+        class="max-w-6xl mx-auto relative overflow-hidden rounded-sm border border-[var(--gold)]/30 bg-cover bg-center p-12 md:p-24 text-center gold-glow shadow-2xl"
+        style="background-image: url('/assets/kits-banner.png');"
+      >
+        <div class="absolute inset-0 bg-[var(--background)]/75 pointer-events-none"></div>
+        <div class="absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_30%_30%,_var(--gold)_0%,_transparent_65%)] pointer-events-none"></div>
+        
+        <div class="relative z-10 max-w-3xl mx-auto">
+          <p class="font-sans italic text-2xl md:text-4xl text-[var(--cream)] leading-relaxed mb-10">
+            Para quem merece algo raro.<br />Kits artesanais para ocasiões especiais.
+          </p>
+          <a
+            href="/kits"
+            class="inline-block px-10 py-4 bg-[var(--gold)] text-[var(--background)] font-sans tracking-widest text-xs md:text-sm uppercase font-bold hover:bg-[var(--gold-hover)] transition-all rounded-sm shadow-xl"
+          >
+            Explorar Kits
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS CAROUSEL -->
+    <section class="py-20 overflow-hidden border-y border-[var(--gold)]/15 bg-[var(--surface)]/40 relative z-10">
+      <div class="text-center mb-10 px-6">
+        <h2 class="text-3xl md:text-4xl font-medium text-[var(--cream)] uppercase tracking-[0.12em]">
+          O que dizem nossos apreciadores
+        </h2>
+        <div class="w-16 h-px bg-[var(--gold)]/40 mx-auto mt-4"></div>
+      </div>
+
+      <div class="testi-track-wrap">
+        <div class="testi-track">
+          {doubledTestimonials.map((t, idx) => (
+            <div class="testi-card" key={`${t.id}-${idx}`}>
+              <div class="font-display text-3xl text-[var(--gold)] leading-none mb-2">“</div>
+              <p class="font-sans italic text-base md:text-lg text-[var(--cream)]/90 leading-relaxed min-h-[4.5rem]">
+                {t.texto}
+              </p>
+              <div class="flex gap-1 mt-4 text-[var(--gold)] text-sm">
+                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+              </div>
+              <div class="font-display text-sm md:text-base tracking-widest uppercase text-[var(--gold)] mt-2 font-bold">
+                — {t.nome}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="text-center mt-12 px-6">
+        <p class="font-sans italic text-base md:text-lg text-[var(--text-soft)] mb-4">
+          Compartilhe sua experiência e apareça aqui.
+        </p>
+        <a
+          href="https://g.page/r/CWzwaZr9lnaDEAE/review"
+          target="_blank"
+          rel="noreferrer"
+          class="inline-block px-10 py-4 bg-transparent border border-[var(--gold)]/60 text-[var(--gold)] font-sans font-bold tracking-[0.2em] uppercase hover:bg-[var(--gold)] hover:text-[var(--background)] transition-all rounded-sm text-xs"
+        >
+          Deixar minha avaliação
+        </a>
+      </div>
+    </section>
+  </div>
 </Layout>

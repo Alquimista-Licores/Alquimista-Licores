@@ -1,0 +1,99 @@
+---
+// Cursor golden particle sparks
+---
+
+<canvas
+  id="cursor-particles-canvas"
+  class="pointer-events-none fixed inset-0 z-50 hidden md:block"
+></canvas>
+
+<script>
+  function setupCursorParticles() {
+    const canvas = document.getElementById("cursor-particles-canvas") as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener("resize", () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    interface Particle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      size: number;
+      alpha: number;
+      decay: number;
+    }
+
+    const particles: Particle[] = [];
+    let lastX = 0;
+    let lastY = 0;
+    let throttle = 0;
+
+    window.addEventListener("mousemove", (e) => {
+      const now = performance.now();
+      if (now - throttle < 30) return;
+      throttle = now;
+
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      const speed = Math.sqrt(dx * dx + dy * dy);
+
+      if (speed > 3 && particles.length < 40) {
+        particles.push({
+          x: e.clientX,
+          y: e.clientY,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: (Math.random() - 0.5) * 1.5 - 0.5,
+          size: Math.random() * 2 + 1,
+          alpha: 0.8,
+          decay: Math.random() * 0.03 + 0.02,
+        });
+      }
+
+      lastX = e.clientX;
+      lastY = e.clientY;
+    });
+
+    let animId: number;
+    function render() {
+      ctx?.clearRect(0, 0, width, height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        if (ctx) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(194, 157, 56, ${p.alpha})`;
+          ctx.shadowColor = "#c29d38";
+          ctx.shadowBlur = 6;
+          ctx.fill();
+        }
+      }
+
+      animId = requestAnimationFrame(render);
+    }
+
+    render();
+  }
+
+  setupCursorParticles();
+  document.addEventListener("astro:page-load", setupCursorParticles);
+</script>

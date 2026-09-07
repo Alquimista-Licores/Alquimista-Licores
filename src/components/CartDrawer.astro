@@ -1,0 +1,670 @@
+---
+// Cart Drawer component for Astro
+---
+
+<div id="cart-drawer-overlay" class="fixed inset-0 z-[100] hidden bg-black/70 backdrop-blur-sm transition-opacity duration-300">
+  <div
+    id="cart-drawer-panel"
+    class="fixed right-0 top-0 bottom-0 w-full sm:max-w-md bg-[var(--background)] border-l border-[var(--gold)]/20 text-[var(--cream)] shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-out z-[101]"
+  >
+    <!-- DRAWER HEADER -->
+    <div class="px-6 py-5 border-b border-[var(--gold)]/15 flex items-center justify-between">
+      <div id="cart-drawer-title" class="font-display font-bold text-lg md:text-xl text-[var(--gold)] tracking-widest uppercase">
+        Seu Caldeirão
+      </div>
+      <button id="cart-drawer-close" class="text-[var(--text-soft)] hover:text-[var(--gold)] text-xl p-1">
+        ✕
+      </button>
+    </div>
+
+    <!-- DRAWER BODY: LIST STAGE -->
+    <div id="cart-stage-list" class="flex-1 overflow-y-auto px-6 py-4 flex flex-col">
+      <div id="cart-empty-state" class="hidden flex-1 flex-col items-center justify-center text-center py-16">
+        <div class="text-6xl mb-4 text-[var(--gold)]/40 font-serif">⚗</div>
+        <p class="font-sans italic text-[var(--text-soft)] mb-6 text-base">
+          Seu caldeirão está vazio. Escolha suas poções.
+        </p>
+        <a
+          href="/pocoes"
+          id="cart-empty-browse-btn"
+          class="px-6 py-3 border border-[var(--gold)] text-[var(--gold)] text-xs font-display tracking-widest uppercase hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-sm font-bold"
+        >
+          Ver as Poções
+        </a>
+      </div>
+
+      <ul id="cart-items-list" class="space-y-4 flex-1">
+        <!-- Rendered dynamically by JS -->
+      </ul>
+    </div>
+
+    <!-- DRAWER BODY: CHECKOUT STAGE -->
+    <div id="cart-stage-checkout" class="hidden flex-1 overflow-y-auto px-6 py-4 space-y-4">
+      <button id="checkout-back-btn" class="text-xs text-[var(--text-faded)] underline hover:text-[var(--gold)] flex items-center gap-1">
+        ← Voltar ao caldeirão
+      </button>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-[var(--gold)]/80 mb-1">Seu Nome *</label>
+          <input
+            id="checkout-name"
+            type="text"
+            placeholder="Ex: Maria Alquimista"
+            class="w-full bg-[var(--surface)] border border-[var(--gold)]/30 px-3.5 py-2.5 text-sm rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-[var(--gold)]/80 mb-1">WhatsApp com DDD *</label>
+          <input
+            id="checkout-phone"
+            type="tel"
+            placeholder="Ex: (48) 99123-4567"
+            class="w-full bg-[var(--surface)] border border-[var(--gold)]/30 px-3.5 py-2.5 text-sm rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
+          />
+        </div>
+      </div>
+
+      <!-- ENTREGA TYPE -->
+      <div class="grid grid-cols-2 gap-3 pt-2">
+        <button
+          type="button"
+          id="btn-delivery"
+          class="p-3 border border-[var(--gold)] bg-[var(--gold)]/15 rounded-sm text-center transition-all"
+        >
+          <div class="text-2xl mb-1">🛵</div>
+          <div class="font-display tracking-widest uppercase text-xs font-bold text-[var(--gold)]">Delivery</div>
+        </button>
+        <button
+          type="button"
+          id="btn-retirada"
+          class="p-3 border border-[var(--gold)]/20 rounded-sm text-center transition-all opacity-70 hover:opacity-100"
+        >
+          <div class="text-2xl mb-1">🏠</div>
+          <div class="font-display tracking-widest uppercase text-xs font-bold text-[var(--gold)]">Retirada</div>
+        </button>
+      </div>
+
+      <!-- DELIVERY ADDRESS FIELDS -->
+      <div id="delivery-fields" class="space-y-3 pt-2">
+        <div class="p-3.5 border border-[var(--gold)]/25 rounded-sm bg-[var(--surface)]/60">
+          <label class="block font-display tracking-widest uppercase text-xs text-[var(--gold)] mb-2 font-bold">
+            Calcular frete motoboy
+          </label>
+          <div class="relative">
+            <input
+              id="address-query"
+              type="text"
+              placeholder="Digite sua rua ou bairro em Criciúma e região..."
+              class="w-full bg-[var(--background)] border border-[var(--gold)]/30 px-3 py-2 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
+            />
+            <div id="address-suggestions-loading" class="hidden text-[10px] text-[var(--text-faded)] mt-1 animate-pulse">
+              Buscando endereços...
+            </div>
+            <ul
+              id="address-suggestions"
+              class="hidden absolute z-30 left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-[var(--surface-elevated)] border border-[var(--gold)]/40 rounded-sm shadow-2xl"
+            ></ul>
+          </div>
+
+          <div id="shipping-status" class="text-xs text-[var(--cream)]/90 mt-2.5 leading-relaxed"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <input
+            id="address-number"
+            type="text"
+            placeholder="Número *"
+            class="bg-[var(--surface)] border border-[var(--gold)]/30 px-3 py-2 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
+          />
+          <input
+            id="address-comp"
+            type="text"
+            placeholder="Complemento / Apto"
+            class="bg-[var(--surface)] border border-[var(--gold)]/30 px-3 py-2 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
+          />
+        </div>
+      </div>
+
+      <!-- RETIRADA NOTICE -->
+      <div id="retirada-fields" class="hidden p-3 border border-[var(--gold)]/20 rounded-sm bg-[var(--surface)]/40 text-xs text-[var(--text-soft)] text-center leading-relaxed">
+        🏠 Retirada gratuita no endereço do Alquimista:<br />
+        <strong class="text-[var(--cream)]">Rod. Antonio Darós, 1105 - São João, Criciúma - SC</strong>
+      </div>
+
+      <!-- INDICAÇÃO -->
+      <div class="p-3 border border-[var(--gold)]/20 rounded-sm bg-[var(--surface)]/40 space-y-2">
+        <div class="font-display tracking-widest uppercase text-xs text-[var(--gold)]">Indicação (opcional)</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <input
+            id="indicador-nome"
+            type="text"
+            placeholder="Nome de quem indicou"
+            class="bg-[var(--background)] border border-[var(--gold)]/30 px-2.5 py-1.5 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
+          />
+          <input
+            id="indicador-whats"
+            type="tel"
+            placeholder="WhatsApp de quem indicou"
+            class="bg-[var(--background)] border border-[var(--gold)]/30 px-2.5 py-1.5 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- DRAWER FOOTER -->
+    <div id="cart-drawer-footer" class="border-t border-[var(--gold)]/20 px-6 py-4 bg-[var(--surface)]/80 space-y-3">
+      <div class="space-y-1 text-sm font-display tracking-wider">
+        <div class="flex justify-between items-baseline">
+          <span class="text-[var(--text-soft)]">Subtotal</span>
+          <span id="cart-subtotal-val" class="text-base text-[var(--cream)] font-bold">R$ 0</span>
+        </div>
+        <div id="cart-shipping-row" class="hidden flex justify-between items-baseline text-xs">
+          <span class="text-[var(--text-soft)]">Frete estimado</span>
+          <span id="cart-shipping-val" class="text-sm text-[var(--gold)] font-bold">R$ 0</span>
+        </div>
+        <div class="flex justify-between items-baseline pt-1 border-t border-[var(--gold)]/10 text-base md:text-lg">
+          <span class="font-bold text-[var(--cream)]">Total</span>
+          <span id="cart-total-val" class="font-bold text-2xl md:text-3xl text-[var(--gold)]">R$ 0</span>
+        </div>
+      </div>
+
+      <div id="cart-list-buttons" class="grid grid-cols-2 gap-2 pt-1">
+        <a
+          href="/pocoes"
+          id="cart-continue-btn"
+          class="py-3 text-center border border-[var(--gold)]/40 text-[var(--gold)] text-xs font-display tracking-widest uppercase hover:bg-[var(--gold)]/10 transition-colors rounded-sm font-bold"
+        >
+          Ver Poções
+        </a>
+        <button
+          id="cart-checkout-btn"
+          class="py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs hover:bg-[var(--gold-hover)] transition-colors rounded-sm font-bold shadow-md"
+        >
+          Finalizar
+        </button>
+      </div>
+
+      <div id="cart-checkout-buttons" class="hidden pt-1">
+        <button
+          id="cart-submit-order-btn"
+          class="w-full py-3.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs hover:bg-[var(--gold-hover)] transition-colors rounded-sm font-bold shadow-lg"
+        >
+          Enviar Pedido no WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupCart() {
+    const overlay = document.getElementById("cart-drawer-overlay");
+    const panel = document.getElementById("cart-drawer-panel");
+    const closeBtn = document.getElementById("cart-drawer-close");
+    const title = document.getElementById("cart-drawer-title");
+    const listStage = document.getElementById("cart-stage-list");
+    const checkoutStage = document.getElementById("cart-stage-checkout");
+    const itemsList = document.getElementById("cart-items-list");
+    const emptyState = document.getElementById("cart-empty-state");
+    const subtotalVal = document.getElementById("cart-subtotal-val");
+    const shippingRow = document.getElementById("cart-shipping-row");
+    const shippingVal = document.getElementById("cart-shipping-val");
+    const totalVal = document.getElementById("cart-total-val");
+    const listButtons = document.getElementById("cart-list-buttons");
+    const checkoutButtons = document.getElementById("cart-checkout-buttons");
+    const checkoutBtn = document.getElementById("cart-checkout-btn");
+    const backBtn = document.getElementById("checkout-back-btn");
+    const submitBtn = document.getElementById("cart-submit-order-btn");
+    const continueBtn = document.getElementById("cart-continue-btn");
+    const emptyBrowseBtn = document.getElementById("cart-empty-browse-btn");
+
+    // Form fields
+    const nameInput = document.getElementById("checkout-name") as HTMLInputElement;
+    const phoneInput = document.getElementById("checkout-phone") as HTMLInputElement;
+    const btnDelivery = document.getElementById("btn-delivery");
+    const btnRetirada = document.getElementById("btn-retirada");
+    const deliveryFields = document.getElementById("delivery-fields");
+    const retiradaFields = document.getElementById("retirada-fields");
+    const addressQuery = document.getElementById("address-query") as HTMLInputElement;
+    const suggestionsLoading = document.getElementById("address-suggestions-loading");
+    const suggestionsList = document.getElementById("address-suggestions");
+    const shippingStatus = document.getElementById("shipping-status");
+    const addressNumber = document.getElementById("address-number") as HTMLInputElement;
+    const addressComp = document.getElementById("address-comp") as HTMLInputElement;
+    const indicadorNome = document.getElementById("indicador-nome") as HTMLInputElement;
+    const indicadorWhats = document.getElementById("indicador-whats") as HTMLInputElement;
+
+    let cartItems: any[] = [];
+    let deliveryType: "delivery" | "retirada" = "delivery";
+    let selectedAddress: any = null;
+    let freightCost = 0;
+    let freightKm = 0;
+    let freightACombinar = false;
+
+    function loadCart() {
+      try {
+        const raw = localStorage.getItem("alquimista-cart");
+        cartItems = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        cartItems = [];
+      }
+      renderCart();
+    }
+
+    function saveCart() {
+      try {
+        localStorage.setItem("alquimista-cart", JSON.stringify(cartItems));
+        window.dispatchEvent(new CustomEvent("cart-updated"));
+      } catch (e) {}
+    }
+
+    function openDrawer() {
+      overlay?.classList.remove("hidden");
+      setTimeout(() => {
+        panel?.classList.remove("translate-x-full");
+      }, 10);
+      document.body.style.overflow = "hidden";
+      showStage("list");
+      renderCart();
+    }
+
+    function closeDrawer() {
+      panel?.classList.add("translate-x-full");
+      setTimeout(() => {
+        overlay?.classList.add("hidden");
+        document.body.style.overflow = "";
+      }, 300);
+    }
+
+    function showStage(stage: "list" | "checkout") {
+      if (stage === "list") {
+        if (title) title.textContent = "Seu Caldeirão";
+        listStage?.classList.remove("hidden");
+        checkoutStage?.classList.add("hidden");
+        listButtons?.classList.remove("hidden");
+        checkoutButtons?.classList.add("hidden");
+        if (shippingRow) shippingRow.classList.add("hidden");
+      } else {
+        if (title) title.textContent = "Fechar Pedido";
+        listStage?.classList.add("hidden");
+        checkoutStage?.classList.remove("hidden");
+        listButtons?.classList.add("hidden");
+        checkoutButtons?.classList.remove("hidden");
+        if (deliveryType === "delivery" && freightCost > 0) {
+          if (shippingRow) shippingRow.classList.remove("hidden");
+        }
+      }
+      updateTotals();
+    }
+
+    function fmtPriceStr(n: number) {
+      if (Number.isInteger(n)) return `R$ ${n}`;
+      return `R$ ${n.toFixed(2).replace(".", ",")}`;
+    }
+
+    function renderCart() {
+      if (!itemsList) return;
+      itemsList.innerHTML = "";
+
+      if (cartItems.length === 0) {
+        emptyState?.classList.remove("hidden");
+        emptyState?.classList.add("flex");
+        listButtons?.classList.add("hidden");
+      } else {
+        emptyState?.classList.add("hidden");
+        emptyState?.classList.remove("flex");
+        listButtons?.classList.remove("hidden");
+
+        cartItems.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "flex gap-3 pb-4 border-b border-[var(--gold)]/10 items-start";
+
+          let titleText = item.nome;
+          let subText = item.sabor || "";
+          let iconImg = item.foto_url
+            ? `<img src="${item.foto_url}" class="w-full h-full object-cover" />`
+            : item.tipo === "kit-degustacao" ? "⚗" : item.tipo === "kit-presenteavel" ? "🎁" : "⚗";
+
+          if (item.tipo === "kit-degustacao") {
+            titleText = "Kit Degustação";
+            subText = (item.saboresLabels || []).map((s: any) => s.nome).join(" · ") || "3 mini-poções";
+          } else if (item.tipo === "kit-presenteavel") {
+            titleText = "Kit Presenteável";
+            subText = `${item.licor?.nome || "Licor"} · ${item.acompanhamento || ""} · ${item.embalagem || ""}`;
+          }
+
+          li.innerHTML = `
+            <div class="w-14 h-16 bg-[var(--surface-elevated)] rounded-sm overflow-hidden flex items-center justify-center text-[var(--gold)]/50 text-xl shrink-0 border border-[var(--gold)]/15">
+              ${iconImg}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-display text-sm font-bold text-[var(--gold)] truncate">${titleText}</div>
+              <div class="font-sans italic text-xs text-[var(--text-soft)] truncate">${subText}</div>
+              <div class="text-xs text-[var(--cream)]/80 mt-1">${fmtPriceStr(item.preco)} cada</div>
+              <div class="flex items-center gap-2 mt-2">
+                <div class="inline-flex items-center border border-[var(--gold)]/30 rounded-sm bg-[var(--surface-elevated)]">
+                  <button class="cart-qty-minus px-2 py-0.5 text-xs text-[var(--gold)] hover:bg-[var(--gold)]/10" data-index="${index}">−</button>
+                  <span class="px-2 text-xs font-bold">${item.qty}</span>
+                  <button class="cart-qty-plus px-2 py-0.5 text-xs text-[var(--gold)] hover:bg-[var(--gold)]/10" data-index="${index}">+</button>
+                </div>
+                <button class="cart-remove-item ml-auto text-[var(--text-faded)] hover:text-red-400 p-1 text-xs" data-index="${index}" title="Remover item">
+                  🗑️
+                </button>
+              </div>
+            </div>
+            <div class="text-base font-display text-[var(--gold)] font-bold shrink-0">
+              ${fmtPriceStr(item.preco * item.qty)}
+            </div>
+          `;
+          itemsList.appendChild(li);
+        });
+      }
+
+      updateTotals();
+    }
+
+    function updateTotals() {
+      const subtotal = cartItems.reduce((acc, item) => acc + (item.preco * item.qty), 0);
+      const deliveryFee = deliveryType === "delivery" ? freightCost : 0;
+      const total = subtotal + deliveryFee;
+
+      if (subtotalVal) subtotalVal.textContent = fmtPriceStr(subtotal);
+      if (shippingVal) shippingVal.textContent = freightACombinar ? "A combinar" : fmtPriceStr(deliveryFee);
+      if (totalVal) totalVal.textContent = fmtPriceStr(total);
+    }
+
+    // Event listeners
+    closeBtn?.addEventListener("click", closeDrawer);
+    overlay?.addEventListener("click", (e) => {
+      if (e.target === overlay) closeDrawer();
+    });
+    continueBtn?.addEventListener("click", closeDrawer);
+    emptyBrowseBtn?.addEventListener("click", closeDrawer);
+
+    checkoutBtn?.addEventListener("click", () => {
+      if (cartItems.length === 0) return;
+      showStage("checkout");
+    });
+
+    backBtn?.addEventListener("click", () => {
+      showStage("list");
+    });
+
+    // Item quantity buttons & removal
+    itemsList?.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const minusBtn = target.closest(".cart-qty-minus") as HTMLElement;
+      const plusBtn = target.closest(".cart-qty-plus") as HTMLElement;
+      const removeBtn = target.closest(".cart-remove-item") as HTMLElement;
+
+      if (minusBtn && minusBtn.dataset.index) {
+        const idx = parseInt(minusBtn.dataset.index);
+        if (cartItems[idx].qty > 1) {
+          cartItems[idx].qty--;
+        } else {
+          cartItems.splice(idx, 1);
+        }
+        saveCart();
+        renderCart();
+      } else if (plusBtn && plusBtn.dataset.index) {
+        const idx = parseInt(plusBtn.dataset.index);
+        cartItems[idx].qty++;
+        saveCart();
+        renderCart();
+      } else if (removeBtn && removeBtn.dataset.index) {
+        const idx = parseInt(removeBtn.dataset.index);
+        cartItems.splice(idx, 1);
+        saveCart();
+        renderCart();
+      }
+    });
+
+    // Delivery Type Switcher
+    btnDelivery?.addEventListener("click", () => {
+      deliveryType = "delivery";
+      btnDelivery.classList.add("border-[var(--gold)]", "bg-[var(--gold)]/15");
+      btnDelivery.classList.remove("opacity-70");
+      btnRetirada?.classList.remove("border-[var(--gold)]", "bg-[var(--gold)]/15");
+      btnRetirada?.classList.add("opacity-70");
+      deliveryFields?.classList.remove("hidden");
+      retiradaFields?.classList.add("hidden");
+      if (shippingRow && freightCost > 0) shippingRow.classList.remove("hidden");
+      updateTotals();
+    });
+
+    btnRetirada?.addEventListener("click", () => {
+      deliveryType = "retirada";
+      btnRetirada.classList.add("border-[var(--gold)]", "bg-[var(--gold)]/15");
+      btnRetirada.classList.remove("opacity-70");
+      btnDelivery?.classList.remove("border-[var(--gold)]", "bg-[var(--gold)]/15");
+      btnDelivery?.classList.add("opacity-70");
+      deliveryFields?.classList.add("hidden");
+      retiradaFields?.classList.remove("hidden");
+      if (shippingRow) shippingRow.classList.add("hidden");
+      updateTotals();
+    });
+
+    // Address Search via Nominatim
+    let searchTimeout: any = null;
+    addressQuery?.addEventListener("input", () => {
+      const q = addressQuery.value.trim();
+      selectedAddress = null;
+      freightCost = 0;
+      freightKm = 0;
+      freightACombinar = false;
+      if (shippingStatus) shippingStatus.innerHTML = "";
+      if (shippingRow) shippingRow.classList.add("hidden");
+      updateTotals();
+
+      if (q.length < 3) {
+        if (suggestionsList) suggestionsList.classList.add("hidden");
+        return;
+      }
+
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(async () => {
+        if (suggestionsLoading) suggestionsLoading.classList.remove("hidden");
+        try {
+          const viewbox = "-49.95,-28.30,-48.55,-29.20";
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&countrycodes=br&viewbox=${viewbox}&bounded=1&q=${encodeURIComponent(q)}`, {
+            headers: { "Accept-Language": "pt-BR" }
+          });
+          const list = await res.json();
+          if (suggestionsLoading) suggestionsLoading.classList.add("hidden");
+          if (suggestionsList) {
+            suggestionsList.innerHTML = "";
+            if (list.length > 0) {
+              list.forEach((item: any) => {
+                const li = document.createElement("li");
+                const label = item.display_name;
+                li.innerHTML = `
+                  <button type="button" class="w-full text-left px-3 py-2 text-xs text-[var(--cream)] hover:bg-[var(--gold)]/15 border-b border-[var(--gold)]/10 last:border-b-0 leading-tight">
+                    ${label}
+                  </button>
+                `;
+                li.querySelector("button")?.addEventListener("click", () => {
+                  selectedAddress = {
+                    label: item.display_name,
+                    lat: parseFloat(item.lat),
+                    lon: parseFloat(item.lon)
+                  };
+                  addressQuery.value = item.display_name.split(",")[0] || item.display_name;
+                  suggestionsList.classList.add("hidden");
+                  calculateFreight(selectedAddress.lat, selectedAddress.lon);
+                });
+                suggestionsList.appendChild(li);
+              });
+              suggestionsList.classList.remove("hidden");
+            } else {
+              suggestionsList.classList.add("hidden");
+            }
+          }
+        } catch (err) {
+          if (suggestionsLoading) suggestionsLoading.classList.add("hidden");
+        }
+      }, 400);
+    });
+
+    async function calculateFreight(lat: number, lon: number) {
+      if (shippingStatus) shippingStatus.innerHTML = `<span class="text-[var(--gold)] animate-pulse">Calculando rota e frete...</span>`;
+      try {
+        const origin = { lat: -28.7184, lng: -49.3523 };
+        const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${origin.lng},${origin.lat};${lon},${lat}?overview=false`);
+        const data = await res.json();
+        if (data.routes && data.routes[0]) {
+          const km = data.routes[0].distance / 1000;
+          freightKm = km;
+          if (km > 35) {
+            freightCost = 0;
+            freightACombinar = true;
+            if (shippingStatus) {
+              shippingStatus.innerHTML = `<span class="text-[var(--amber-warm)] font-medium">Distância: ${km.toFixed(1)} km (Acima de 35km — combinaremos a entrega pelo WhatsApp).</span>`;
+            }
+          } else {
+            freightCost = Math.max(8, Math.round(km * 2));
+            freightACombinar = false;
+            if (shippingStatus) {
+              shippingStatus.innerHTML = `Distância: <strong class="text-[var(--gold)]">${km.toFixed(1)} km</strong> — Frete: <strong class="text-[var(--gold)]">${fmtPriceStr(freightCost)}</strong>`;
+            }
+            if (shippingRow) shippingRow.classList.remove("hidden");
+          }
+          updateTotals();
+        } else {
+          throw new Error();
+        }
+      } catch (e) {
+        if (shippingStatus) {
+          shippingStatus.innerHTML = `<span class="text-xs text-[var(--gold)]">Frete estimado: R$ 10,00 (confirmaremos via WhatsApp).</span>`;
+          freightCost = 10;
+          updateTotals();
+        }
+      }
+    }
+
+    // Submit Order to WhatsApp
+    submitBtn?.addEventListener("click", () => {
+      const name = nameInput?.value.trim();
+      const phone = phoneInput?.value.trim();
+
+      if (!name) {
+        alert("Por favor, informe seu nome.");
+        nameInput?.focus();
+        return;
+      }
+      if (!phone) {
+        alert("Por favor, informe seu telefone / WhatsApp.");
+        phoneInput?.focus();
+        return;
+      }
+
+      let enderecoCompleto = "";
+      if (deliveryType === "delivery") {
+        const rua = addressQuery?.value.trim();
+        const num = addressNumber?.value.trim();
+        const comp = addressComp?.value.trim();
+        if (!rua || !num) {
+          alert("Por favor, preencha a rua e o número para a entrega.");
+          return;
+        }
+        enderecoCompleto = `${rua}, ${num}${comp ? ` (${comp})` : ""}`;
+      }
+
+      const subtotal = cartItems.reduce((acc, item) => acc + (item.preco * item.qty), 0);
+      const frete = deliveryType === "delivery" ? freightCost : 0;
+      const total = subtotal + frete;
+      const dataStr = new Date().toLocaleDateString("pt-BR");
+      const horaStr = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+      const itemBlocks = cartItems.map((item) => {
+        if (item.tipo === "avulso") {
+          return `- *x${item.qty} ${item.nome} (${item.sabor})*\n  R$ ${(item.preco * item.qty).toFixed(2).replace('.', ',')}`;
+        }
+        if (item.tipo === "kit-degustacao") {
+          const gar = (item.saboresLabels || []).map((s: any, idx: number) => `  > Garrafinha ${idx + 1}: ${s.nome} (${s.sabor})`).join("\n");
+          return `- *x${item.qty} Kit Degustação* — R$ ${(item.preco * item.qty).toFixed(2).replace('.', ',')}\n${gar}`;
+        }
+        // Kit Presenteável
+        const lines = [
+          `- *x${item.qty} Kit Presenteável* — R$ ${(item.preco * item.qty).toFixed(2).replace('.', ',')}`,
+          `  > Licor: ${item.licor?.nome} (${item.licor?.sabor}) — 500ml`,
+          `  > Acompanhamento: ${item.acompanhamento}`,
+          `  > Embalagem: ${item.embalagem}`,
+        ];
+        if (item.dedicatoria) lines.push(`  > Dedicatória: "${item.dedicatoria}"`);
+        return lines.join("\n");
+      }).join("\n\n");
+
+      const msgLines = [
+        `Resumo do pedido de *${name}*`,
+        `🗓️ Data: ${dataStr} ⏰ Hora: ${horaStr}`,
+        ``,
+        `*Tipo de serviço:* ${deliveryType === "delivery" ? "Delivery 🛵" : "Retirada no Local 🏠"}`,
+        ``
+      ];
+
+      if (deliveryType === "delivery") {
+        msgLines.push(`📍 *Endereço:*`, enderecoCompleto, ``);
+      }
+
+      msgLines.push(
+        `💲 *Custos*`,
+        `Produtos: R$ ${subtotal.toFixed(2).replace('.', ',')}`,
+      );
+
+      if (deliveryType === "delivery") {
+        msgLines.push(`Entrega estimada: ${freightACombinar ? "A combinar" : `R$ ${frete.toFixed(2).replace('.', ',')}`}`);
+      }
+
+      msgLines.push(
+        `*Total: R$ ${total.toFixed(2).replace('.', ',')}*`,
+        ``
+      );
+
+      const indNome = indicadorNome?.value.trim();
+      const indWhats = indicadorWhats?.value.trim();
+      if (indNome || indWhats) {
+        msgLines.push(`🌟 Indicação: ${indNome}${indWhats ? ` - ${indWhats}` : ""}`, ``);
+      }
+
+      msgLines.push(
+        `📜 *Composição do Pedido*`,
+        ``,
+        itemBlocks,
+        ``,
+        `Fico no aguardo da confirmação do pedido. Obrigado!`
+      );
+
+      const fullMessage = msgLines.join("\n");
+      const waUrl = `https://api.whatsapp.com/send?phone=5548991737692&text=${encodeURIComponent(fullMessage)}`;
+
+      window.open(waUrl, "_blank");
+
+      // Clear cart
+      cartItems = [];
+      saveCart();
+      renderCart();
+      closeDrawer();
+    });
+
+    // Listen to global open / add cart events
+    window.addEventListener("open-cart", openDrawer);
+    window.addEventListener("add-to-cart", (e: any) => {
+      const newItem = e.detail;
+      const existing = cartItems.find((i) => i.id === newItem.id && i.tipo === newItem.tipo);
+      if (existing && newItem.tipo === "avulso") {
+        existing.qty += (newItem.qty || 1);
+      } else {
+        cartItems.push(newItem);
+      }
+      saveCart();
+      openDrawer();
+    });
+
+    loadCart();
+  }
+
+  setupCart();
+  document.addEventListener("astro:page-load", setupCart);
+</script>

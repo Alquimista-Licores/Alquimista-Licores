@@ -1,0 +1,1320 @@
+---
+// HeroCinematic.astro - Cinematic Scroll-Driven Video Hero Experience
+---
+
+<!-- External CDN Scripts for GSAP, ScrollTrigger, and Lenis -->
+<script
+    is:inline
+    src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script
+    is:inline
+    src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script
+    is:inline
+    src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"
+></script>
+
+<div class="hero-scroll" id="heroScroll">
+    <section class="hero-stage" id="heroStage">
+        <!-- Corner Framing Accents -->
+        <div class="corner-bracket corner-tl" aria-hidden="true"></div>
+        <div class="corner-bracket corner-tr" aria-hidden="true"></div>
+        <div class="corner-bracket corner-bl" aria-hidden="true"></div>
+        <div class="corner-bracket corner-br" aria-hidden="true"></div>
+
+        <!-- 1. Background Video Layer -->
+        <div class="hero-video-wrap" id="videoWrapper">
+            <video
+                id="heroVideo"
+                class="hero-video"
+                src="/video2.mp4"
+                preload="auto"
+                muted
+                playsinline
+                webkit-playsinline
+                disablepictureinpicture
+                disableremoteplayback></video>
+        </div>
+
+        <!-- 2. Atmospheric & Contrast Overlays -->
+        <div class="overlay-ambient-aurora" aria-hidden="true"></div>
+        <div class="overlay-editorial-veil" aria-hidden="true"></div>
+        <div class="overlay-vignette" aria-hidden="true"></div>
+        <div class="overlay-grain" aria-hidden="true"></div>
+
+        <!-- 3. Foreground Editorial UI Layer -->
+        <div class="hero-ui-layer">
+            <!-- Main Center Editorial Lettering -->
+            <div class="hero-content-center">
+                <!-- 1. Initial Lettering Block (0% to 20% scroll) -->
+                <div class="hero-typography-block" id="heroTypography">
+                    <h1 class="hero-headline" id="heroHeadline">
+                        <span class="headline-line"
+                            ><span class="headline-line-inner"
+                                >LICORES<br class="mobile-break" /> ARTESANAIS</span
+                            ></span
+                        >
+                        <span class="headline-line"
+                            ><span class="headline-line-inner">FEITOS COMO</span
+                            ></span
+                        >
+                        <span class="headline-line"
+                            ><span class="headline-line-inner"
+                                ><span class="text-gold-accent"
+                                    >Antigamente.</span
+                                ></span
+                            ></span
+                        >
+                    </h1>
+
+                    <p class="hero-subtitle" id="heroSubtitle">
+                        Feitos à mão, em pequenos lotes,<br
+                            class="mobile-break"
+                        /> com alma e propósito.
+                    </p>
+                </div>
+
+                <!-- 2. Final Climax Lettering Block (Appears at 80% scroll) -->
+                <div class="hero-final-block" id="finalTypographyBlock">
+                    <h2 class="hero-final-headline" id="finalHeadline">
+                        <span class="final-line"
+                            ><span class="final-line-inner">DEGUSTE</span></span
+                        >
+                        <span class="final-line"
+                            ><span class="final-line-inner">NOSSA</span></span
+                        >
+                        <span class="final-line"
+                            ><span class="final-line-inner"
+                                ><span class="text-gold-accent">Alquimia</span
+                                ></span
+                            ></span
+                        >
+                    </h2>
+                </div>
+            </div>
+
+            <!-- Glassmorphic Call-To-Action Button (Bottom Right, Appears at 80%) -->
+            <div class="hero-cta-wrapper" id="heroCtaWrap">
+                <a
+                    href="#pocoes"
+                    class="glass-cta-button"
+                    id="glassCtaBtn"
+                    aria-label="Conheça as Poções"
+                >
+                    <span class="cta-text">Conheça as Poções</span>
+                    <svg
+                        class="cta-arrow"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M4.16666 10H15.8333"
+                            stroke="currentColor"
+                            stroke-width="1.6"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"></path>
+                        <path
+                            d="M10.8333 5L15.8333 10L10.8333 15"
+                            stroke="currentColor"
+                            stroke-width="1.6"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"></path>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Footer Bar with Pure Discreet Minimalist Arrow Indicator -->
+            <footer class="hero-footer-bar">
+                <div
+                    class="scroll-arrow-anchor"
+                    id="scrollArrow"
+                    aria-hidden="true"
+                >
+                    <svg
+                        class="scroll-arrow-icon"
+                        viewBox="0 0 24 42"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <line
+                            x1="12"
+                            y1="2"
+                            x2="12"
+                            y2="30"
+                            stroke="currentColor"
+                            stroke-width="1.2"
+                            stroke-linecap="round"
+                            stroke-opacity="0.4"></line>
+                        <path
+                            d="M6 24L12 32L18 24"
+                            stroke="currentColor"
+                            stroke-width="1.6"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"></path>
+                    </svg>
+                </div>
+            </footer>
+        </div>
+    </section>
+</div>
+
+<style>
+    /* ==========================================================================
+     HERO TOKENS & ALCHEMICAL LUXURY FOUNDATION
+     ========================================================================== */
+    .hero-scroll {
+        --gold: #c8a97e;
+        --gold-rgb: 200, 169, 126;
+        --gold-light: #e8d5bc;
+        --gold-dark: #9a7b4f;
+        --gold-ancient: #a17f12;
+        --gold-bright: #d4b23a;
+        --gold-glow: rgba(200, 169, 126, 0.38);
+        --gold-glow-subtle: rgba(200, 169, 126, 0.15);
+
+        --black-pure: #050505;
+        --surface-0: #0c0a08;
+
+        --white: #fafaf9;
+        --white-dim: #e8e6e1;
+        --cream: #f5efeb;
+        --text-faded: #9e9188;
+        --text-soft: #d1c7bd;
+
+        --vinho: #6b1d2f;
+
+        --border-subtle: rgba(200, 169, 126, 0.12);
+        --border-medium: rgba(200, 169, 126, 0.25);
+        --border-strong: rgba(200, 169, 126, 0.5);
+
+        --font-display:
+            "Cinzel", "Cinzel Decorative", "Cormorant Garamond", serif;
+        --font-serif: "Cormorant Garamond", Georgia, serif;
+        --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-mono: "JetBrains Mono", monospace;
+
+        --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+        position: relative;
+        z-index: 30;
+        width: 100%;
+        height: 350vh;
+        background: var(--black-pure);
+        overflow-x: hidden;
+    }
+
+    .hero-stage {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        pointer-events: auto;
+        z-index: 10;
+    }
+
+    /* ==========================================================================
+     VIDEO LAYER & ATMOSPHERIC CONTRAST OVERLAYS
+     ========================================================================== */
+    .hero-video-wrap {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        overflow: hidden;
+        background: #000;
+    }
+
+    .hero-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+        display: block;
+        transform: translateZ(0);
+        will-change: transform;
+    }
+
+    .overlay-grain {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 2;
+        opacity: 0.03;
+        transform: translateZ(0);
+        background-image: radial-gradient(
+            rgba(200, 169, 126, 0.08) 1px,
+            transparent 0
+        );
+        background-size: 24px 24px;
+    }
+
+    .overlay-vignette {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 3;
+        transform: translateZ(0);
+        background: radial-gradient(
+            circle at 50% 50%,
+            transparent 42%,
+            rgba(5, 5, 5, 0.42) 78%,
+            rgba(5, 5, 5, 0.88) 100%
+        );
+    }
+
+    .overlay-editorial-veil {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 4;
+        transform: translateZ(0);
+        background:
+            linear-gradient(
+                90deg,
+                rgba(8, 6, 5, 0.88) 0%,
+                rgba(8, 6, 5, 0.6) 36%,
+                rgba(8, 6, 5, 0.15) 70%,
+                transparent 100%
+            ),
+            linear-gradient(
+                180deg,
+                rgba(8, 6, 5, 0.7) 0%,
+                transparent 20%,
+                transparent 80%,
+                rgba(8, 6, 5, 0.85) 100%
+            );
+    }
+
+    .overlay-ambient-aurora {
+        position: absolute;
+        top: -15%;
+        left: -10%;
+        width: 55vw;
+        height: 55vh;
+        border-radius: 50%;
+        background: radial-gradient(
+            circle,
+            rgba(200, 169, 126, 0.1) 0%,
+            rgba(107, 29, 47, 0.03) 50%,
+            transparent 70%
+        );
+        pointer-events: none;
+        z-index: 5;
+        transform: translateZ(0);
+    }
+
+    /* ==========================================================================
+     EDITORIAL FRAME & METADATA ACCENTS
+     ========================================================================== */
+    .hero-ui-layer {
+        position: relative;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 5.5rem 3.75rem 2.75rem 3.75rem;
+        pointer-events: none;
+    }
+
+    .hero-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-subtle);
+        will-change: transform, opacity, filter;
+        opacity: 0;
+        transform: translate3d(0, -25px, 0);
+        filter: blur(8px);
+    }
+
+    .brand-insignia {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.85rem;
+    }
+
+    .alchemical-symbols {
+        color: var(--gold);
+        font-size: 0.95rem;
+        letter-spacing: 0.35em;
+        opacity: 0.85;
+        text-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    .brand-title-meta {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--gold-light);
+        font-weight: 600;
+    }
+
+    .brand-title-meta span {
+        color: var(--text-faded);
+        font-weight: 400;
+    }
+
+    .topbar-right-meta {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .batch-badge {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold-light);
+        background: rgba(200, 169, 126, 0.08);
+        border: 1px solid var(--border-medium);
+        padding: 0.3rem 0.75rem;
+        border-radius: 2px;
+        backdrop-filter: blur(8px);
+    }
+
+    .origin-tag {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--text-faded);
+    }
+
+    /* Decorative corner bracket accents */
+    .corner-bracket {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border: 1px solid var(--border-medium);
+        pointer-events: none;
+        z-index: 12;
+        opacity: 0.55;
+    }
+
+    .corner-tl {
+        top: 5rem;
+        left: 1.5rem;
+        border-right: none;
+        border-bottom: none;
+    }
+
+    .corner-tr {
+        top: 5rem;
+        right: 1.5rem;
+        border-left: none;
+        border-bottom: none;
+    }
+
+    .corner-bl {
+        bottom: 1.5rem;
+        left: 1.5rem;
+        border-right: none;
+        border-top: none;
+    }
+
+    .corner-br {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        border-left: none;
+        border-top: none;
+    }
+
+    /* ==========================================================================
+     MAIN TYPOGRAPHIC COMPOSITIONS
+     ========================================================================== */
+    .hero-content-center {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 1560px;
+        margin: auto 0;
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+    }
+
+    .hero-typography-block {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 860px;
+        position: relative;
+    }
+
+    .hero-headline {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(2.6rem, 5.3vw, 5.3rem);
+        font-weight: 600;
+        line-height: 1.05;
+        letter-spacing: 0.035em;
+        text-transform: uppercase;
+        color: var(--white);
+        margin-bottom: 1.85rem;
+        text-shadow: 0 4px 30px rgba(0, 0, 0, 0.75);
+    }
+
+    .headline-line {
+        display: block;
+        overflow: visible;
+    }
+
+    .headline-line-inner {
+        display: block;
+        transform-origin: left bottom;
+        will-change: transform, opacity, filter;
+        opacity: 0;
+        transform: translate3d(0, 55px, 0) scale(0.98);
+        filter: blur(14px);
+    }
+
+    .text-gold-accent {
+        background: linear-gradient(
+            135deg,
+            #ffffff 10%,
+            var(--gold-light) 40%,
+            var(--gold) 70%,
+            var(--gold-dark) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: "Cinzel Decorative", "Cormorant Garamond", serif;
+        font-weight: 700;
+        text-transform: none;
+        letter-spacing: 0.04em;
+        display: inline-block;
+        padding: 0.25em 1.4em 0.55em 0.4em;
+        margin: -0.25em -1.4em -0.55em -0.4em;
+        overflow: visible;
+        filter: drop-shadow(0 0 25px rgba(200, 169, 126, 0.3));
+    }
+
+    br.mobile-break {
+        display: none;
+    }
+
+    .hero-subtitle {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: clamp(1.15rem, 1.8vw, 1.55rem);
+        font-weight: 400;
+        line-height: 1.55;
+        color: var(--text-soft);
+        letter-spacing: 0.02em;
+        max-width: 580px;
+        position: relative;
+        padding-left: 1.5rem;
+        border-left: 1px solid var(--border-strong);
+        will-change: transform, opacity, filter;
+        opacity: 0;
+        transform: translate3d(0, 28px, 0);
+        filter: blur(10px);
+    }
+
+    .hero-final-block {
+        position: absolute;
+        top: 55%;
+        left: 0;
+        transform: translateY(-46%);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 960px;
+        pointer-events: none;
+        z-index: 20;
+        overflow: visible;
+        padding-bottom: 2.5rem;
+        padding-right: 3.5rem;
+        will-change: transform, opacity, filter;
+    }
+
+    .hero-final-headline {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(2.8rem, 5.8vw, 5.8rem);
+        font-weight: 600;
+        line-height: 1.06;
+        letter-spacing: 0.035em;
+        color: var(--white);
+        text-shadow: 0 4px 30px rgba(0, 0, 0, 0.75);
+        overflow: visible;
+        padding-right: 3rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .final-line {
+        display: block;
+        overflow: visible;
+        line-height: 1.06;
+    }
+
+    .final-line-inner {
+        display: inline-block;
+        transform-origin: left bottom;
+        will-change: transform, opacity, filter;
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        filter: blur(18px);
+        overflow: visible;
+        padding-right: 2rem;
+    }
+
+    /* ==========================================================================
+     GLASSMORPHIC CALL-TO-ACTION BUTTON
+     ========================================================================== */
+    .hero-cta-wrapper {
+        position: absolute;
+        left: 70%;
+        right: auto;
+        bottom: 5.5rem;
+        z-index: 30;
+        pointer-events: none;
+        will-change: transform, opacity, filter;
+        opacity: 0;
+        transform: translate3d(0, 22px, 0);
+        filter: blur(16px);
+    }
+
+    .glass-cta-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.95rem;
+        padding: 1.05rem 2.2rem;
+        background: linear-gradient(
+            135deg,
+            rgba(200, 169, 126, 0.14) 0%,
+            rgba(20, 17, 14, 0.65) 100%
+        );
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(200, 169, 126, 0.4);
+        border-radius: 4px;
+        color: var(--gold-light);
+        font-family: var(--font-sans);
+        font-size: 0.82rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        overflow: hidden;
+        position: relative;
+        box-shadow:
+            0 12px 35px rgba(0, 0, 0, 0.65),
+            0 0 25px rgba(200, 169, 126, 0.18);
+        transition: all 0.4s var(--ease-out-expo);
+        outline: none;
+        pointer-events: auto;
+    }
+
+    .glass-cta-button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -130%;
+        width: 90%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.28),
+            transparent
+        );
+        transform: skewX(-25deg);
+        transition: left 0.8s ease;
+    }
+
+    .glass-cta-button:hover {
+        background: linear-gradient(
+            135deg,
+            rgba(200, 169, 126, 0.32) 0%,
+            rgba(25, 22, 19, 0.88) 100%
+        );
+        border-color: var(--gold-bright);
+        color: #ffffff;
+        box-shadow:
+            0 16px 45px rgba(0, 0, 0, 0.85),
+            0 0 35px rgba(200, 169, 126, 0.45);
+        transform: translateY(-3px);
+    }
+
+    .glass-cta-button:hover::before {
+        left: 140%;
+    }
+
+    .glass-cta-button .cta-arrow {
+        width: 18px;
+        height: 18px;
+        color: var(--gold);
+        transition:
+            transform 0.3s ease,
+            color 0.3s ease;
+    }
+
+    .glass-cta-button:hover .cta-arrow {
+        color: #ffffff;
+        transform: translateX(4px);
+    }
+
+    /* ==========================================================================
+     BOTTOM CONTROLS & MINIMALIST ARROW INDICATOR
+     ========================================================================== */
+    .hero-footer-bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        position: relative;
+        padding-top: 1.5rem;
+    }
+
+    .scroll-arrow-anchor {
+        position: absolute;
+        left: 50%;
+        bottom: 0.5rem;
+        transform: translateX(-50%) translateY(20px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 25;
+        will-change: transform, opacity;
+        opacity: 0;
+    }
+
+    .scroll-arrow-icon {
+        width: 22px;
+        height: 38px;
+        color: var(--gold-light);
+        filter: drop-shadow(0 0 12px var(--gold-glow));
+        animation: floatScrollArrow 2.6s infinite ease-in-out;
+    }
+
+    @keyframes floatScrollArrow {
+        0% {
+            transform: translateY(0);
+            opacity: 0.45;
+        }
+        50% {
+            transform: translateY(8px);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 0.45;
+        }
+    }
+
+    /* ==========================================================================
+     RESPONSIVENESS
+     ========================================================================== */
+    @media (max-width: 1024px) {
+        .hero-ui-layer {
+            padding: 5rem 2rem 2rem 2rem;
+        }
+
+        .hero-headline {
+            font-size: clamp(2.4rem, 6vw, 4.2rem);
+        }
+
+        .hero-final-headline {
+            font-size: clamp(2.6rem, 6.2vw, 4.4rem);
+            line-height: 1.25;
+        }
+
+        .hero-cta-wrapper {
+            left: 65%;
+            right: auto;
+            bottom: 4.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        br.mobile-break {
+            display: block;
+        }
+
+        .hero-scroll {
+            height: 280vh;
+        }
+
+        .hero-ui-layer {
+            padding: 4.5rem 1.25rem 1.5rem 1.25rem;
+        }
+
+        .hero-headline {
+            font-size: clamp(2.3rem, 8.5vw, 3.6rem);
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-final-block {
+            top: 54%;
+            transform: translateY(-46%);
+        }
+
+        .hero-final-headline {
+            font-size: clamp(3.5rem, 14vw, 5.2rem);
+            line-height: 1.06;
+            overflow: visible;
+            padding-right: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.05rem;
+            padding-left: 1rem;
+        }
+
+        .hero-cta-wrapper {
+            left: 1.25rem;
+            right: auto;
+            bottom: 4rem;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .glass-cta-button {
+            padding: 0.65rem 1.2rem;
+            font-size: 0.65rem;
+            letter-spacing: 0.14em;
+            gap: 0.55rem;
+        }
+
+        .glass-cta-button .cta-arrow {
+            width: 13px;
+            height: 13px;
+        }
+
+        .corner-bracket {
+            display: none;
+        }
+
+        .scroll-arrow-anchor {
+            bottom: 0.25rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+
+        .scroll-arrow-icon {
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+    // Declare external GSAP & Lenis globals for TypeScript
+    declare const gsap: any;
+    declare const ScrollTrigger: any;
+    declare const Lenis: any;
+
+    function initHeroExperience() {
+        const video = document.getElementById(
+            "heroVideo",
+        ) as HTMLVideoElement | null;
+        const videoWrapper = document.getElementById("videoWrapper");
+        const heroScroll = document.getElementById("heroScroll");
+        const heroStage = document.getElementById("heroStage");
+        const headlineLines = document.querySelectorAll(
+            ".headline-line-inner",
+        ) as NodeListOf<HTMLElement>;
+        const heroSubtitle = document.getElementById("heroSubtitle");
+        const finalLines = document.querySelectorAll(
+            ".final-line-inner",
+        ) as NodeListOf<HTMLElement>;
+        const heroCtaWrap = document.getElementById("heroCtaWrap");
+        const scrollArrow = document.getElementById("scrollArrow");
+
+        if (
+            !video ||
+            !videoWrapper ||
+            !heroScroll ||
+            !heroStage ||
+            !heroSubtitle ||
+            !heroCtaWrap ||
+            !scrollArrow
+        ) {
+            return;
+        }
+
+        if (
+            typeof gsap === "undefined" ||
+            typeof ScrollTrigger === "undefined"
+        ) {
+            console.warn(
+                "[Alquimista Hero] GSAP or ScrollTrigger not loaded yet, retrying...",
+            );
+            setTimeout(initHeroExperience, 100);
+            return;
+        }
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        let videoDuration = 0;
+        let lenisInstance: any = null;
+        const isReducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+        let isEntranceComplete = false;
+
+        // Smooth Scroll (Lenis)
+        function initLenis() {
+            if (
+                typeof Lenis !== "undefined" &&
+                !isReducedMotion &&
+                !lenisInstance
+            ) {
+                lenisInstance = new Lenis({
+                    duration: 1.2,
+                    easing: (t: number) =>
+                        Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    orientation: "vertical",
+                    gestureOrientation: "vertical",
+                    smoothWheel: true,
+                    wheelMultiplier: 0.95,
+                    touchMultiplier: 1.5,
+                    infinite: false,
+                });
+
+                lenisInstance.on("scroll", ScrollTrigger.update);
+
+                gsap.ticker.add((time: number) => {
+                    lenisInstance.raf(time * 1000);
+                });
+
+                gsap.ticker.lagSmoothing(0);
+            }
+        }
+
+        // Entrance Animation (Runs immediately on load without delay)
+        function playEntranceAnimation() {
+            const tl = gsap.timeline({
+                defaults: {
+                    ease: "power3.out",
+                },
+                onComplete: () => {
+                    isEntranceComplete = true;
+                },
+            });
+
+            tl.fromTo(
+                headlineLines,
+                { opacity: 0, y: 55, filter: "blur(14px)", scale: 0.98 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    filter: "blur(0px)",
+                    scale: 1.0,
+                    stagger: 0.18,
+                    duration: 1.2,
+                    ease: "power3.out",
+                },
+            )
+                .fromTo(
+                    heroSubtitle,
+                    { opacity: 0, y: 28, filter: "blur(10px)" },
+                    { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.0 },
+                    "-=0.7",
+                )
+                .fromTo(
+                    scrollArrow,
+                    { opacity: 0, y: 20 },
+                    { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" },
+                    "-=0.5",
+                );
+
+            return tl;
+        }
+
+        // 5. High-Performance Scroll-Driven Video Scrubbing Engine
+        let isTimelineInitialized = false;
+
+        function initScrollDrivenTimeline() {
+            if (isTimelineInitialized) return;
+            isTimelineInitialized = true;
+
+            videoDuration =
+                video &&
+                video.duration &&
+                !isNaN(video.duration) &&
+                video.duration > 0
+                    ? video.duration
+                    : 5.0;
+            const safeEndDuration = Math.max(0.1, videoDuration - 0.04);
+            let targetVideoTime = 0;
+            let renderedVideoTime = 0;
+            let isSeeking = false;
+
+            function requestVideoSeek() {
+                if (!video || isSeeking || video.readyState < 1) return;
+
+                renderedVideoTime +=
+                    (targetVideoTime - renderedVideoTime) * 0.45;
+                if (Math.abs(renderedVideoTime - targetVideoTime) < 0.006) {
+                    renderedVideoTime = targetVideoTime;
+                }
+
+                if (Math.abs(video.currentTime - renderedVideoTime) > 0.025) {
+                    isSeeking = true;
+                    try {
+                        if (
+                            "fastSeek" in video &&
+                            typeof (video as any).fastSeek === "function"
+                        ) {
+                            (video as any).fastSeek(renderedVideoTime);
+                        } else {
+                            video.currentTime = renderedVideoTime;
+                        }
+                    } catch (e) {
+                        video.currentTime = renderedVideoTime;
+                    }
+                }
+            }
+
+            video.addEventListener("seeked", () => {
+                isSeeking = false;
+                if (
+                    video &&
+                    Math.abs(video.currentTime - targetVideoTime) > 0.025
+                ) {
+                    requestVideoSeek();
+                }
+            });
+
+            // Watchdog failsafe so isSeeking never stays permanently locked
+            setInterval(() => {
+                if (isSeeking && video) {
+                    isSeeking = false;
+                    if (Math.abs(video.currentTime - targetVideoTime) > 0.03) {
+                        requestVideoSeek();
+                    }
+                }
+            }, 70);
+
+            function getSubProgress(p: number, start: number, end: number) {
+                return Math.min(Math.max((p - start) / (end - start), 0), 1);
+            }
+
+            function easeInOutCubic(t: number) {
+                return t < 0.5
+                    ? 4 * t * t * t
+                    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            }
+
+            function updateTypographyChoreography(progress: number) {
+                if (!isEntranceComplete && progress < 0.005) {
+                    return;
+                }
+                isEntranceComplete = true;
+
+                if (isReducedMotion) {
+                    const pAll = getSubProgress(progress, 0.02, 0.18);
+                    const op = 1 - pAll;
+                    headlineLines.forEach((line) => {
+                        line.style.opacity = String(op);
+                    });
+                    if (heroSubtitle) heroSubtitle.style.opacity = String(op);
+
+                    const pFinal = getSubProgress(progress, 0.78, 0.88);
+                    finalLines.forEach((line) => {
+                        line.style.opacity = String(pFinal);
+                    });
+                    if (heroCtaWrap) {
+                        heroCtaWrap.style.opacity = String(pFinal);
+                        heroCtaWrap.style.pointerEvents =
+                            pFinal > 0.5 ? "auto" : "none";
+                    }
+                    return;
+                }
+
+                // PHASE 1: INITIAL LETTERING EXIT (0% -> 20% SCROLL)
+                if (headlineLines[0]) {
+                    const p1 = easeInOutCubic(
+                        getSubProgress(progress, 0.02, 0.08),
+                    );
+                    const op1 = 1 - p1;
+                    const blur1 = p1 * 18;
+                    const y1 = -p1 * 26;
+                    headlineLines[0].style.opacity = String(op1);
+                    headlineLines[0].style.filter =
+                        p1 > 0 ? `blur(${blur1.toFixed(1)}px)` : "none";
+                    headlineLines[0].style.transform = `translate3d(0, ${y1.toFixed(1)}px, 0)`;
+                }
+
+                if (headlineLines[1]) {
+                    const p2 = easeInOutCubic(
+                        getSubProgress(progress, 0.06, 0.12),
+                    );
+                    const op2 = 1 - p2;
+                    const blur2 = p2 * 18;
+                    const y2 = -p2 * 26;
+                    headlineLines[1].style.opacity = String(op2);
+                    headlineLines[1].style.filter =
+                        p2 > 0 ? `blur(${blur2.toFixed(1)}px)` : "none";
+                    headlineLines[1].style.transform = `translate3d(0, ${y2.toFixed(1)}px, 0)`;
+                }
+
+                if (headlineLines[2]) {
+                    const p3 = easeInOutCubic(
+                        getSubProgress(progress, 0.1, 0.16),
+                    );
+                    const op3 = 1 - p3;
+                    const blur3 = p3 * 20;
+                    const y3 = -p3 * 30;
+                    headlineLines[2].style.opacity = String(op3);
+                    headlineLines[2].style.filter =
+                        p3 > 0 ? `blur(${blur3.toFixed(1)}px)` : "none";
+                    headlineLines[2].style.transform = `translate3d(0, ${y3.toFixed(1)}px, 0)`;
+                }
+
+                if (heroSubtitle) {
+                    const p4 = easeInOutCubic(
+                        getSubProgress(progress, 0.14, 0.2),
+                    );
+                    const op4 = 1 - p4;
+                    const blur4 = p4 * 18;
+                    const y4 = -p4 * 22;
+                    heroSubtitle.style.opacity = String(op4);
+                    heroSubtitle.style.filter =
+                        p4 > 0 ? `blur(${blur4.toFixed(1)}px)` : "none";
+                    heroSubtitle.style.transform = `translate3d(0, ${y4.toFixed(1)}px, 0)`;
+                }
+
+                // PHASE 2: FINAL CLIMAX LETTERING ("DEGUSTE NOSSA ALQUIMIA") & GLASS CTA
+                const finalBlock = document.getElementById(
+                    "finalTypographyBlock",
+                );
+                const pBlock = getSubProgress(progress, 0.72, 0.95);
+                if (finalBlock) {
+                    finalBlock.style.pointerEvents =
+                        pBlock > 0.5 ? "auto" : "none";
+                }
+
+                if (finalLines[0]) {
+                    const pf1 = easeInOutCubic(
+                        getSubProgress(progress, 0.74, 0.82),
+                    );
+                    const blurF1 = (1 - pf1) * 18;
+                    const yF1 = (1 - pf1) * 30;
+                    finalLines[0].style.opacity = String(pf1);
+                    finalLines[0].style.filter =
+                        pf1 < 1 ? `blur(${blurF1.toFixed(1)}px)` : "none";
+                    finalLines[0].style.transform = `translate3d(0, ${yF1.toFixed(1)}px, 0)`;
+                }
+
+                if (finalLines[1]) {
+                    const pf2 = easeInOutCubic(
+                        getSubProgress(progress, 0.77, 0.85),
+                    );
+                    const blurF2 = (1 - pf2) * 18;
+                    const yF2 = (1 - pf2) * 30;
+                    finalLines[1].style.opacity = String(pf2);
+                    finalLines[1].style.filter =
+                        pf2 < 1 ? `blur(${blurF2.toFixed(1)}px)` : "none";
+                    finalLines[1].style.transform = `translate3d(0, ${yF2.toFixed(1)}px, 0)`;
+                }
+
+                if (finalLines[2]) {
+                    const pf3 = easeInOutCubic(
+                        getSubProgress(progress, 0.8, 0.88),
+                    );
+                    const blurF3 = (1 - pf3) * 20;
+                    const yF3 = (1 - pf3) * 32;
+                    finalLines[2].style.opacity = String(pf3);
+                    finalLines[2].style.filter =
+                        pf3 < 1 ? `blur(${blurF3.toFixed(1)}px)` : "none";
+                    finalLines[2].style.transform = `translate3d(0, ${yF3.toFixed(1)}px, 0)`;
+                }
+
+                if (heroCtaWrap) {
+                    const pCta = easeInOutCubic(
+                        getSubProgress(progress, 0.78, 0.88),
+                    );
+                    const blurCta = (1 - pCta) * 16;
+                    const yCta = (1 - pCta) * 22;
+                    heroCtaWrap.style.opacity = String(pCta);
+                    heroCtaWrap.style.filter =
+                        pCta < 1 ? `blur(${blurCta.toFixed(1)}px)` : "none";
+                    heroCtaWrap.style.transform = `translate3d(0, ${yCta.toFixed(1)}px, 0)`;
+                    heroCtaWrap.style.pointerEvents =
+                        pCta > 0.7 ? "auto" : "none";
+                }
+            }
+
+            ScrollTrigger.create({
+                trigger: heroScroll,
+                start: "top top",
+                end: "bottom bottom",
+                pin: heroStage,
+                scrub: isReducedMotion ? 0 : 0.2,
+                onUpdate: (self: any) => {
+                    const progress = self.progress;
+                    targetVideoTime = progress * safeEndDuration;
+                    requestVideoSeek();
+                    updateTypographyChoreography(progress);
+
+                    if (progress > 0.018) {
+                        if (scrollArrow.dataset.visible !== "false") {
+                            scrollArrow.dataset.visible = "false";
+                            gsap.to(scrollArrow, {
+                                opacity: 0,
+                                y: 12,
+                                duration: 0.35,
+                                overwrite: "auto",
+                                ease: "power2.out",
+                            });
+                        }
+                    } else {
+                        if (scrollArrow.dataset.visible === "false") {
+                            scrollArrow.dataset.visible = "true";
+                            gsap.to(scrollArrow, {
+                                opacity: 1,
+                                y: 0,
+                                duration: 0.5,
+                                overwrite: "auto",
+                                ease: "power2.out",
+                            });
+                        }
+                    }
+                },
+            });
+
+            // Ticker loop guarantees smooth frame progression between scroll events
+            gsap.ticker.add(() => {
+                if (!video) return;
+                if (
+                    Math.abs(renderedVideoTime - targetVideoTime) > 0.008 ||
+                    Math.abs(video.currentTime - targetVideoTime) > 0.025
+                ) {
+                    requestVideoSeek();
+                }
+            });
+
+            ScrollTrigger.refresh();
+        }
+
+        // Video Ready Listener & Memory Cache Bootstrap
+        initLenis();
+
+        video.muted = true;
+        video.defaultMuted = true;
+        video.playsInline = true;
+        video.pause();
+        video.currentTime = 0;
+
+        // Preload video into memory Blob for zero-latency seeking
+        fetch("/video2.mp4")
+            .then((res) => {
+                if (res.ok) return res.blob();
+                throw new Error("Network response not ok");
+            })
+            .then((blob) => {
+                const blobUrl = URL.createObjectURL(blob);
+                video.src = blobUrl;
+                video.load();
+                video.addEventListener(
+                    "loadeddata",
+                    () => {
+                        if (!video) return;
+                        try {
+                            video.currentTime = 0.001;
+                        } catch (e) {}
+                        if (typeof ScrollTrigger !== "undefined") {
+                            ScrollTrigger.refresh();
+                        }
+                    },
+                    { once: true },
+                );
+            })
+            .catch(() => {
+                // Native fallback src="/video2.mp4" is already set
+            });
+
+        function onMetadataLoaded() {
+            if (!video) return;
+            videoDuration = video.duration || 5.0;
+            try {
+                video.currentTime = 0.001;
+            } catch (e) {}
+            initScrollDrivenTimeline();
+        }
+
+        if (video.readyState >= 1 && video.duration) {
+            onMetadataLoaded();
+        } else {
+            video.addEventListener("loadedmetadata", onMetadataLoaded, {
+                once: true,
+            });
+            video.addEventListener("loadeddata", onMetadataLoaded, {
+                once: true,
+            });
+            setTimeout(() => {
+                if (!isTimelineInitialized) {
+                    onMetadataLoaded();
+                }
+            }, 500);
+        }
+
+        // Play entrance animation immediately
+        playEntranceAnimation();
+
+        // Listen to Age Gate unlock to recalculate ScrollTrigger and Lenis dimensions
+        window.addEventListener("age-gate-unlocked", () => {
+            setTimeout(() => {
+                if (typeof ScrollTrigger !== "undefined") {
+                    ScrollTrigger.refresh();
+                }
+                if (lenisInstance) {
+                    lenisInstance.resize();
+                }
+            }, 50);
+        });
+
+        let resizeTimeout: any;
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (typeof ScrollTrigger !== "undefined") {
+                    ScrollTrigger.refresh();
+                }
+            }, 200);
+        });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initHeroExperience);
+    } else {
+        initHeroExperience();
+    }
+    document.addEventListener("astro:page-load", initHeroExperience);
+</script>

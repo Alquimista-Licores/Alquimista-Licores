@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CauldronIcon from '../components/CauldronIcon.astro';
+---
+
+<Layout
+  title="Alquimia em Pausa — Alquimista Licores"
+  description="Estamos refinando nossas fórmulas e organizando nosso laboratório. Em breve voltamos."
+  hideChrome={true}
+>
+  <div class="flex flex-col items-center justify-center min-h-[90vh] px-6 text-center max-w-2xl mx-auto py-16 reveal">
+    <div class="mb-8 text-[var(--gold)] animate-pulse">
+      <CauldronIcon className="w-20 h-20 md:w-24 md:h-24 mx-auto" size={96} />
+    </div>
+
+    <h1 class="text-3xl md:text-5xl font-medium tracking-wide text-[var(--gold)] mb-6">
+      Alquimia em Pausa
+    </h1>
+
+    <p class="text-base md:text-xl text-[var(--cream)]/85 mb-8 leading-relaxed font-body">
+      Estamos refinando nossas fórmulas e organizando nosso laboratório.<br />
+      Em breve, novos licores e experiências estarão prontos para você.
+    </p>
+
+    <div class="p-6 border border-[var(--gold)]/25 rounded-sm bg-[var(--surface)]/50 gold-glow mb-10 max-w-lg">
+      <p class="text-lg md:text-2xl text-[var(--gold)] font-sans italic">
+        "A paciência é o segredo do alquimista."
+      </p>
+    </div>
+
+    <a
+      href="/"
+      class="px-8 py-3.5 border border-[var(--gold)]/40 text-[var(--gold)] font-display tracking-widest text-xs uppercase hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-sm font-bold"
+    >
+      Voltar para o início
+    </a>
+
+    <div class="text-xs text-[var(--text-faded)] mt-12">
+      Alquimista Licores Artesanais · Criciúma/SC
+    </div>
+  </div>
+</Layout>
