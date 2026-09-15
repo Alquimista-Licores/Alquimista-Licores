@@ -1,42 +1,36 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
+import Badge from '../components/Badge.astro';
 
 const SECTIONS = [
   {
-    title: "A Origem",
-    text: "O Alquimista nasceu da ideia de transformar ingredientes naturais em algo memorável. Inspirados pela alquimia medieval, criamos receitas que unem sabor, simbolismo e processo artesanal.",
+    title: "A Origem do Fogo",
+    text: "Tudo começou com uma curiosidade genuína: como frutas, ervas e especiarias poderiam se transformar em algo que acolhe a alma? Na cozinha de casa, com um caderno de anotações e muita paciência, nasceram os primeiros experimentos.",
     image: "/assets/sobre-origem.jpg",
-    alt: "Rótulo e garrafa do Alquimista Licores",
+    alt: "Ingredientes naturais e preparo artesanal",
     reverse: false,
   },
   {
-    title: "O Processo",
-    text: "Cada lote é produzido manualmente, em pequena escala e sem atalhos. Utilizamos ingredientes naturais, sem corantes artificiais ou químicos desnecessários.",
-    image: "/assets/sobre-processo.jpg",
-    alt: "Infusão botânica natural em garrafas de vidro",
+    title: "O Tempo como Ingrediente",
+    text: "Não usamos atalhos. Cada poção passa por semanas — às vezes meses — de maceração e maturação lenta. O tempo não é um detalhe; é o ingrediente principal que extrai a essência pura de cada elemento.",
+    image: "/assets/sobre-tempo.jpg",
+    alt: "Garrafas e processo de maceração",
     reverse: true,
   },
   {
-    title: "O Ciclo",
-    text: "Reutilizamos e reciclamos nossas garrafas como parte natural do processo. Para nós, transformar também significa reaproveitar.",
-    image: "/assets/sobre-ciclo.jpg",
-    alt: "Garrafas de vidro artesanais higienizadas e reutilizadas",
+    title: "Feito à Mão, em Pequenos Lotes",
+    text: "Produzimos em escala humana, em Criciúma/SC. Cada garrafa é envasada, rotulada e finalizada manualmente pelo próprio Alquimista. É assim que garantimos que nenhuma garrafa seja apenas mais uma.",
+    image: "/assets/sobre-artesanal.jpg",
+    alt: "Produção artesanal em pequenos lotes",
     reverse: false,
-  },
-  {
-    title: "A Filosofia",
-    text: "Produzir artesanalmente é nossa forma de respeitar o tempo, os ingredientes e quem aprecia o resultado.",
-    image: "/assets/sobre-filosofia.jpg",
-    alt: "Livro de receitas e infusões botânicas à luz de vela",
-    reverse: true,
   },
 ];
 ---
 
 <Layout
-  title="Sobre o Alquimista — Alquimista Licores"
-  description="A história do Alquimista — artesão que transforma frutas, ervas e tempo em licores autorais, em Criciúma/SC."
+  title="O Alquimista — Nossa História & Filosofia"
+  description="Conheça a história por trás dos licores artesanais do Alquimista. Produção manual, ingredientes naturais e a busca pelo extraordinário em Criciúma/SC."
 >
   <div class="relative overflow-hidden">
     <!-- GLOWING ORBS IN BACKGROUND -->
@@ -51,6 +45,22 @@ const SECTIONS = [
         title="O Alquimista"
         subtitle="Ingredientes simples atravessando o ritual da transformação."
       />
+
+      <!-- PROCESS PILLS -->
+      <div class="flex flex-wrap justify-center items-center gap-3 mt-4 mb-12">
+        <Badge variant="gold" symbol="🜚" tooltip="100% botânicos e ingredientes naturais">
+          100% Orgânico
+        </Badge>
+        <Badge variant="dark" symbol="⚗" tooltip="Infusão de 40 dias sem aceleradores químicos">
+          Maceração 40 Dias
+        </Badge>
+        <Badge variant="gold" symbol="👑" tooltip="Feito à mão em pequenos lotes numerados">
+          Selo Real
+        </Badge>
+        <Badge variant="dark" symbol="❖" tooltip="Criciúma — Serra Catarinense">
+          Serra Catarinense
+        </Badge>
+      </div>
 
       <!-- STORY SECTIONS / JORNADA -->
       <div id="jornada" class="space-y-24 md:space-y-36 mt-8 scroll-mt-28">

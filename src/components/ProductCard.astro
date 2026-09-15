@@ -2,6 +2,7 @@
 import type { Product } from '../lib/data';
 import { fmtPrice, categoriaLabel, needsPrep } from '../lib/data';
 import CauldronIcon from './CauldronIcon.astro';
+import Badge from './Badge.astro';
 
 interface Props {
   product: Product;
@@ -13,9 +14,12 @@ const hasPrep = needsPrep(p);
 ---
 
 <div
-  class="product-card group relative flex flex-col md:block aspect-auto md:aspect-[3/4] bg-[var(--surface)] border border-[var(--gold)]/20 rounded-sm overflow-hidden transition-all duration-500 hover:-translate-y-1.5 gold-glow-hover cursor-pointer"
+  class="product-card group relative flex flex-col md:block aspect-auto md:aspect-[3/4] bg-[var(--surface)] border border-[var(--gold)]/20 rounded-md overflow-hidden transition-all duration-300 hover:border-[var(--gold)]/50 cursor-pointer select-none"
   data-product={JSON.stringify(p)}
 >
+  <!-- Dynamic Glare Light on Hover -->
+  <div class="product-glare pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 rounded-md z-30"></div>
+
   <!-- IMAGE LAYER -->
   <div
     class={`relative w-full aspect-square md:absolute md:inset-x-0 md:top-0 md:h-[62%] md:aspect-auto md:w-auto bg-gradient-to-b from-[var(--surface-elevated)] to-[var(--background)] overflow-hidden transition-[height,opacity] duration-700 ease-out md:group-hover:h-full md:group-hover:opacity-35 ${
@@ -30,65 +34,72 @@ const hasPrep = needsPrep(p);
         alt={p.nome}
         loading="lazy"
         decoding="async"
-        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+        class="product-img w-full h-full object-cover transition-transform duration-700"
       />
     ) : (
       <div class="w-full h-full flex items-center justify-center text-[var(--gold)]/30 text-7xl">⚗</div>
     )}
 
+    {/* Top Badges */}
+    <div class="hidden md:flex absolute top-3 left-3 z-20 gap-1.5 pointer-events-none">
+      <Badge variant="gold" size="sm" symbol="🜚">
+        {categoriaLabel(p.categoria)}
+      </Badge>
+    </div>
+
     {hasPrep && !isOutOfStock && (
-      <div class="absolute top-0 inset-x-0 bg-[var(--amber-warm)]/90 text-[var(--background)] text-[10px] md:text-xs font-display tracking-widest uppercase text-center py-1 backdrop-blur-sm z-20 font-bold">
+      <div class="absolute top-0 inset-x-0 bg-[var(--amber-warm)]/90 text-[var(--background)] text-[10px] md:text-xs font-mono tracking-widest uppercase text-center py-1 backdrop-blur-sm z-20 font-bold">
         Sob encomenda · 2 dias
       </div>
     )}
 
     {isOutOfStock && (
-      <div class="absolute inset-0 z-20 flex items-center justify-center bg-[var(--background)]/60 backdrop-blur-[1px]">
-        <span class="px-5 py-2 bg-[var(--gold)] text-[var(--background)] text-xs md:text-sm font-display tracking-widest uppercase rounded-sm shadow-xl font-bold">
-          Esgotado
-        </span>
+      <div class="absolute inset-0 z-20 flex items-center justify-center bg-[var(--background)]/70 backdrop-blur-[2px]">
+        <Badge variant="ember" symbol="🜂" size="md" class="shadow-2xl font-bold uppercase tracking-widest scale-110">
+          Lote Esgotado
+        </Badge>
       </div>
     )}
 
     <!-- MOBILE: Overlay inside image square -->
     <div class="md:hidden absolute inset-x-0 bottom-0 pt-8 px-3 pb-2 bg-gradient-to-t from-black/90 via-black/60 to-transparent pointer-events-none">
-      <div class="font-display text-[10px] text-[var(--gold)] tracking-widest uppercase">
+      <div class="font-mono text-[10px] text-[var(--gold)] tracking-widest uppercase">
         {categoriaLabel(p.categoria)}
       </div>
-      <div class="font-body text-xs text-[var(--cream)] mt-0.5 leading-tight font-medium">
+      <div class="font-serif text-xs text-[var(--cream)] mt-0.5 leading-tight font-medium">
         {p.sabor}
       </div>
     </div>
   </div>
 
   <!-- MOBILE: Bottom bar with price & quick add -->
-  <div class="md:hidden relative h-12 px-3 flex items-center justify-between bg-[var(--surface)] border-t border-[var(--gold)]/15">
-    <div class="font-display font-bold text-lg text-[var(--gold)]">{fmtPrice(p.preco)}</div>
+  <div class="md:hidden relative h-11 px-3 flex items-center justify-between bg-[var(--surface)] border-t border-[var(--gold)]/15">
+    <div class="font-display font-semibold text-sm sm:text-base text-[var(--gold)]">{fmtPrice(p.preco)}</div>
     {!isOutOfStock && (
       <button
         type="button"
-        class="quick-add-btn w-8 h-8 flex items-center justify-center border border-[var(--gold)]/40 text-[var(--gold)] hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-sm"
+        class="quick-add-btn w-7.5 h-7.5 flex items-center justify-center border border-[var(--gold)]/40 text-[var(--gold)] hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-md"
         title="Adicionar ao caldeirão"
         aria-label="Adicionar ao caldeirão"
         data-id={p.id}
       >
-        <CauldronIcon className="w-4 h-4" />
+        <CauldronIcon className="w-3.5 h-3.5" />
       </button>
     )}
   </div>
 
   <!-- DESKTOP: Bottom Info Layer -->
   <div class="hidden md:block absolute inset-x-0 bottom-0 p-5 bg-[var(--surface)] transition-colors duration-700 md:group-hover:bg-transparent">
-    <h3 class="font-display font-bold text-base lg:text-lg text-[var(--gold)] tracking-wider uppercase leading-tight">
+    <h3 class="font-display font-semibold text-base lg:text-lg text-[var(--gold)] tracking-wider leading-tight">
       {p.nome}
     </h3>
-    <div class="font-body text-sm text-[var(--text-soft)] mt-1.5">{p.sabor}</div>
-    <div class="flex items-end justify-between mt-4 pt-3 border-t border-[var(--gold)]/15">
-      <div class="font-display font-bold text-2xl lg:text-3xl text-[var(--gold)]">{fmtPrice(p.preco)}</div>
+    <div class="font-serif italic text-sm text-[var(--text-soft)] mt-1.5">{p.sabor}</div>
+    <div class="flex items-end justify-between mt-3 pt-3 border-t border-[var(--gold)]/15">
+      <div class="font-display font-bold text-lg lg:text-xl text-[var(--gold)]">{fmtPrice(p.preco)}</div>
       {!isOutOfStock && (
         <button
           type="button"
-          class="quick-add-btn w-9 h-9 flex items-center justify-center border border-[var(--gold)]/40 text-[var(--gold)] bg-[var(--surface)]/80 hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-sm backdrop-blur-sm shadow-md"
+          class="quick-add-btn w-8.5 h-8.5 flex items-center justify-center border border-[var(--gold)]/40 text-[var(--gold)] bg-[var(--surface)]/80 hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-md backdrop-blur-sm shadow-md"
           title="Adicionar ao caldeirão"
           aria-label="Adicionar ao caldeirão"
           data-id={p.id}
@@ -99,3 +110,85 @@ const hasPrep = needsPrep(p);
     </div>
   </div>
 </div>
+
+<style>
+  .product-card {
+    transform-style: preserve-3d;
+    perspective: 900px;
+    will-change: transform, box-shadow;
+  }
+  .product-card .product-img {
+    will-change: transform;
+  }
+</style>
+
+<script>
+  function initProductCardParallax() {
+    // Enable only on desktop pointer devices
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+    const cards = document.querySelectorAll<HTMLElement>(".product-card");
+
+    cards.forEach((card) => {
+      if (card.dataset.parallaxInit === "true") return;
+      card.dataset.parallaxInit = "true";
+
+      const img = card.querySelector<HTMLElement>(".product-img");
+      const glare = card.querySelector<HTMLElement>(".product-glare");
+
+      let rafId = 0;
+
+      function onMouseMove(e: MouseEvent) {
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          const rect = card.getBoundingClientRect();
+          const normX = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+          const normY = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
+
+          const rotX = (-normY * 11).toFixed(2);
+          const rotY = (normX * 11).toFixed(2);
+
+          card.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-6px)`;
+          card.style.boxShadow = `${(-normX * 18).toFixed(1)}px ${(-normY * 18 + 18).toFixed(1)}px 32px -5px rgba(0, 0, 0, 0.75), 0 0 24px rgba(200, 169, 126, 0.25)`;
+
+          if (img) {
+            img.style.transform = `translate3d(${(-normX * 10).toFixed(1)}px, ${(-normY * 10).toFixed(1)}px, 0px) scale(1.08)`;
+          }
+
+          if (glare) {
+            glare.style.opacity = "1";
+            glare.style.background = `radial-gradient(circle at ${((normX + 0.5) * 100).toFixed(1)}% ${((normY + 0.5) * 100).toFixed(1)}%, rgba(212, 178, 58, 0.22) 0%, rgba(200, 169, 126, 0.05) 45%, transparent 70%)`;
+          }
+        });
+      }
+
+      function onMouseEnter() {
+        card.style.transition = "transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.3s ease";
+        if (img) img.style.transition = "transform 0.12s ease-out";
+      }
+
+      function onMouseLeave() {
+        cancelAnimationFrame(rafId);
+        card.style.transition = "transform 0.5s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.5s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.4s ease";
+        card.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0)";
+        card.style.boxShadow = "";
+
+        if (img) {
+          img.style.transition = "transform 0.5s cubic-bezier(0.2, 0, 0.2, 1)";
+          img.style.transform = "translate3d(0, 0, 0) scale(1)";
+        }
+
+        if (glare) {
+          glare.style.opacity = "0";
+        }
+      }
+
+      card.addEventListener("mousemove", onMouseMove);
+      card.addEventListener("mouseenter", onMouseEnter);
+      card.addEventListener("mouseleave", onMouseLeave);
+    });
+  }
+
+  initProductCardParallax();
+  document.addEventListener("astro:page-load", initProductCardParallax);
+</script>

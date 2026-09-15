@@ -113,17 +113,17 @@ const RITUALS: Ritual[] = [
     <div class="text-center mb-16 md:mb-24 rituals-header reveal-item">
       <div class="inline-flex items-center justify-center gap-3 mb-3">
         <span class="w-8 md:w-12 h-px bg-[var(--gold)]/40"></span>
-        <span class="font-sans font-medium text-[11px] md:text-xs tracking-[0.3em] uppercase text-[var(--gold)]">
+        <span class="font-mono font-medium text-[11px] md:text-xs tracking-[0.3em] uppercase text-[var(--gold)]">
           Grimório de Servir
         </span>
         <span class="w-8 md:w-12 h-px bg-[var(--gold)]/40"></span>
       </div>
 
-      <h2 class="text-3xl md:text-5xl lg:text-6xl font-medium text-[var(--cream)] tracking-wide mb-4 font-decorative">
+      <h2 class="text-3xl md:text-5xl lg:text-6xl font-medium text-[var(--cream)] tracking-wide mb-4 font-display">
         RITUAIS DE DEGUSTAÇÃO
       </h2>
 
-      <p class="font-sans italic text-base md:text-xl text-[var(--text-soft)] max-w-xl mx-auto">
+      <p class="font-serif italic text-base md:text-xl text-[var(--text-soft)] max-w-xl mx-auto">
         Cada poção revela uma experiência diferente.
       </p>
     </div>
@@ -142,7 +142,7 @@ const RITUALS: Ritual[] = [
           <span class="corner-bracket corner-br" aria-hidden="true"></span>
 
           <!-- Image Visual Canvas -->
-          <div class="ritual-image-deck aspect-[3/4] sm:aspect-[4/3] lg:aspect-[3/4] rounded-sm overflow-hidden relative">
+          <div class="ritual-image-deck aspect-[3/4] sm:aspect-[4/3] lg:aspect-[3/4] rounded-md overflow-hidden relative">
             
             <!-- Vignette & Glow Overlay -->
             <div class="absolute inset-0 z-10 pointer-events-none ritual-inner-vignette"></div>
@@ -162,9 +162,9 @@ const RITUALS: Ritual[] = [
             ))}
 
             <!-- Discreet Alchemical Watermark & Seal -->
-            <div class="absolute bottom-4 left-4 z-20 pointer-events-none flex items-center gap-2.5 px-3 py-1.5 rounded-sm bg-black/40 backdrop-blur-md border border-[var(--gold)]/20">
+            <div class="absolute bottom-4 left-4 z-20 pointer-events-none flex items-center gap-2.5 px-3 py-1.5 rounded-md bg-black/40 backdrop-blur-md border border-[var(--gold)]/20">
               <span id="activeGlyph" class="text-[var(--gold-bright)] text-sm font-serif transition-all duration-500">🜄</span>
-              <span id="activeBadgeText" class="font-sans text-[10px] tracking-[0.2em] uppercase text-[var(--gold-light)] font-light transition-all duration-500">
+              <span id="activeBadgeText" class="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--gold-light)] font-light transition-all duration-500">
                 Ritual I · Puro & Gelado
               </span>
             </div>
@@ -178,7 +178,7 @@ const RITUALS: Ritual[] = [
         
         {RITUALS.map((ritual, index) => (
           <div
-            class={`ritual-card group cursor-pointer transition-all duration-500 relative p-5 md:p-6 rounded-sm border border-transparent reveal-item ${
+            class={`ritual-card group cursor-pointer transition-all duration-500 relative p-5 md:p-6 rounded-md border border-transparent reveal-item ${
               index === 0 ? "is-active" : ""
             }`}
             data-index={index}
@@ -196,7 +196,7 @@ const RITUALS: Ritual[] = [
                 <span class="ritual-numeral font-decorative text-lg md:text-xl font-bold transition-all duration-400">
                   {ritual.numeral}
                 </span>
-                <h3 class="ritual-title font-decorative text-lg md:text-2xl font-semibold tracking-wide transition-colors duration-400">
+                <h3 class="ritual-title font-display text-lg md:text-2xl font-semibold tracking-wide transition-colors duration-400">
                   {ritual.title}
                 </h3>
               </div>
@@ -206,7 +206,7 @@ const RITUALS: Ritual[] = [
             </div>
 
             <!-- Subtitle / Context -->
-            <div class="text-[11px] md:text-xs font-sans uppercase tracking-[0.18em] text-[var(--gold)]/70 mb-2">
+            <div class="text-[11px] md:text-xs font-mono uppercase tracking-[0.18em] text-[var(--gold)]/70 mb-2">
               {ritual.subtitle}
             </div>
 
@@ -214,7 +214,7 @@ const RITUALS: Ritual[] = [
             <div class="ritual-ornament-line" aria-hidden="true"></div>
 
             <!-- Short Main Description -->
-            <p class="ritual-quote font-sans italic text-sm md:text-base text-[var(--cream)]/90 leading-relaxed mt-3 transition-all duration-400">
+            <p class="ritual-quote font-serif italic text-sm md:text-base text-[var(--cream)]/90 leading-relaxed mt-3 transition-all duration-400">
               “{ritual.desc}”
             </p>
 
@@ -222,19 +222,19 @@ const RITUALS: Ritual[] = [
             <div class="ritual-expanded-content transition-all duration-500">
               <!-- Serving Technique & Temp Badge -->
               <div class="flex flex-wrap items-center gap-2 mt-3 mb-2.5">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-sm bg-[var(--gold)]/10 border border-[var(--gold)]/25 text-[11px] font-sans text-[var(--gold-light)] font-medium">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-sm bg-[var(--gold)]/10 border border-[var(--gold)]/25 text-[11px] font-mono text-[var(--gold-light)] font-medium">
                   <span class="text-[var(--gold)]">✦</span> {ritual.idealTemp}
                 </span>
               </div>
 
               <!-- Technique narrative -->
-              <p class="text-xs md:text-sm text-[var(--text-soft)] font-light leading-relaxed mb-3">
+              <p class="text-xs md:text-sm text-[var(--text-soft)] font-body font-light leading-relaxed mb-3">
                 {ritual.technique}
               </p>
 
               <!-- Concrete Highlight / Recipe -->
-              <div class="p-3 rounded-sm bg-black/25 border-l-2 border-[var(--gold)]/60 text-xs font-sans mb-4">
-                <span class="text-[var(--gold-bright)] font-semibold uppercase tracking-wider text-[10px] block mb-0.5">
+              <div class="p-3 rounded-sm bg-black/25 border-l-2 border-[var(--gold)]/60 text-xs font-body mb-4">
+                <span class="text-[var(--gold-bright)] font-mono font-semibold uppercase tracking-wider text-[10px] block mb-0.5">
                   {ritual.highlightLabel}
                 </span>
                 <span class="text-[var(--cream)]/90 font-light leading-relaxed">
@@ -244,19 +244,19 @@ const RITUALS: Ritual[] = [
 
               <!-- Suggested Potions Strip with Modal Trigger Buttons -->
               <div class="ritual-potions-strip pt-3 border-t border-[var(--gold)]/15 flex flex-wrap items-center gap-2">
-                <span class="text-[10px] uppercase font-sans tracking-[0.2em] text-[var(--gold)]/80 font-medium w-full sm:w-auto">
+                <span class="text-[10px] uppercase font-mono tracking-[0.2em] text-[var(--gold)]/80 font-medium w-full sm:w-auto">
                   Poções do Ritual:
                 </span>
                 <div class="flex flex-wrap gap-1.5">
                   {ritual.suggestedPotions.map((potion) => (
                     <button
                       type="button"
-                      class="potion-suggestion-link text-xs font-sans px-2.5 py-1 rounded-sm bg-[var(--surface-elevated)]/40 hover:bg-[var(--gold)]/20 border border-[var(--gold)]/25 hover:border-[var(--gold)] text-[var(--cream)] hover:text-[var(--gold-bright)] transition-all flex items-center gap-1.5 group/link"
+                      class="potion-suggestion-link text-xs px-2.5 py-1 rounded-sm bg-[var(--surface-elevated)]/40 hover:bg-[var(--gold)]/20 border border-[var(--gold)]/25 hover:border-[var(--gold)] text-[var(--cream)] hover:text-[var(--gold-bright)] transition-all flex items-center gap-1.5 group/link font-sans"
                       data-potion-id={potion.id}
                       title={`Ver detalhes de ${potion.name}`}
                     >
-                      <span class="font-medium">{potion.name}</span>
-                      <span class="text-[10px] text-[var(--text-faded)] group-hover/link:text-[var(--gold-light)]">({potion.sabor})</span>
+                      <span class="font-medium font-display">{potion.name}</span>
+                      <span class="text-[10px] text-[var(--text-faded)] font-serif italic group-hover/link:text-[var(--gold-light)]">({potion.sabor})</span>
                       <span class="text-[var(--gold)] text-[10px] transform group-hover/link:translate-x-0.5 transition-transform">→</span>
                     </button>
                   ))}

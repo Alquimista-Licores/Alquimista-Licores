@@ -10,7 +10,6 @@ const NAV = [
   { href: "/monte-seu-kit", label: "Monte seu Kit" },
   { href: "/sobre", label: "Sobre" },
   { href: "/sobre#jornada", label: "Jornada" },
-  { href: "/contato", label: "Contato" },
 ];
 ---
 
@@ -33,14 +32,14 @@ const NAV = [
     </a>
 
     <!-- DESKTOP NAV -->
-    <nav class="hidden lg:flex items-center gap-8">
+    <nav class="hidden lg:flex items-center gap-7">
       {NAV.map((n) => {
         const isActive = currentPath === n.href || (n.href !== '/' && currentPath.startsWith(n.href));
         return (
           <a
             href={n.href}
-            class={`header-nav-link text-[0.80rem] uppercase relative py-0.5 transition-colors duration-300 ${
-              isActive ? "active text-[var(--gold-light)] font-normal" : "text-[var(--text-soft)] hover:text-[var(--gold-light)] font-light"
+            class={`header-nav-link relative py-0.5 transition-colors duration-300 ${
+              isActive ? "active text-[var(--gold-light)]" : "text-[var(--text-soft)] hover:text-[var(--gold-light)]"
             }`}
           >
             {n.label}
@@ -91,8 +90,8 @@ const NAV = [
         return (
           <a
             href={n.href}
-            class={`header-nav-link py-3.5 uppercase text-xs border-b border-[var(--gold)]/10 last:border-0 transition-colors ${
-              isActive ? "text-[var(--gold)] font-medium" : "text-[var(--text-soft)] hover:text-[var(--gold)] font-light"
+            class={`header-nav-link py-3 border-b border-[var(--gold)]/10 last:border-0 transition-colors ${
+              isActive ? "text-[var(--gold)]" : "text-[var(--text-soft)] hover:text-[var(--gold)]"
             }`}
           >
             {n.label}
@@ -140,9 +139,11 @@ const NAV = [
   }
 
   .header-nav-link {
-    font-family: 'Century Gothic', 'Questrial', 'Outfit', -apple-system, sans-serif;
+    font-family: 'Lato', var(--font-body), sans-serif;
     letter-spacing: 0.22em;
-    font-weight: 300;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.75rem;
   }
 
   .header-nav-link::after {

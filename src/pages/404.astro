@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
 ---
 
 <Layout
@@ -17,12 +18,14 @@ import Layout from '../layouts/Layout.astro';
       <p class="font-sans italic text-sm md:text-base text-[var(--text-soft)] mb-8 leading-relaxed">
         A fórmula ou página que você está buscando não existe ou foi transmutada para outro lugar.
       </p>
-      <a
+      <Button
         href="/"
-        class="inline-block px-8 py-3.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase hover:bg-[var(--gold-hover)] transition-all rounded-sm font-bold shadow-md"
+        variant="primary"
+        size="md"
       >
-        Voltar ao início
-      </a>
+        <span>Voltar ao início</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+      </Button>
     </div>
   </div>
 </Layout>

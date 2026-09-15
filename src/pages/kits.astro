@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
+import Button from '../components/Button.astro';
+import Badge from '../components/Badge.astro';
 ---
 
 <Layout
@@ -15,9 +17,9 @@ import PageHeader from '../components/PageHeader.astro';
 
     <div class="grid md:grid-cols-2 gap-8">
       <!-- KIT DEGUSTAÇÃO -->
-      <div class="p-8 border border-[var(--gold)]/20 rounded-sm bg-[var(--surface)]/50 hover:border-[var(--gold)] transition-all duration-300 gold-glow-hover flex flex-col justify-between group">
+      <div class="p-8 border border-[var(--gold)]/20 rounded-md bg-[var(--surface)]/50 hover:border-[var(--gold)] transition-all duration-300 gold-glow-hover flex flex-col justify-between group">
         <div>
-          <div class="aspect-[4/3] mb-6 overflow-hidden rounded-sm bg-[var(--surface-elevated)] border border-[var(--gold)]/10">
+          <div class="aspect-[4/3] mb-6 overflow-hidden rounded-md bg-[var(--surface-elevated)] border border-[var(--gold)]/10 relative">
             <img
               src="/assets/kits-degustacao.jpg"
               alt="Kit Degustação"
@@ -25,7 +27,17 @@ import PageHeader from '../components/PageHeader.astro';
               decoding="async"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
+            <div class="absolute top-3 left-3 flex gap-2">
+              <Badge variant="gold" symbol="⚗" tooltip="3 frascos alquímicos de 50ml">
+                3 Mini-Poções
+              </Badge>
+            </div>
           </div>
+          
+          <div class="flex items-center gap-2 mb-2">
+            <Badge variant="dark" symbol="🜚">100% Artesanal</Badge>
+          </div>
+
           <h2 class="text-2xl md:text-3xl text-[var(--gold)] tracking-wide font-medium">
             Kit Degustação
           </h2>
@@ -38,19 +50,21 @@ import PageHeader from '../components/PageHeader.astro';
           <div class="text-[var(--gold)] font-display text-2xl font-bold tracking-wider">
             apenas R$ 20
           </div>
-          <a
+          <Button
             href="/monte-seu-kit?kit=degustacao"
-            class="px-6 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase hover:bg-[var(--gold-hover)] transition-all rounded-sm font-bold shadow-md"
+            variant="primary"
+            size="md"
           >
-            Montar Degustação
-          </a>
+            <span>Montar Degustação</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+          </Button>
         </div>
       </div>
 
       <!-- KIT PRESENTEÁVEL -->
-      <div class="p-8 border border-[var(--gold)]/20 rounded-sm bg-[var(--surface)]/50 hover:border-[var(--gold)] transition-all duration-300 gold-glow-hover flex flex-col justify-between group">
+      <div class="p-8 border border-[var(--gold)]/20 rounded-md bg-[var(--surface)]/50 hover:border-[var(--gold)] transition-all duration-300 gold-glow-hover flex flex-col justify-between group">
         <div>
-          <div class="aspect-[4/3] mb-6 overflow-hidden rounded-sm bg-[var(--surface-elevated)] border border-[var(--gold)]/10">
+          <div class="aspect-[4/3] mb-6 overflow-hidden rounded-md bg-[var(--surface-elevated)] border border-[var(--gold)]/10 relative">
             <img
               src="/assets/kits-caixa-premium.jpg"
               alt="Kit Presenteável"
@@ -58,7 +72,17 @@ import PageHeader from '../components/PageHeader.astro';
               decoding="async"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
+            <div class="absolute top-3 left-3 flex gap-2">
+              <Badge variant="gold" symbol="👑" tooltip="Embalagem especial selada com laço e brasão">
+                Selo Real
+              </Badge>
+            </div>
           </div>
+
+          <div class="flex items-center gap-2 mb-2">
+            <Badge variant="dark" symbol="❖">MDF ou Acrílico</Badge>
+          </div>
+
           <h2 class="text-2xl md:text-3xl text-[var(--gold)] tracking-wide font-medium">
             Kit Presenteável
           </h2>
@@ -71,24 +95,28 @@ import PageHeader from '../components/PageHeader.astro';
           <div class="text-[var(--gold)] font-display text-2xl font-bold tracking-wider">
             A partir de R$ 110
           </div>
-          <a
+          <Button
             href="/monte-seu-kit?kit=presenteavel"
-            class="px-6 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase hover:bg-[var(--gold-hover)] transition-all rounded-sm font-bold shadow-md"
+            variant="primary"
+            size="md"
           >
-            Montar Presente
-          </a>
+            <span>Montar Presente</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+          </Button>
         </div>
       </div>
     </div>
 
     <!-- AVULSOS LINK -->
     <div class="text-center mt-16">
-      <a
+      <Button
         href="/pocoes"
-        class="text-xs font-display tracking-widest uppercase text-[var(--gold)]/80 hover:text-[var(--gold)] underline underline-offset-4 font-bold"
+        variant="ghost"
+        size="md"
       >
-        Quero apenas garrafas avulsas →
-      </a>
+        <span>Quero apenas garrafas avulsas</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+      </Button>
     </div>
   </div>
 </Layout>

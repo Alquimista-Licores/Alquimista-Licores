@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import CauldronIcon from '../components/CauldronIcon.astro';
+import Button from '../components/Button.astro';
 ---
 
 <Layout
@@ -28,12 +29,14 @@ import CauldronIcon from '../components/CauldronIcon.astro';
       </p>
     </div>
 
-    <a
+    <Button
       href="/"
-      class="px-8 py-3.5 border border-[var(--gold)]/40 text-[var(--gold)] font-display tracking-widest text-xs uppercase hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-sm font-bold"
+      variant="outline"
+      size="md"
     >
-      Voltar para o início
-    </a>
+      <span>Voltar para o início</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+    </Button>
 
     <div class="text-xs text-[var(--text-faded)] mt-12">
       Alquimista Licores Artesanais · Criciúma/SC

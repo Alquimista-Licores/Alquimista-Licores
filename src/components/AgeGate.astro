@@ -1,5 +1,6 @@
 ---
 // Age Gate 18+ Verification Modal
+import Button from './Button.astro';
 ---
 
 <div id="age-gate-modal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-[var(--background)]/95 backdrop-blur-lg px-4">
@@ -19,18 +20,20 @@
       </p>
 
       <div class="flex gap-3 justify-center">
-        <button
+        <Button
           id="age-gate-yes"
-          class="px-7 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold hover:bg-[var(--gold-hover)] transition-colors rounded-sm shadow-md"
+          variant="primary"
+          size="md"
         >
-          Sim, tenho 18+
-        </button>
-        <button
+          <span>Sim, tenho 18+</span>
+        </Button>
+        <Button
           id="age-gate-no"
-          class="px-7 py-3 border border-[var(--gold)]/40 text-[var(--cream)] font-display tracking-widest text-xs uppercase font-bold hover:bg-[var(--surface-elevated)] transition-colors rounded-sm"
+          variant="outline"
+          size="md"
         >
-          Não
-        </button>
+          <span>Não</span>
+        </Button>
       </div>
 
       <p class="mt-8 text-[11px] text-[var(--text-faded)] font-body tracking-wider">

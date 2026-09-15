@@ -124,9 +124,9 @@ const kitPrices = await fetchKitPrices();
             <button
               id="deg-next-btn"
               disabled
-              class="w-full sm:w-auto px-8 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] transition-colors rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+              class="btn-primary w-full sm:w-auto !px-8 !py-3 !text-xs font-bold"
             >
-              Continuar →
+              <span>Continuar →</span>
             </button>
           </div>
         </div>
@@ -145,11 +145,11 @@ const kitPrices = await fetchKitPrices();
           </div>
 
           <div class="flex gap-3">
-            <button id="deg-prev-btn" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
-              ← Voltar
+            <button id="deg-prev-btn" class="btn-outline flex-1 !py-3 !text-xs font-bold">
+              <span>← Voltar</span>
             </button>
-            <button id="deg-add-cart-btn" class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs rounded-sm hover:bg-[var(--gold-hover)] font-bold shadow-md">
-              Adicionar ao Caldeirão
+            <button id="deg-add-cart-btn" class="btn-primary flex-1 !py-3 !text-xs font-bold">
+              <span>Adicionar ao Caldeirão</span>
             </button>
           </div>
         </div>
@@ -237,11 +237,11 @@ const kitPrices = await fetchKitPrices();
           </div>
 
           <div class="flex gap-3 pt-4">
-            <button id="pres-prev-2" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
-              ← Voltar
+            <button id="pres-prev-2" class="btn-outline flex-1 !py-3 !text-xs font-bold">
+              <span>← Voltar</span>
             </button>
-            <button id="pres-next-2" disabled class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
-              Continuar →
+            <button id="pres-next-2" disabled class="btn-primary flex-1 !py-3 !text-xs font-bold">
+              <span>Continuar →</span>
             </button>
           </div>
         </div>
@@ -285,11 +285,11 @@ const kitPrices = await fetchKitPrices();
           </div>
 
           <div class="flex gap-3 pt-4">
-            <button id="pres-prev-3" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
-              ← Voltar
+            <button id="pres-prev-3" class="btn-outline flex-1 !py-3 !text-xs font-bold">
+              <span>← Voltar</span>
             </button>
-            <button id="pres-next-3" disabled class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
-              Continuar →
+            <button id="pres-next-3" disabled class="btn-primary flex-1 !py-3 !text-xs font-bold">
+              <span>Continuar →</span>
             </button>
           </div>
         </div>
@@ -321,11 +321,11 @@ const kitPrices = await fetchKitPrices();
           </div>
 
           <div class="flex gap-3">
-            <button id="pres-prev-4" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
-              ← Voltar
+            <button id="pres-prev-4" class="btn-outline flex-1 !py-3 !text-xs font-bold">
+              <span>← Voltar</span>
             </button>
-            <button id="pres-add-cart-btn" class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs rounded-sm hover:bg-[var(--gold-hover)] font-bold shadow-md">
-              Adicionar ao Caldeirão
+            <button id="pres-add-cart-btn" class="btn-primary flex-1 !py-3 !text-xs font-bold">
+              <span>Adicionar ao Caldeirão</span>
             </button>
           </div>
         </div>
@@ -340,14 +340,14 @@ const kitPrices = await fetchKitPrices();
           Deseja adicionar mais poções ou já deseja finalizar seu pedido?
         </p>
         <div class="grid sm:grid-cols-3 gap-3 pt-2">
-          <button id="post-add-new-btn" class="py-3 border border-[var(--gold)]/40 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
-            Montar outro kit
+          <button id="post-add-new-btn" class="btn-outline !py-3 !text-xs font-bold">
+            <span>Montar outro kit</span>
           </button>
-          <a href="/pocoes" class="py-3 border border-[var(--gold)]/40 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold text-center">
-            Ver as poções
+          <a href="/pocoes" class="btn-outline !py-3 !text-xs font-bold text-center">
+            <span>Ver as poções</span>
           </a>
-          <button id="post-add-open-cart-btn" class="py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs rounded-sm hover:bg-[var(--gold-hover)] font-bold shadow-md">
-            Ir para o caldeirão
+          <button id="post-add-open-cart-btn" class="btn-primary !py-3 !text-xs font-bold">
+            <span>Ir para o caldeirão</span>
           </button>
         </div>
       </div>
