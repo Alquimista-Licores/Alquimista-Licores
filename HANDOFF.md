@@ -290,13 +290,12 @@ npm run build
    - Atualizado texto com quebra de linha equilibrada em 3 linhas antes de *"pois aqui tudo é"*.
    - Tipografia da citação ajustada para `Lato` itálico com aspas discretas em cor de acento no início.
    - Espaçamento inferior reduzido para aproximar a frase do título *"FEITO COM (C)ALMA."*.
-### [15/09/2026] — Refinamento do Custom Cursor (#B28C46)
+### [15/09/2026] — Refinamento do Custom Cursor Magnético (#B28C46)
 - **Componente Dedicado ([`src/components/CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro)) integrado globalmente em [`src/layouts/Layout.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/layouts/Layout.astro):**
   1. **Ponto Central (Dot):** Acompanha instantaneamente a coordenada do mouse com 0 lag (`translate3d` no evento de `mousemove`), tamanho de 6px na cor `#B28C46`.
-  2. **Círculo Externo (Trailing Follower):** Anel circular perfeito de 40px com espessura fina de **1px** (metade da anterior), seguindo com atraso suave e fluido (`lerp factor 0.12`) em loop `requestAnimationFrame`.
-  3. **Sem Distorções:** Preserva geometria 100% circular e uniforme em todas as velocidades sem deformações ovais (sem elastic stretch).
-  4. **Estados Interativos:** Expansão sutil ao passar sobre botões, links, cards e inputs clicáveis; contração tátil no clique (`mousedown`).
-  5. **Desktop Exclusivo:** Inativo em dispositivos móveis e telas touch (`@media (hover: hover) and (pointer: fine)`).
+  2. **Círculo Externo (Trailing Follower):** Anel circular perfeito de 40px com espessura fina de **1px**, seguindo com atraso suave e fluido (`lerp factor 0.14`) em loop `requestAnimationFrame`.
+  3. **Englobamento Magnético no Hover (Target Enclosing Morph):** Ao passar o mouse sobre botões, links, cards (`.product-card`, `.ritual-card`) ou inputs, o círculo externo atrai e se molda ao formato e dimensões exatas do elemento clicável, envolvendo-o com borda `#B28C46` de 1px e suave brilho áureo translúcido (`box-shadow: 0 0 20px rgba(178, 140, 70, 0.45)`). Ao sair do elemento, retorna suavemente à forma circular livre.
+  4. **Desktop Exclusivo:** Inativo em dispositivos móveis e telas touch (`@media (hover: hover) and (pointer: fine)`).
 
 ---
 
