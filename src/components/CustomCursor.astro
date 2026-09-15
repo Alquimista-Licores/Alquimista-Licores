@@ -213,8 +213,41 @@ const {
       [data-cursor-enclose], ${roundCircularSelector}
     `;
 
+    // Helper to detect if an overlay/modal (Cart Drawer, Product Modal, Dialog) is currently active/open
+    function getActiveOverlayOrModal(): HTMLElement | null {
+      // 1. Cart Drawer
+      const cartOverlay = document.getElementById("cart-drawer-overlay");
+      if (cartOverlay && !cartOverlay.classList.contains("hidden") && window.getComputedStyle(cartOverlay).display !== "none") {
+        const panel = document.getElementById("cart-drawer-panel");
+        return panel || cartOverlay;
+      }
+
+      // 2. Product Modal
+      const productModal = document.getElementById("product-modal-container");
+      if (productModal && !productModal.classList.contains("hidden") && window.getComputedStyle(productModal).display !== "none") {
+        const card = document.getElementById("product-modal-card");
+        return card || productModal;
+      }
+
+      // 3. Generic active modal / dialog / overlay
+      const activeDialog = document.querySelector<HTMLElement>("dialog[open], [role='dialog']:not(.hidden), .modal.is-active, #age-gate:not(.hidden)");
+      if (activeDialog && window.getComputedStyle(activeDialog).display !== "none" && window.getComputedStyle(activeDialog).visibility !== "hidden") {
+        return activeDialog;
+      }
+
+      return null;
+    }
+
     // Helper to check if an element is strictly visible, rendered, and not inside a collapsed accordion
     function isTargetActuallyVisible(el: HTMLElement): boolean {
+      // If an overlay/modal/drawer is open, ONLY elements inside that active modal are eligible
+      const activeModal = getActiveOverlayOrModal();
+      if (activeModal) {
+        if (!activeModal.contains(el)) {
+          return false;
+        }
+      }
+
       // If inside a ritual card, it MUST be inside the active ritual card (.is-active)
       const ritualParent = el.closest('.ritual-card');
       if (ritualParent && !ritualParent.classList.contains('is-active')) {
@@ -251,9 +284,15 @@ const {
 
     // Magnetic proximity detection (100px magnetic attraction range)
     function findMagneticTarget(x: number, y: number, proximity = 100): HTMLElement | null {
+      const activeModal = getActiveOverlayOrModal();
+
       // 1. Direct hit check under point
       const elUnderPoint = document.elementFromPoint(x, y) as HTMLElement | null;
       if (elUnderPoint) {
+        // If modal/drawer is open and point is outside it, no magnetic pull
+        if (activeModal && !activeModal.contains(elUnderPoint)) {
+          return null;
+        }
         // If it's over a product card, direct hit is handled by cardTarget in onMouseMove (0 opacity)
         if (elUnderPoint.closest('.product-card')) {
           return null;
@@ -273,6 +312,10 @@ const {
 
       for (let i = 0; i < candidates.length; i++) {
         const el = candidates[i];
+        // If modal/drawer is open, strictly skip elements outside the modal
+        if (activeModal && !activeModal.contains(el)) {
+          continue;
+        }
         if (el.closest(softLinksSelector) && !el.matches(roundCircularSelector) && !el.classList.contains('potion-suggestion-link')) {
           continue;
         }
@@ -314,6 +357,27 @@ const {
       }`;
 
       const target = e.target as HTMLElement | null;
+      const activeModal = getActiveOverlayOrModal();
+
+      // If a modal or cart drawer is open and mouse is outside it (e.g. on backdrop overlay), do not enclose anything
+      if (activeModal) {
+        if (!target || !activeModal.contains(target)) {
+          if (hoveredEncloseEl) {
+            hoveredEncloseEl = null;
+            circle.classList.remove("cursor-enclosing");
+            circle.style.width = `${baseCircleSize}px`;
+            circle.style.height = `${baseCircleSize}px`;
+            circle.style.borderRadius = "9999px";
+          }
+          isDirectlyHovered = false;
+          isCardHover = false;
+          isSoftHover = false;
+          circle.classList.remove("cursor-hidden", "cursor-soft");
+          circle.style.visibility = "visible";
+          circle.style.opacity = "1";
+          return;
+        }
+      }
 
       if (target) {
         // PRIORITY 1: Hover over a Product Card -> Outer circle becomes instantly 0% opacity (completely hidden)
@@ -330,7 +394,7 @@ const {
           return;
         }
 
-        // PRIORITY 2: Direct hit on Enclosing target (Video CTA, Instagram, WhatsApp, Potion buttons, Buttons)
+        // PRIORITY 2: Direct hit on Enclosing target (Modal items, Drawer items, Video CTA, Instagram, WhatsApp, Potion buttons, Buttons)
         const directEnclose = target.closest(enclosingSelector) as HTMLElement | null;
         if (directEnclose && isTargetActuallyVisible(directEnclose)) {
           isSoftHover = false;
@@ -348,7 +412,7 @@ const {
 
         // PRIORITY 3: Direct hit on Soft Hover element (Header/Footer text links or Ritual card background)
         const softTarget = target.closest(softLinksSelector) as HTMLElement | null;
-        if (softTarget) {
+        if (softTarget && !activeModal) {
           isDirectlyHovered = false;
           isCardHover = false;
           circle.classList.remove("cursor-hidden");

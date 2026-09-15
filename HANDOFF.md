@@ -300,6 +300,7 @@ npm run build
   6. **Brilho do Mouse nos Cards (Glare Refinado):** A área de brilho radial (`.product-glare`) gerada pelo mouse nos cards foi reduzida para um raio conciso e elegante de 130px com queda suave e translúcida, mantendo o visual limpo sem ofuscar a arte do produto.
   7. **Ícones Circulares (WhatsApp FAB, Instagram Footer e Caldeirão):** O botão flutuante do WhatsApp, o botão do Instagram no footer (`a[aria-label="Instagram do Alquimista"]`) e o botão do Caldeirão no header são englobados de forma **perfeitamente redonda** (`border-radius: 9999px`).
   8. **Botão de CTA do Vídeo Hero ("Conheça as Poções"):** O botão `#glassCtaBtn` (`.glass-cta-button`) exibido sobre o vídeo cinematográfico da Home é plenamente reconhecido pelo cursor e englobado de forma rente à sua borda com atração magnética quando visível após o scroll.
+  9. **Modais e Aba Lateral do Caldeirão (Isolamento Estrito):** Quando a aba lateral do carrinho (`#cart-drawer-panel`) ou qualquer modal (`#product-modal-card`, diálogos) estiver aberto, o cursor **engloba exclusivamente os elementos presentes dentro do modal/gaveta ativo**. Qualquer elemento da página de fundo é ignorado pela detecção e atração magnética.
 
 ---
 
