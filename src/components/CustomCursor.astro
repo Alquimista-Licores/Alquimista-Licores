@@ -184,7 +184,7 @@ const {
 
     // Selectors for round circular targets (WhatsApp button, Instagram button, and Cauldron icon)
     const roundCircularSelector = `
-      #cart-toggle-btn, button[aria-label*="Caldeirão"], button[title*="Caldeirão"], .quick-add-btn,
+      #cart-toggle-btn, button[aria-label*="Caldeirão"]:not(.quick-add-btn):not(.product-card *), button[title*="Caldeirão"]:not(.quick-add-btn):not(.product-card *),
       a[aria-label*="WhatsApp"], a[href*="wa.me"], a[href*="whatsapp.com"], .whatsapp-fab,
       a[aria-label*="Instagram"], a[href*="instagram.com"]
     `;
@@ -200,16 +200,16 @@ const {
       .ritual-card
     `;
 
-    // Selectors for Enclosing targets (Buttons, Video CTA, Potion badges, Social icons, Inputs - excluding cards)
+    // Selectors for Enclosing targets (Buttons, Video CTA, Potion badges, Social icons, Inputs - strictly excluding cards & buttons inside cards)
     const enclosingSelector = `
       .glass-cta-button,
       #glassCtaBtn,
       .potion-suggestion-link,
-      button:not(#cart-toggle-btn):not(.ritual-card),
+      button:not(#cart-toggle-btn):not(.ritual-card):not(.quick-add-btn):not(.product-card *),
       a.btn-primary, a.btn-ghost, a.btn-shimmer, a.btn-outline,
       .filter-tab-btn,
       input:not([type="hidden"]), select, textarea,
-      [data-cursor-enclose], ${roundCircularSelector}
+      [data-cursor-enclose]:not(.product-card):not(.product-card *), ${roundCircularSelector}
     `;
 
     // Helper to check if an element is strictly visible, rendered, and not inside a collapsed accordion
@@ -253,12 +253,12 @@ const {
       // 1. Direct hit check under point
       const elUnderPoint = document.elementFromPoint(x, y) as HTMLElement | null;
       if (elUnderPoint) {
-        // If it's over a product card (outside buttons), don't magnetic pull
-        if (elUnderPoint.closest('.product-card') && !elUnderPoint.closest('.quick-add-btn, button, a')) {
+        // If it's over a product card, strictly no magnetic pull
+        if (elUnderPoint.closest('.product-card')) {
           return null;
         }
         // If it's a soft target (header/footer text links or ritual card background), don't magnetic pull
-        if (elUnderPoint.closest(softLinksSelector) && !elUnderPoint.closest('.potion-suggestion-link, #cart-toggle-btn, .quick-add-btn, a[aria-label*="WhatsApp"], a[aria-label*="Instagram"], a[href*="instagram.com"]')) {
+        if (elUnderPoint.closest(softLinksSelector) && !elUnderPoint.closest('.potion-suggestion-link, #cart-toggle-btn, a[aria-label*="WhatsApp"], a[aria-label*="Instagram"], a[href*="instagram.com"]')) {
           return null;
         }
         const directHit = elUnderPoint.closest(enclosingSelector) as HTMLElement | null;
@@ -272,6 +272,9 @@ const {
 
       for (let i = 0; i < candidates.length; i++) {
         const el = candidates[i];
+        if (el.closest('.product-card')) {
+          continue;
+        }
         if (el.closest(softLinksSelector) && !el.matches(roundCircularSelector) && !el.classList.contains('potion-suggestion-link')) {
           continue;
         }
@@ -314,23 +317,30 @@ const {
 
       const target = e.target as HTMLElement | null;
 
-      // 1. Direct hit on Enclosing target (Video CTA, Instagram, WhatsApp, Potion buttons, Buttons inside cards)
       if (target) {
-        const directEnclose = target.closest(`
-          .glass-cta-button, #glassCtaBtn,
-          .potion-suggestion-link,
-          a[aria-label*="Instagram"], a[href*="instagram.com"],
-          #cart-toggle-btn, button[aria-label*="Caldeirão"], .quick-add-btn,
-          a[aria-label*="WhatsApp"], a[href*="wa.me"], .whatsapp-fab,
-          button:not(.ritual-card), a.btn-primary, a.btn-ghost, a.btn-shimmer, a.btn-outline,
-          .filter-tab-btn
-        `) as HTMLElement | null;
+        // PRIORITY 1: Hover over a Product Card -> Outer circle becomes instantly 0% opacity (completely hidden)
+        const cardTarget = target.closest('.product-card') as HTMLElement | null;
+        if (cardTarget) {
+          isCardHover = true;
+          hoveredEncloseEl = null;
+          isDirectlyHovered = false;
+          isSoftHover = false;
+          circle.classList.remove("cursor-enclosing", "cursor-soft");
+          circle.classList.add("cursor-hidden");
+          circle.style.opacity = "0";
+          circle.style.visibility = "hidden";
+          return;
+        }
 
+        // PRIORITY 2: Direct hit on Enclosing target (Video CTA, Instagram, WhatsApp, Potion buttons, Buttons)
+        const directEnclose = target.closest(enclosingSelector) as HTMLElement | null;
         if (directEnclose && isTargetActuallyVisible(directEnclose)) {
           isSoftHover = false;
           isCardHover = false;
           isDirectlyHovered = true;
           circle.classList.remove("cursor-hidden", "cursor-soft");
+          circle.style.visibility = "visible";
+          circle.style.opacity = "1";
           if (hoveredEncloseEl !== directEnclose) {
             hoveredEncloseEl = directEnclose;
             circle.classList.add("cursor-enclosing");
@@ -338,33 +348,13 @@ const {
           return;
         }
 
-        // 2. Direct hit on Product Card: Outer circle instantly becomes 0% opacity
-        const cardTarget = target.closest('.product-card') as HTMLElement | null;
-        if (cardTarget) {
-          isDirectlyHovered = false;
-          isSoftHover = false;
-          if (!isCardHover) {
-            isCardHover = true;
-            circle.classList.remove("cursor-soft", "cursor-enclosing");
-            circle.classList.add("cursor-hidden");
-          }
-          if (hoveredEncloseEl) {
-            hoveredEncloseEl = null;
-            circle.style.width = `${baseCircleSize}px`;
-            circle.style.height = `${baseCircleSize}px`;
-            circle.style.borderRadius = "9999px";
-          }
-          return;
-        }
-
-        // 3. Direct hit on Soft Hover element (Header/Footer text links or Ritual card background)
+        // PRIORITY 3: Direct hit on Soft Hover element (Header/Footer text links or Ritual card background)
         const softTarget = target.closest(softLinksSelector) as HTMLElement | null;
         if (softTarget) {
           isDirectlyHovered = false;
-          if (isCardHover) {
-            isCardHover = false;
-            circle.classList.remove("cursor-hidden");
-          }
+          isCardHover = false;
+          circle.classList.remove("cursor-hidden");
+          circle.style.visibility = "visible";
           if (hoveredEncloseEl) {
             hoveredEncloseEl = null;
             circle.classList.remove("cursor-enclosing");
@@ -383,6 +373,8 @@ const {
       if (isCardHover) {
         isCardHover = false;
         circle.classList.remove("cursor-hidden");
+        circle.style.visibility = "visible";
+        circle.style.opacity = "1";
       }
 
       if (isSoftHover) {
@@ -390,11 +382,15 @@ const {
         circle.classList.remove("cursor-soft");
       }
 
-      // 4. 100px Magnetic Attraction check
+      // PRIORITY 4: 100px Magnetic Attraction check
       const magneticTarget = findMagneticTarget(mouseX, mouseY, magneticProximity);
 
       if (magneticTarget) {
         isDirectlyHovered = false;
+        isCardHover = false;
+        circle.classList.remove("cursor-hidden");
+        circle.style.visibility = "visible";
+        circle.style.opacity = "1";
         if (hoveredEncloseEl !== magneticTarget) {
           hoveredEncloseEl = magneticTarget;
           circle.classList.add("cursor-enclosing");
@@ -440,7 +436,10 @@ const {
     // Smooth Trailing & Morphing loop
     function loop() {
       if (isVisible) {
-        if (hoveredEncloseEl && document.body.contains(hoveredEncloseEl) && isTargetActuallyVisible(hoveredEncloseEl)) {
+        if (isCardHover) {
+          circle.style.opacity = "0";
+          circle.style.visibility = "hidden";
+        } else if (hoveredEncloseEl && document.body.contains(hoveredEncloseEl) && isTargetActuallyVisible(hoveredEncloseEl)) {
           const isRound = hoveredEncloseEl.matches(roundCircularSelector);
           const layout = getUntransformedLayout(hoveredEncloseEl);
 
