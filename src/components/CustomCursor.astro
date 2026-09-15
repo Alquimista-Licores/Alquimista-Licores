@@ -200,16 +200,17 @@ const {
       .ritual-card
     `;
 
-    // Selectors for Enclosing targets (Buttons, Video CTA, Potion badges, Social icons, Inputs - strictly excluding cards & buttons inside cards)
+    // Selectors for Enclosing targets (Buttons, Video CTA, Potion badges, Product cards, Social icons, Inputs)
     const enclosingSelector = `
       .glass-cta-button,
       #glassCtaBtn,
       .potion-suggestion-link,
       button:not(#cart-toggle-btn):not(.ritual-card):not(.quick-add-btn):not(.product-card *),
       a.btn-primary, a.btn-ghost, a.btn-shimmer, a.btn-outline,
+      .product-card,
       .filter-tab-btn,
       input:not([type="hidden"]), select, textarea,
-      [data-cursor-enclose]:not(.product-card):not(.product-card *), ${roundCircularSelector}
+      [data-cursor-enclose], ${roundCircularSelector}
     `;
 
     // Helper to check if an element is strictly visible, rendered, and not inside a collapsed accordion
@@ -253,7 +254,7 @@ const {
       // 1. Direct hit check under point
       const elUnderPoint = document.elementFromPoint(x, y) as HTMLElement | null;
       if (elUnderPoint) {
-        // If it's over a product card, strictly no magnetic pull
+        // If it's over a product card, direct hit is handled by cardTarget in onMouseMove (0 opacity)
         if (elUnderPoint.closest('.product-card')) {
           return null;
         }
@@ -265,16 +266,13 @@ const {
         if (directHit && isTargetActuallyVisible(directHit)) return directHit;
       }
 
-      // 2. Proximity check within 100px
+      // 2. Proximity check within 100px (includes .product-card from outside)
       const candidates = document.querySelectorAll<HTMLElement>(enclosingSelector);
       let closest: HTMLElement | null = null;
       let minDistance = Infinity;
 
       for (let i = 0; i < candidates.length; i++) {
         const el = candidates[i];
-        if (el.closest('.product-card')) {
-          continue;
-        }
         if (el.closest(softLinksSelector) && !el.matches(roundCircularSelector) && !el.classList.contains('potion-suggestion-link')) {
           continue;
         }
