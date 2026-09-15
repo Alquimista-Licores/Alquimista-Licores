@@ -281,6 +281,12 @@ npm run build
 ### [15/09/2026] — Reordenação de Seções na Home (Story Quote pós-Depoimentos)
 - A dobra poética/manifesto *"Feito com (c)alma"* foi movida para o fechamento da página inicial ([`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro)), posicionando-se logo abaixo do carrossel de avaliações dos clientes e servindo como um convite intimista para conhecer a história do Alquimista antes do rodapé.
 
+### [15/09/2026] — Implementação da Seção "Fixed Background Reveal" para Kits
+- Substituído o banner anterior de kits por uma experiência cinematográfica de **Fixed Background Reveal** (`[clip-path:inset(0)]` com viewport fixo) em [`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro):
+  1. **Divisória Nobre:** Linha fina dourada contínua de uma ponta à outra posicionada imediatamente após a seção de Rituais de Degustação.
+  2. **Efeito Janela de Revelação:** A fotografia da caixa de kits (`/assets/caixa-premium.png`) permanece perfeitamente estática no viewport enquanto a dobra do site rola sobre ela, revelando-a organicamente sem distorção, sem zoom e sem cálculos pesados de parallax.
+  3. **Tipografia & CTA:** Texto poético *"Para quem merece algo raro. Kits artesanais para ocasiões especiais"* com botão `<Button variant="outline">` translúcido direcionando para a página `/kits`.
+
 ---
 
 *Nota: Ao realizar futuras mudanças de código, adicione uma nova entrada na seção 7 deste arquivo e atualize as seções correspondentes.*

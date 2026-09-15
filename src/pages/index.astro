@@ -49,53 +49,39 @@ const doubledTestimonials = [...testimonials, ...testimonials];
     <!-- RITUAIS DE DEGUSTAÇÃO (GRIMÓRIO INTERATIVO // 100% TRANSPARENTE) -->
     <RituaisDegustacao />
 
-    <!-- KITS BANNER (3D SCROLL PARALLAX: BACKGROUND, TEXT, BUTTON) -->
-    <section class="px-6 py-20 relative z-10" id="kitsParallaxSection">
-      <div
-        id="kitsBannerCard"
-        class="max-w-6xl mx-auto relative overflow-hidden rounded-md border border-[var(--gold)]/30 p-12 md:p-24 text-center gold-glow shadow-2xl"
-        style="perspective: 1000px; transform-style: preserve-3d;"
-      >
-        <!-- Background Layer (Deep Z, moves gently slower on scroll) -->
-        <div
-          id="kitsParallaxBg"
-          class="absolute -inset-[20%] w-[140%] h-[140%] bg-cover bg-center pointer-events-none will-change-transform"
-          style="background-image: url('/assets/kits-banner.png'); transform: translate3d(0px, 0px, -15px) scale(1.15);"
-        ></div>
+    <!-- DIVISÓRIA FINA DE UMA PONTA À OUTRA -->
+    <div class="w-full h-px bg-[var(--gold)]/20 relative z-10" aria-hidden="true"></div>
 
-        <!-- Atmospheric overlays -->
-        <div class="absolute inset-0 bg-[var(--background)]/75 pointer-events-none"></div>
-        <div class="absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_30%_30%,_var(--gold)_0%,_transparent_65%)] pointer-events-none"></div>
-        
-        <!-- Content Container with 3D Preservation -->
-        <div class="relative z-10 max-w-3xl mx-auto pointer-events-auto" style="transform-style: preserve-3d;">
-          <!-- Text Layer (Mid Z, rises gently on scroll) -->
-          <div
-            id="kitsParallaxText"
-            class="will-change-transform"
-            style="transform: translate3d(0px, 0px, 15px);"
-          >
-            <h2 class="font-sans italic text-2xl md:text-4xl text-[var(--cream)] leading-relaxed mb-10 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
-              Para quem merece algo raro.<br />Kits artesanais para ocasiões especiais.
-            </h2>
-          </div>
+    <!-- KITS FIXED BACKGROUND REVEAL SECTION -->
+    <section class="relative z-10 w-full min-h-[60vh] md:min-h-[75vh] flex items-center justify-center overflow-hidden [clip-path:inset(0)]">
+      <!-- Fixed Background Window (Permanece fixo no viewport enquanto o scroll revela a dobra) -->
+      <div class="fixed inset-0 w-full h-full pointer-events-none z-0">
+        <img
+          src="/assets/caixa-premium.png"
+          alt="Kits artesanais Alquimista para ocasiões especiais"
+          class="w-full h-full object-cover object-center"
+          loading="lazy"
+        />
+        <!-- Atmospheric Dark Overlay for Contrast -->
+        <div class="absolute inset-0 bg-black/60"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_30%,_rgba(0,0,0,0.6)_100%)]"></div>
+      </div>
 
-          <!-- Button Layer (Front Z, rises gently on scroll) -->
-          <div
-            id="kitsParallaxBtn"
-            class="will-change-transform"
-            style="transform: translate3d(0px, 0px, 30px);"
-          >
-            <Button
-              href="/kits"
-              variant="primary"
-              size="lg"
-            >
-              <span>Explorar Kits</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
-            </Button>
-          </div>
-        </div>
+      <!-- Content Layer -->
+      <div class="relative z-10 max-w-3xl mx-auto px-6 py-20 md:py-28 text-center flex flex-col items-center justify-center">
+        <h2 class="font-serif italic text-2xl sm:text-3xl md:text-5xl text-[var(--cream)] leading-snug md:leading-tight mb-8 md:mb-10 drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] max-w-2xl">
+          Para quem merece algo raro.<br class="hidden sm:inline" /> Kits artesanais para ocasiões especiais.
+        </h2>
+
+        <Button
+          href="/kits"
+          variant="outline"
+          size="lg"
+          class="bg-transparent hover:bg-[var(--gold)]/15 border-[var(--gold)]/60 text-[var(--cream)] hover:text-[var(--gold-bright)] transition-all"
+        >
+          <span>Explorar kits</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+        </Button>
       </div>
     </section>
 
@@ -239,74 +225,8 @@ const doubledTestimonials = [...testimonials, ...testimonials];
     }
   }
 
-  function setupKitsParallax() {
-    const card = document.getElementById("kitsBannerCard");
-    const bg = document.getElementById("kitsParallaxBg");
-    const text = document.getElementById("kitsParallaxText");
-    const btn = document.getElementById("kitsParallaxBtn");
-
-    if (!card || !bg || !text || !btn) return;
-
-    let rafId = 0;
-    let isIntersecting = false;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          isIntersecting = entry.isIntersecting;
-          if (isIntersecting) {
-            startParallaxLoop();
-          } else {
-            cancelAnimationFrame(rafId);
-          }
-        });
-      },
-      { threshold: 0.02 }
-    );
-
-    observer.observe(card);
-
-    function updateParallax() {
-      if (!isIntersecting) return;
-
-      const rect = card!.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-
-      // When the card is within or near the viewport
-      if (rect.bottom >= -150 && rect.top <= windowHeight + 150) {
-        const bannerCenter = rect.top + rect.height / 2;
-        const viewportCenter = windowHeight / 2;
-        // Offset in pixels from the screen center
-        const offset = bannerCenter - viewportCenter;
-
-        // 1. Fundo (Background Image): deslocamento suave e sutil (fundo em 3D)
-        const bgY = offset * 0.08;
-        bg!.style.transform = `translate3d(0px, ${bgY.toFixed(1)}px, -15px) scale(1.15)`;
-
-        // 2. Texto Poético: deslocamento suave intermediário
-        const textY = offset * -0.05;
-        text!.style.transform = `translate3d(0px, ${textY.toFixed(1)}px, 15px)`;
-
-        // 3. Botão Dourado: deslocamento suave no primeiro plano
-        const btnY = offset * -0.10;
-        btn!.style.transform = `translate3d(0px, ${btnY.toFixed(1)}px, 30px)`;
-      }
-
-      rafId = requestAnimationFrame(updateParallax);
-    }
-
-    function startParallaxLoop() {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(updateParallax);
-    }
-
-    // Direct scroll event listener for instant response
-    window.addEventListener("scroll", updateParallax, { passive: true });
-  }
-
   function initInteractiveEffects() {
     setupTestimonialsCenterGlow();
-    setupKitsParallax();
   }
 
   initInteractiveEffects();
