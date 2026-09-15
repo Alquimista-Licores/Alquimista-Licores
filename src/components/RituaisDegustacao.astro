@@ -180,17 +180,18 @@ const RITUALS: Ritual[] = [
             <!-- Background Subtle Aura on Active -->
             <div class="ritual-active-highlight" aria-hidden="true"></div>
 
-            <!-- Top Row: Roman Numeral + Title + Glyph -->
-            <div class="flex items-baseline justify-between gap-4 mb-1">
-              <div class="flex items-baseline gap-3 md:gap-4 flex-wrap">
-                <span class="ritual-numeral font-decorative text-lg md:text-xl font-bold transition-all duration-400">
+            <!-- Top Row: Roman Numeral + Dash + Title + Glyph -->
+            <div class="flex items-center justify-between gap-3 mb-1.5">
+              <div class="flex items-center gap-2.5 md:gap-3.5 flex-nowrap min-w-0">
+                <span class="ritual-numeral font-decorative text-lg md:text-xl font-bold shrink-0 transition-all duration-400">
                   {ritual.numeral}
                 </span>
-                <h3 class="ritual-title font-display text-lg md:text-2xl font-semibold tracking-wide transition-colors duration-400">
+                <span class="text-[var(--gold)]/50 font-light text-sm select-none shrink-0">—</span>
+                <h3 class="ritual-title font-display text-base sm:text-lg md:text-xl font-semibold tracking-wide transition-colors duration-400 truncate sm:overflow-visible">
                   {ritual.title}
                 </h3>
               </div>
-              <span class="ritual-glyph font-serif text-sm opacity-50 transition-opacity duration-300">
+              <span class="ritual-glyph font-serif text-sm opacity-50 shrink-0 transition-opacity duration-300">
                 {ritual.glyph}
               </span>
             </div>
@@ -415,7 +416,6 @@ const RITUALS: Ritual[] = [
 
   .ritual-card.is-active .ritual-numeral {
     color: var(--gold-bright);
-    transform: translateX(3px);
   }
 
   .ritual-card.is-active .ritual-title {
