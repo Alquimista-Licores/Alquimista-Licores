@@ -297,7 +297,8 @@ npm run build
   3. **Atração Magnética de 100px (Magnetic Pull):** Ao aproximar o mouse a até 100px de distância de qualquer elemento visível e englobável (botões, cards de produto, poções abertas dos rituais, ícone do caldeirão ou WhatsApp), o anel externo é puxado magneticamente em direção ao elemento e se molda suavemente à sua borda. Ao afastar além de 100px, solta-se suavemente de volta ao anel circular livre.
   4. **Links e Logo do Header & Footer + Área de Rituais:** Ao passar sobre a logo, links do Header/Footer ou sobre a área/fundo dos cards de rituais, o círculo externo **não engloba** os elementos; ele permanece livre e transiciona suavemente para **50% de opacidade** com efeito de fade-in e retorna com fade-out.
   5. **Botões e Cards (Contorno Transparente Flush Fit & Sincronização 3D):** Ao englobar botões, cards de produto (`.product-card`), botões de poções (`.potion-suggestion-link`) e abas de filtro, o anel engloba **exatamente rente à borda** (0 padding) com **fundo 100% transparente**. Nos cards com efeito de tilt/paralaxe 3D, a moldura do cursor herda e replica o ângulo de inclinação e rotação 3D (`perspective`, `rotateX`, `rotateY`, `translateY`) em tempo real, acompanhando perfeitamente as bordas inclinadas no espaço.
-  6. **Ícones Circulares (WhatsApp FAB e Caldeirão):** O botão flutuante do WhatsApp e o botão do Caldeirão no header são englobados de forma **perfeitamente redonda** (`border-radius: 9999px`).
+  6. **Brilho do Mouse nos Cards (Glare Refinado):** A área de brilho radial (`.product-glare`) gerada pelo mouse nos cards foi reduzida para um raio conciso e elegante de 130px com queda suave e translúcida, mantendo o visual limpo sem ofuscar a arte do produto.
+  7. **Ícones Circulares (WhatsApp FAB e Caldeirão):** O botão flutuante do WhatsApp e o botão do Caldeirão no header são englobados de forma **perfeitamente redonda** (`border-radius: 9999px`).
 
 ---
 
