@@ -15,6 +15,7 @@ interface Props {
   dotSize?: number;
   borderWidth?: number;
   delayFactor?: number;
+  proximity?: number;
 }
 
 const {
@@ -23,6 +24,7 @@ const {
   dotSize = 6,
   borderWidth = 1,
   delayFactor = 0.14,
+  proximity = 100,
 } = Astro.props;
 ---
 
@@ -34,6 +36,7 @@ const {
   data-dot-size={dotSize}
   data-border-width={borderWidth}
   data-delay-factor={delayFactor}
+  data-proximity={proximity}
   style={`--cursor-color: ${color};`}
   aria-hidden="true"
 >
@@ -111,6 +114,7 @@ const {
 
     const baseCircleSize = parseFloat(root.getAttribute("data-circle-size") || "40");
     const delay = parseFloat(root.getAttribute("data-delay-factor") || "0.14");
+    const magneticProximity = parseFloat(root.getAttribute("data-proximity") || "100");
 
     let mouseX = -100;
     let mouseY = -100;
@@ -148,8 +152,8 @@ const {
       [data-cursor-enclose], ${roundCircularSelector}
     `;
 
-    // Magnetic proximity detection (20px magnetic attraction range)
-    function findMagneticTarget(x: number, y: number, proximity = 20): HTMLElement | null {
+    // Magnetic proximity detection (100px magnetic attraction range)
+    function findMagneticTarget(x: number, y: number, proximity = 100): HTMLElement | null {
       // 1. Direct hit check under point
       const elUnderPoint = document.elementFromPoint(x, y) as HTMLElement | null;
       if (elUnderPoint) {
@@ -161,7 +165,7 @@ const {
         if (directHit) return directHit;
       }
 
-      // 2. Proximity check within 20px
+      // 2. Proximity check within 100px
       const candidates = document.querySelectorAll<HTMLElement>(enclosingSelector);
       let closest: HTMLElement | null = null;
       let minDistance = Infinity;
@@ -234,8 +238,8 @@ const {
         circle.classList.remove("cursor-soft");
       }
 
-      // 2. 20px Magnetic Attraction check
-      const magneticTarget = findMagneticTarget(mouseX, mouseY, 20);
+      // 2. 100px Magnetic Attraction check
+      const magneticTarget = findMagneticTarget(mouseX, mouseY, magneticProximity);
 
       if (magneticTarget) {
         if (hoveredEncloseEl !== magneticTarget) {
