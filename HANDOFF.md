@@ -264,6 +264,20 @@ npm run build
    - Trocada a posição dos links: "Contato" agora antecede "Jornada".
    - Ajustado layout do footer no desktop para exibir todos os links de navegação em uma única linha (`md:flex-nowrap whitespace-nowrap`).
 
+### [15/09/2026] — Refinamento e Otimização da Dobra "Rituais de Degustação"
+- **Simplificação de Cópia & UX Mais Escaneável ([`src/components/RituaisDegustacao.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/RituaisDegustacao.astro)):**
+  1. **Preservação Visual 100% da Área da Imagem:** Mantida a moldura fotográfica com cantoneiras clássicas, aspecto proporcional, crossfade suave e paralaxe em mousemove.
+  2. **Estrutura de Accordion Mais Limpa & Objetiva:**
+     - **Estado Recolhido:** Título direto + numeral romano + glifo alquímico + descrição curta e poética em itálico.
+     - **Estado Aberto:** Selo/linha prática em badge mono (`✦ Servir gelado · Taça pequena`), parágrafo principal conciso, bloco auxiliar de destaque (*Dica do Ritual* ou *Inspirações*) e chips interativos das poções indicadas com links diretos para o modal de produto.
+  3. **Títulos e Nomenclaturas Oficiais:**
+     - *Ritual I — PURO & GELADO*
+     - *Ritual II — COM GELO*
+     - *Ritual III — COM SOBREMESAS* (com a inclusão da *Poção da Alegria*)
+     - *Ritual IV — EM COQUETÉIS*
+  4. **Sincronização do Selo Dourado:** Badge flutuante sobre a imagem dinâmica sincronizada com os 4 novos títulos.
+  5. **Validação:** Build estático aprovado com sucesso (`astro build` executado em 5.42s).
+
 ---
 
 *Nota: Ao realizar futuras mudanças de código, adicione uma nova entrada na seção 7 deste arquivo e atualize as seções correspondentes.*
