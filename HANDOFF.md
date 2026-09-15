@@ -302,6 +302,17 @@ npm run build
   8. **Botão de CTA do Vídeo Hero ("Conheça as Poções"):** O botão `#glassCtaBtn` (`.glass-cta-button`) exibido sobre o vídeo cinematográfico da Home é plenamente reconhecido pelo cursor e englobado de forma rente à sua borda com atração magnética quando visível após o scroll.
   9. **Modais e Aba Lateral do Caldeirão (Isolamento Estrito):** Quando a aba lateral do carrinho (`#cart-drawer-panel`) ou qualquer modal (`#product-modal-card`, diálogos) estiver aberto, o cursor **engloba exclusivamente os elementos presentes dentro do modal/gaveta ativo**. Qualquer elemento da página de fundo é ignorado pela detecção e atração magnética.
 
+### [15/09/2026] — Refinamento do Modal de Detalhes da Poção (`ProductModal.astro`)
+- **Tipografia do Sabor Aumentada:** O texto do sabor (`#modal-product-sabor`) foi ampliado para `text-lg md:text-xl lg:text-2xl` em tom dourado suave (`var(--gold-soft)`), proporcionando leitura nobre e destaque imediato.
+- **Remoção do Selo Real:** O badge *"Selo Real"* foi removido da barra de garantias alquímicas, mantendo apenas *"100% Orgânico"* e *"Maceração 40 Dias"*.
+- **Eliminação de Scroll Horizontal:** O modal e suas colunas foram blindados com `overflow-x-hidden` e layout responsivo que impede qualquer overflow ou barra de rolagem lateral.
+- **Caixas de Estatísticas Técnicas & Tooltips Explicativos:**
+  - Inserido indicador discreto `(?)` em dourado no canto superior direito de cada caixa técnica.
+  - **Graduação:** Tooltip informativo ao passar o mouse: *"Mede a intensidade do álcool no licor. Define o equilíbrio entre calor e sabor."*
+  - **Brix (Açúcar):** Tooltip informativo ao passar o mouse: *"Indica o teor de açúcar da bebida: quanto maior o número, mais doce e encorpado é o licor."*
+  - **Classificação:** Tooltip informativo: *"Categoria oficial baseada no teor de açúcar e densidade do licor."*
+  - Tooltips renderizados com fundo dark velvet (`#0f0d0b`), borda dourada, seta de indicação e posicionamento dinâmico sem transbordar a tela em mobile.
+
 ---
 
 *Nota: Ao realizar futuras mudanças de código, adicione uma nova entrada na seção 7 deste arquivo e atualize as seções correspondentes.*
