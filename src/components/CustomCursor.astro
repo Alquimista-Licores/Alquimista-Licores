@@ -272,18 +272,24 @@ const {
             circle.style.width = `${roundDimension}px`;
             circle.style.height = `${roundDimension}px`;
             circle.style.borderRadius = "9999px";
+            circle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) translate3d(-50%, -50%, 0) ${
+              isActive ? "scale(0.97)" : "scale(1)"
+            }`;
           } else {
-            // Exact border-flush fit (0 padding) for buttons & cards
+            // Exact border-flush fit for buttons & cards, matching 3D parallax tilt
             const computed = window.getComputedStyle(hoveredEncloseEl);
             const radius = computed.borderRadius || "6px";
-            circle.style.width = `${rect.width}px`;
-            circle.style.height = `${rect.height}px`;
-            circle.style.borderRadius = radius;
-          }
+            const w = hoveredEncloseEl.offsetWidth || rect.width;
+            const h = hoveredEncloseEl.offsetHeight || rect.height;
+            const elTransform = hoveredEncloseEl.style.transform || "";
 
-          circle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) translate3d(-50%, -50%, 0) ${
-            isActive ? "scale(0.97)" : "scale(1)"
-          }`;
+            circle.style.width = `${w}px`;
+            circle.style.height = `${h}px`;
+            circle.style.borderRadius = radius;
+            circle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) translate3d(-50%, -50%, 0) ${elTransform} ${
+              isActive ? "scale(0.97)" : "scale(1)"
+            }`;
+          }
         } else {
           // Free-floating circle trailing the mouse
           circleX += (mouseX - circleX) * delay;
