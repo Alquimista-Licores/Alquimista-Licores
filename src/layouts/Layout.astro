@@ -8,6 +8,7 @@ import AgeGate from '../components/AgeGate.astro';
 import BackgroundParticles from '../components/BackgroundParticles.astro';
 import WhatsAppFAB from '../components/WhatsAppFAB.astro';
 import Toast from '../components/Toast.astro';
+import CustomCursor from '../components/CustomCursor.astro';
 import { SITE } from '../lib/data';
 
 interface Props {
@@ -70,9 +71,10 @@ const {
     {!hideChrome && <Footer />}
     {!hideChrome && <WhatsAppFAB />}
 
-    <!-- Global Cart Drawer, Product Detail Modal & Alchemical Toast -->
+    <!-- Global Cart Drawer, Product Detail Modal, Toast & Desktop Custom Cursor -->
     <CartDrawer />
     <ProductModal />
     <Toast />
+    <CustomCursor />
   </body>
 </html>

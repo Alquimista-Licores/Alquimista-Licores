@@ -657,23 +657,7 @@
   .gold-glow { box-shadow: 0 0 0 1px rgba(161,127,18,0.22), 0 8px 30px -8px rgba(161,127,18,0.28); }
   .gold-glow-hover:hover { box-shadow: 0 0 0 1px rgba(161,127,18,0.5), 0 16px 50px -10px rgba(191,152,24,0.35); }
 
-  /* Themed cursors — Windows standard geometry in #B28C46 with dark outline for contrast.
-     Falls back to native cursor if the SVG fails to load. */
-  @media (hover: hover) and (pointer: fine) {
-    body {
-      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M1 1 L1 18 L5.5 13.5 L8.5 21 L11.5 19.5 L8.5 12.2 L14.5 12.2 Z' fill='%23B28C46' stroke='%230e0b07' stroke-width='1.2' stroke-linejoin='round'/></svg>") 1 1, default !important;
-    }
-    a, button, [role="button"], [role="link"], summary, label[for], select, .cursor-pointer {
-      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M7 1.5 C6.2 1.5 5.5 2.2 5.5 3 L5.5 11.2 C4.8 10.5 3.6 10.3 2.8 10.9 C1.9 11.6 1.7 12.8 2.3 13.8 L4.8 18 C6 20.1 8.1 21.5 10.5 21.5 L13.8 21.5 C17 21.5 19.5 19 19.5 15.8 L19.5 10.5 C19.5 9.7 18.8 9 18 9 C17.6 9 17.3 9.2 17 9.4 C16.6 8.5 15.7 8 14.7 8 C14.4 8 14.1 8.1 13.8 8.3 C13.4 7.5 12.5 7 11.5 7 C11.2 7 10.9 7.1 10.7 7.3 L10.7 3 C10.7 2.2 10 1.5 9.2 1.5 Z' fill='%23B28C46' stroke='%230e0b07' stroke-width='1.2' stroke-linejoin='round'/><line x1='10.7' y1='7.5' x2='10.7' y2='13.5' stroke='%230e0b07' stroke-width='1' stroke-linecap='round'/><line x1='13.8' y1='8.5' x2='13.8' y2='13.5' stroke='%230e0b07' stroke-width='1' stroke-linecap='round'/><line x1='16.8' y1='9.5' x2='16.8' y2='13.5' stroke='%230e0b07' stroke-width='1' stroke-linecap='round'/></svg>") 7 2, pointer !important;
-    }
-    input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]),
-    textarea, [contenteditable="true"] {
-      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'><g stroke='%230e0b07' stroke-width='2.4' stroke-linecap='round' fill='none'><path d='M5 3 L11 3'/><path d='M5 19 L11 19'/><path d='M8 3 L8 19'/></g><g stroke='%23B28C46' stroke-width='1.4' stroke-linecap='round' fill='none'><path d='M5 3 L11 3'/><path d='M5 19 L11 19'/><path d='M8 3 L8 19'/></g></svg>") 8 11, text !important;
-    }
-    button:disabled, [aria-disabled="true"], .cursor-not-allowed {
-      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='11' cy='11' r='8' fill='none' stroke='%230e0b07' stroke-width='2.4'/><circle cx='11' cy='11' r='8' fill='none' stroke='%23B28C46' stroke-width='1.4'/><line x1='5.5' y1='5.5' x2='16.5' y2='16.5' stroke='%230e0b07' stroke-width='2.4' stroke-linecap='round'/><line x1='5.5' y1='5.5' x2='16.5' y2='16.5' stroke='%23B28C46' stroke-width='1.4' stroke-linecap='round'/></svg>") 11 11, not-allowed !important;
-    }
-  }
+
 
   @keyframes scrollX {
     from { transform: translateX(0); }
