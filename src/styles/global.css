@@ -255,11 +255,15 @@
   .animate-scroll-x { animation: scrollX 40s linear infinite; }
   .animate-scroll-x:hover { animation-play-state: paused; }
 
-  .testi-track-wrap { width: 100%; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-  .testi-track { display: flex; gap: 1.5rem; width: max-content; animation: scrollX 90s linear infinite; padding: 0 1rem; }
+  .testi-track-wrap { width: 100%; overflow: hidden; padding: 2rem 0; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .testi-track { display: flex; gap: 2rem; width: max-content; animation: scrollX 90s linear infinite; padding: 0 1rem; align-items: center; }
   .testi-track:hover { animation-play-state: paused; }
-  .testi-card { flex: 0 0 320px; padding: 1.5rem; border: none; background: transparent; }
-  @media (min-width: 768px) { .testi-card { flex-basis: 420px; } }
+  .testi-card { flex: 0 0 264px; padding: 0.5rem; border: none; background: transparent; }
+  @media (min-width: 768px) { .testi-card { flex-basis: 350px; } }
+  .testi-card-inner {
+    transition: transform 0.12s ease-out, opacity 0.15s ease-out;
+    will-change: transform, opacity;
+  }
 
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
   .reveal { animation: fadeUp 0.8s ease-out both; }

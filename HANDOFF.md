@@ -115,12 +115,18 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
-### [07/09/2026] — Implementação do Marquee Infinito Editorial na Home
-1. **Novo Componente `InfiniteMarquee.astro`:**
-   - Criada faixa contínua infinita com as mensagens: *"Produção artesanal"*, *"Sem corantes artificiais"*, *"Garrafas reutilizadas"* e *"Pequenos lotes"*.
-   - Tipografia serifada em alta escala (`Cormorant Garamond`), tracking amplo (`tracking-[0.2em]`), cor dourada suave (`--gold-soft`), separadores com glifo místico dourado com halo (`✦`).
-   - Efeito de fade nas bordas com gradientes transparentes e pausa interativa em `:hover`.
-   - Substituição da antiga grade estática de 4 ícones em `src/pages/index.astro`.
+### [07/09/2026] — Sincronização Oficial de Dados do Catálogo e Rituais de Degustação
+1. **Catálogo & Base de Dados 100% Alinhados:**
+   - Atualizado [`src/lib/data.ts`](file:///d:/projetos%20antigravity/site_alquimista/src/lib/data.ts) com as 12 poções reais, volumes oficiais (750ml), graduações (°GL), densidade (Brix), ingredientes, notas aromáticas, sugestões completas de consumo e os 10 depoimentos autênticos.
+2. **Refinamento dos Rituais de Degustação ([`RituaisDegustacao.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/RituaisDegustacao.astro)):**
+   - **Ritual I (Puro & Gelado):** Alinhado às temperaturas de 10–15°C e doses digestivas em cálice para *Poção da Prosperidade (Ouro)*, *Poção Néctar Místico (Butiá)* e *Poção Silvestre (Jabuticaba)*.
+   - **Ritual II (Sobre Gelo):** Focado na oxigenação e notas cítricas para *Poção Tropical (Abacaxi)*, *Poção da Serenidade (Maracujá)* e *Poção da Conexão (Figo)*.
+   - **Ritual III (À Mesa & Harmonização):** Conexão gastronômica com queijos de cabra/ricota, sobremesas de café, chocolate amargo e caldas sobre sorvete com *Poção do Doce Deleite (Doce de Leite)*, *Poção do Desejo (Chocolate)* e *Poção da Alegria (Banana)*.
+   - **Ritual IV (Em Alquimia & Mixologia):** Mixologia e drinks clássicos adaptados (Espresso Martini, Piña Colada, Margarita, Canela Sour) com *Poção da Inspiração (Café & Laranja)*, *Poção do Aconchego (Canela)* e *Poção do Doce Sossego (Maracujá Cremoso)*.
+3. **Efeito Dinâmico e Reativo no Header ([`Header.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/Header.astro)):**
+   - **No topo (`scrollY === 0`):** 100% transparente (`bg-transparent border-transparent`), integrando-se organicamente com o topo da página e o vídeo hero.
+   - **Ao rolar a página (`scrollY > 15`):** Transição suave para fundo escuro translúcido acetinado (`rgba(10, 10, 10, 0.80)`) com desfoque de vidro profundo (`backdrop-blur-xl`), borda inferior e sombra sutil.
+   - **Ao passar o mouse (`:hover` com cursor tracking):** Efeito *spotlight* em tempo real: o fundo e a borda inferior dourada clareiam e brilham suavemente ao redor da posição exata do cursor.
 
 ### [03/09/2026] — Implementação da Dobra "Rituais de Degustação" & Refinamentos Visuais
 1. **Nova Dobra `RituaisDegustacao.astro`:**
@@ -141,6 +147,88 @@ npm run build
 5. **Ajuste de Lettering no Hero:**
    - "ALQUIMIA" ajustado para "Alquimia" mantendo consistência com "Antigamente.".
 
+### [07/09/2026] — Remoção das Bordas e Ajuste Proporcional dos Depoimentos
+- Removidas as caixas retangulares e bordas douradas (`border border-[var(--gold)]/15`, `bg-[var(--surface-elevated)]/30`) dos cards do carrossel infinito de depoimentos em [`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro) e [`src/styles/global.css`](file:///d:/projetos%20antigravity/site_alquimista/src/styles/global.css).
+- **Redução Proporcional de 20%:** Largura dos itens (`flex-basis: 264px` / `350px`), fontes das aspas, corpo do comentário (`text-sm md:text-[15px]`), estrelas e autor foram reduzidos em 20%, mantendo a dinâmica de magnificação central proporcional (`scale(1.22)`).
+- As avaliações fluem com máxima harmonia visual e foco central.
+
+### [07/09/2026] — Calibração do Sistema de Partículas de Fundo & Onda de Choque
+- **Densidade Ampliada:** Total de partículas elevado de 76 para **130** (desktop) e de 38 para **65** (mobile) em [`src/components/BackgroundParticles.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/BackgroundParticles.astro).
+- **Preservação do Bokeh:** A quantidade de partículas grandes e desfocadas do primeiro plano (Layer 1) foi mantida estritamente fixa (15 desktop / 8 mobile), evitando poluição visual.
+- **Onda Invisível com Efeito Pairar e Impulso Ultrassuave:** Ao clicar no fundo, a onda gera apenas uma leve brisa sutil (força reduzida para `1.35`). As fagulhas deslizam suavemente sem solavancos (`damping: 0.968`), pairam com leveza e retomam o fluxo ascendente com máxima elegância.
+
+### [07/09/2026] — Parallax 3D Suave no Scroll no Banner de Kits
+- Implementado sistema de parallax 3D suave acionado pelo scroll da página (sem interferência de hover) em [`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro):
+  - **Fundo (Caixa do Kit):** Profundidade traseira (`translateZ: -15px`, `scale: 1.15`) com deslocamento suave (`offset * 0.08`).
+  - **Texto Poético:** Profundidade intermediária (`translateZ: 15px`) subindo de forma delicada (`offset * -0.05`).
+  - **Botão Dourado ("Explorar Kits"):** Primeiro plano 3D (`translateZ: 30px`) subindo ligeiramente mais rápido (`offset * -0.10`), conferindo uma tridimensionalidade refinada, leve e elegante durante a rolagem.
+
+### [07/09/2026] — Aprofundamento dos Rituais de Degustação
+- Atualizado [`src/components/RituaisDegustacao.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/RituaisDegustacao.astro) integrando receitas e técnicas do catálogo oficial:
+  1. **Ritual I (Puro & Gelado):** Digestivo solo a 10–15°C para poções com especiarias e cálices resfriados para frutas nativas (Butiá, Jabuticaba).
+  2. **Ritual II (Sobre Gelo):** Oxigenação em copo Old Fashioned para aberturas aromáticas de Abacaxi com cravo, Maracujá e folhas de Figo.
+  3. **Ritual III (À Mesa & Harmonização):** Harmonizações com tábuas de queijos nobres (cabra, ricota), sobremesas caramelizadas (Doce de Leite como calda sobre sorvetes/pudim) e Chocolate 50% com café.
+  4. **Ritual IV (Em Alquimia & Mixologia):** Receitas de coquetelaria autoral (Espresso Martini com Poção de Café & Laranja, Canela Sour com limão e anis estrelado, e Velvet Tropical Batida com Maracujá Cremoso).
+- Cards expandidos agora exibem badges de temperatura recomendada, caixas de destaque metodológico e chips interativos de poções com sabor e link direto para o `ProductModal`.
+
+### [14/09/2026] — Criação do Master Design System (`treino antigravity/resultados/design_system_master.html`)
+- **Novo Arquivo Criado Sem Substituição:** Conforme solicitado pelo usuário, os arquivos anteriores (`design_system.html`, `design_system0.html`, `design_system_old.html`) foram integralmente preservados e intactos. O novo master foi publicado em [`treino antigravity/resultados/design_system_master.html`](file:///d:/projetos%20antigravity/site_alquimista/treino%20antigravity/resultados/design_system_master.html).
+- **Fusão Criativa Definitiva:** Desenvolvido o novo arquivo mestre consolidando as melhores referências e sistemas:
+  1. **Dobra 1 (Hero Cinematográfico):** Idêntica à [`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro) e [`HeroCinematic.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/HeroCinematic.astro) com vídeo de fundo `video2.mp4` vinculado a scroll scrub contínuo via GSAP ScrollTrigger e Lenis Smooth Scroll, brackets de canto decorativos, status pill com pulso luminoso, título "A ARTE DA TRANSMUTAÇÃO" em ouro líquido e CTA dual.
+  2. **Dobra 2 (Showcase de Capacidades):** Marquee infinito bidirecional com glifos sagrados (🜂, 🜄, 🜁, 🜃, 🜚, 🜛, ⚗), vitrine 3D de poção centralizada com órbitas em rotação e satélites de metadados ("18% ABV", "Infusão Café & Baunilha", "Selo Real Lote 001/2026"), contadores métricos de alta legibilidade e deck de cartões 3D em camadas de profundidade.
+  3. **Tipografia:** Tabela analítica completa (Cinzel Decorative, Playfair Display, Cormorant Garamond, Bebas Neue, Syncopate, Inter, JetBrains Mono) com font-weight numérico, fluid clamp, line-height, letter-spacing e text-transform, além de playground interativo em tempo real para digitação livre.
+  4. **Sistema de Cores:** Espectros Dourado (#C8A97E, #E5C396, #D4AF37, #9A7B4F, #F3E5AB), Obsidiana (#070709, #0E0E12, #1A1A20) e Brasas/Botânica (#A83232, #235438, #4B286D) em Hex, RGB e HSL, índices WCAG AA/AAA e funcionalidade de cópia instantânea com toast flutuante.
+  5. **Componentes de UI:** Botões com sweep dourado (`btn-primary`), hairline (`btn-outline`), transmutação líquida (`btn-liquid`) e vitrificado (`glass-cta-button`), formulários temáticos, stepper numérico interativo, cards de poções com imagens reais em alta resolução, badges com tooltips e modal interativo de fórmula com backdrop-blur.
+  6. **Física de Partículas:** Motor em Canvas 2D contínuo com 60 fagulhas alquímicas douradas e rubras ascendentes e resposta interativa com repulsão ao ponteiro do mouse.
+
+### [15/09/2026] — Criação do Master Design System 2.0 (`treino antigravity/resultados/design_system2.html`)
+- **Arquivo Criado:** Publicado o [`treino antigravity/resultados/design_system2.html`](file:///d:/projetos%20antigravity/site_alquimista/treino%20antigravity/resultados/design_system2.html) com consolidação de tokens e componentes vivos.
+
+### [15/09/2026] — Criação do Master Design System 3.0 (`treino antigravity/resultados/design_system3.html`)
+- **Novo Arquivo Criado:** Criado e validado o [`treino antigravity/resultados/design_system3.html`](file:///d:/projetos%20antigravity/site_alquimista/treino%20antigravity/resultados/design_system3.html) como a versão mais avançada, autônoma e interativa do Design System.
+
+- **Fusão Criativa das Referências Solicitadas:**
+  1. **1ª Dobra (Hero Cinematográfica):** Idêntica a `src/pages/index.astro` e `HeroCinematic.astro`, com cantoneiras clássicas (`corner-bracket`), vídeo `/video2.mp4` ou fallback de alta definição, auroras escuras, coreografia de desfoque/translação das tipografias (*"LICORES ARTESANAIS FEITOS COMO Antigamente."* e *"DEGUSTE NOSSA Alquimia"*), botão glassmórfico e indicador sutil de scroll.
+  2. **2ª Dobra em Diante (Hero de Demonstração Viva):**
+     - Infinite Marquee com glifos dourados (`✦`, `🜂`, `🜄`, `🜁`, `🜃`, `☉`).
+     - Cards de poções em 3D com inclinação giroscópica ao mover o mouse (`[data-tilt]`), garrafas reais em alta resolução, badges de teor alcoólico e preços.
+     - Grimório Transparente interativo de Rituais de Degustação (4 abas: *O Despertar*, *A Temperatura*, *O Cálice*, *Harmonização*) com troca instantânea de receitas, passos cerimoniais e fotos dedicadas.
+     - Banner Parallax 3D de Kits artesanais com profundidade no eixo Z (fundo, texto poético e botão com velocidades de scroll independentes).
+     - Carrossel de Depoimentos com magnificação proporcional em curva cosseno e iluminação dourada no centro.
+  3. **Especificações Técnicas Completas do Design System:**
+     - **Tipografia:** Tabela completa de escala (h1 a h6, body-lg, body, caption/mono) com métricas de font-family, peso, rem/px, line-height e letter-spacing, acompanhada do Testador Interativo ao Vivo (seletores de família, tamanho e tracking com atualização em tempo real).
+     - **Sistema de Cores:** Paleta completa com valores HEX, RGB e HSL, índices de conformidade WCAG 2.1 (AAA e AA), matriz de gradientes, variantes de opacidade e clique para copiar instantâneo com notificação toast.
+     - **Componentes UI:** Botões (Dourado, Outline, Vinho Imperial, Ghost, Disabled), formulários e inputs com estados de validação visual (sucesso/erro), switches luminosos, badges, tooltips posicionais e modais funcionais (Age Gate e Quickview da Poção).
+     - **Ícones & Glifos:** Catálogo interativo com 12 símbolos alquímicos e botânicos com clique para cópia.
+     - **Animações (Motion Playground):** Keyframes puros para flutuação suave, pulso luminescente, rotação alquímica e varredura de luz (shimmer sweep).
+  4. **Atmosfera Contínua em Todas as Dobras:**
+     - Canvas 2D em 3 camadas de profundidade com repulsão ao ponteiro e ondas de choque expansivas ao clicar no fundo.
+     - Auroras boreais escuras em tons de ouro e vinho, textura de ruído/filme granulado e cursores dourados vetoriais personalizados.
+  5. **Validação:** 0 erros no console JavaScript, 100% responsivo (desktop a mobile 375px com menu hamburger).
+
+### [15/09/2026] — Criação do Master Design System 4.0 (`treino antigravity/resultados/design_system4.html`)
+- **Novo Arquivo Criado:** Criado e validado o [`treino antigravity/resultados/design_system4.html`](file:///d:/projetos%20antigravity/site_alquimista/treino%20antigravity/resultados/design_system4.html) consolidando o ápice das versões anteriores (`design_system2.html`, `design_system3.html`) com o Card Stack 3D Parallax de `parallax-clean`, os contadores de métricas artesanais de `barbershop`, e a vitrine de poções de `alquimistalicores.lovable.app`.
+- **Destaques da Versão 4.0:**
+  1. **1ª Dobra (Hero Cinematográfica):** Pinned stage de 350vh com cantoneiras clássicas, vídeo `/video2.mp4` ou canvas fallback, coreografia em 2 fases das tipografias e CTA glassmórfico.
+  2. **2ª Dobra em Diante (Showcase Vivo de Capacidades):**
+     - Infinite Marquee com glifos alquímicos (`✦`, `🜂`, `🜄`, `🜁`, `🜃`, `☉`).
+     - Botica de Poções com inclinação giroscópica 3D (`[data-tilt]`) ao mover o cursor.
+     - **Card Stack 3D Parallax ("O Tríptico da Criação"):** Metodologia secular em 3 cards empilhados (*01. A Maceração Silenciosa*, *02. A Harmonia da Calda*, *03. O Envase & Selo Nobre*).
+     - **Painel de Métricas & Stats Artesanais:** 4 contadores (`7+ Anos`, `15K+ Garrafas`, `12 Poções`, `100% Artesanal`).
+     - **Grimório Transparente dos 4 Elementos:** 4 abas interativas (*Ar 🜁*, *Água 🜄*, *Fogo 🜂*, *Terra 🜃*) com receitas e passos cerimoniais.
+     - Banner Parallax 3D de Kits artesanais e Carrossel de Depoimentos com curva cosseno de magnificação central.
+  3. **Especificações Técnicas Completas:**
+     - **Tipografia:** Tabela analítica completa (h1 a h6, body-lg, body, caption/mono) e Testador Interativo ao Vivo com seletores de fontes, tamanho e espaçamento.
+     - **Sistema de Cores:** Paleta completa (Hex, RGB, HSL), índices WCAG AAA/AA, matriz de gradientes, variantes de opacidade e clique para cópia com toast flutuante.
+     - **Componentes UI:** Botões com microinterações, formulários com validação visual (sucesso/erro), switches luminosos, badges, tooltips posicionais e 2 modais funcionais (Age Gate e Quickview).
+     - **Ícones & Glifos:** Catálogo com 12 símbolos alquímicos vetoriais com cópia imediata.
+     - **Animações (Motion Playground):** Keyframes puros para flutuação, pulso, rotação e varredura de luz (shimmer).
+  4. **Atmosfera Contínua:** Canvas 2D em 3 camadas com repulsão ao mouse e ondas de choque ao clique, auroras boreais escuras, textura de ruído e cursores dourados vetoriais.
+  5. **Validação no Navegador:** 0 erros no console JavaScript, 100% responsivo.
+
 ---
 
 *Nota: Ao realizar futuras mudanças de código, adicione uma nova entrada na seção 7 deste arquivo e atualize as seções correspondentes.*
+
+
+

@@ -75,25 +75,50 @@ const doubledTestimonials = [...testimonials, ...testimonials];
     <!-- RITUAIS DE DEGUSTAÇÃO (GRIMÓRIO INTERATIVO // 100% TRANSPARENTE) -->
     <RituaisDegustacao />
 
-    <!-- KITS BANNER -->
-    <section class="px-6 py-20 relative z-10">
+    <!-- KITS BANNER (3D SCROLL PARALLAX: BACKGROUND, TEXT, BUTTON) -->
+    <section class="px-6 py-20 relative z-10" id="kitsParallaxSection">
       <div
-        class="max-w-6xl mx-auto relative overflow-hidden rounded-sm border border-[var(--gold)]/30 bg-cover bg-center p-12 md:p-24 text-center gold-glow shadow-2xl"
-        style="background-image: url('/assets/kits-banner.png');"
+        id="kitsBannerCard"
+        class="max-w-6xl mx-auto relative overflow-hidden rounded-sm border border-[var(--gold)]/30 p-12 md:p-24 text-center gold-glow shadow-2xl"
+        style="perspective: 1000px; transform-style: preserve-3d;"
       >
+        <!-- Background Layer (Deep Z, moves gently slower on scroll) -->
+        <div
+          id="kitsParallaxBg"
+          class="absolute -inset-[20%] w-[140%] h-[140%] bg-cover bg-center pointer-events-none will-change-transform"
+          style="background-image: url('/assets/kits-banner.png'); transform: translate3d(0px, 0px, -15px) scale(1.15);"
+        ></div>
+
+        <!-- Atmospheric overlays -->
         <div class="absolute inset-0 bg-[var(--background)]/75 pointer-events-none"></div>
         <div class="absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_30%_30%,_var(--gold)_0%,_transparent_65%)] pointer-events-none"></div>
         
-        <div class="relative z-10 max-w-3xl mx-auto">
-          <p class="font-sans italic text-2xl md:text-4xl text-[var(--cream)] leading-relaxed mb-10">
-            Para quem merece algo raro.<br />Kits artesanais para ocasiões especiais.
-          </p>
-          <a
-            href="/kits"
-            class="inline-block px-10 py-4 bg-[var(--gold)] text-[var(--background)] font-sans tracking-widest text-xs md:text-sm uppercase font-bold hover:bg-[var(--gold-hover)] transition-all rounded-sm shadow-xl"
+        <!-- Content Container with 3D Preservation -->
+        <div class="relative z-10 max-w-3xl mx-auto pointer-events-auto" style="transform-style: preserve-3d;">
+          <!-- Text Layer (Mid Z, rises gently on scroll) -->
+          <div
+            id="kitsParallaxText"
+            class="will-change-transform"
+            style="transform: translate3d(0px, 0px, 15px);"
           >
-            Explorar Kits
-          </a>
+            <p class="font-sans italic text-2xl md:text-4xl text-[var(--cream)] leading-relaxed mb-10 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+              Para quem merece algo raro.<br />Kits artesanais para ocasiões especiais.
+            </p>
+          </div>
+
+          <!-- Button Layer (Front Z, rises gently on scroll) -->
+          <div
+            id="kitsParallaxBtn"
+            class="will-change-transform"
+            style="transform: translate3d(0px, 0px, 30px);"
+          >
+            <a
+              href="/kits"
+              class="inline-block px-10 py-4 bg-[var(--gold)] text-[var(--background)] font-sans tracking-widest text-xs md:text-sm uppercase font-bold hover:bg-[var(--gold-hover)] hover:scale-105 active:scale-95 transition-transform rounded-sm shadow-2xl hover:shadow-[0_0_25px_rgba(200,169,126,0.6)]"
+            >
+              Explorar Kits
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -107,19 +132,21 @@ const doubledTestimonials = [...testimonials, ...testimonials];
         <div class="w-16 h-px bg-[var(--gold)]/40 mx-auto mt-4"></div>
       </div>
 
-      <div class="testi-track-wrap">
-        <div class="testi-track">
+      <div class="testi-track-wrap" id="testiTrackWrap">
+        <div class="testi-track" id="testiTrack">
           {doubledTestimonials.map((t, idx) => (
             <div class="testi-card" key={`${t.id}-${idx}`}>
-              <div class="font-display text-3xl text-[var(--gold)] leading-none mb-2">“</div>
-              <p class="font-sans italic text-base md:text-lg text-[var(--cream)]/90 leading-relaxed min-h-[4.5rem]">
-                {t.texto}
-              </p>
-              <div class="flex gap-1 mt-4 text-[var(--gold)] text-sm">
-                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-              </div>
-              <div class="font-display text-sm md:text-base tracking-widest uppercase text-[var(--gold)] mt-2 font-bold">
-                — {t.nome}
+              <div class="testi-card-inner p-3 md:p-4 bg-transparent">
+                <div class="font-display text-2xl text-[var(--gold)] leading-none mb-1.5">“</div>
+                <p class="font-sans italic text-sm md:text-[15px] text-[var(--cream)]/90 leading-relaxed min-h-[3.6rem]">
+                  {t.texto}
+                </p>
+                <div class="testi-stars flex gap-1 mt-3 text-[var(--gold)] text-xs transition-all duration-300">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+                <div class="font-display text-xs md:text-sm tracking-widest uppercase text-[var(--gold)] mt-2 font-bold">
+                  — {t.nome}
+                </div>
               </div>
             </div>
           ))}
@@ -142,3 +169,147 @@ const doubledTestimonials = [...testimonials, ...testimonials];
     </section>
   </div>
 </Layout>
+
+<script>
+  function setupTestimonialsCenterGlow() {
+    const wrap = document.getElementById("testiTrackWrap");
+    if (!wrap) return;
+
+    const cards = wrap.querySelectorAll<HTMLElement>(".testi-card");
+    let isIntersecting = false;
+    let rafId = 0;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isIntersecting = entry.isIntersecting;
+          if (isIntersecting) {
+            startLoop();
+          } else {
+            cancelAnimationFrame(rafId);
+          }
+        });
+      },
+      { threshold: 0.05 }
+    );
+
+    observer.observe(wrap);
+
+    function tick() {
+      if (!isIntersecting) return;
+      const wrapRect = wrap!.getBoundingClientRect();
+      const centerX = wrapRect.left + wrapRect.width / 2;
+      const maxDist = wrapRect.width * 0.30;
+
+      cards.forEach((card) => {
+        const inner = card.querySelector<HTMLElement>(".testi-card-inner");
+        const stars = card.querySelector<HTMLElement>(".testi-stars");
+        if (!inner) return;
+
+        const cardRect = card.getBoundingClientRect();
+        const cardCenter = cardRect.left + cardRect.width / 2;
+        const dist = Math.abs(cardCenter - centerX);
+
+        if (dist < maxDist) {
+          // Smooth cosine curve from 0 to 1 at the center
+          const factor = Math.cos((dist / maxDist) * (Math.PI / 2));
+          const scale = 1 + factor * 0.22;
+          inner.style.transform = `scale(${scale})`;
+          inner.style.opacity = `${0.75 + factor * 0.25}`;
+
+          if (stars) {
+            stars.style.filter = `drop-shadow(0 0 ${factor * 8}px rgba(212, 178, 58, ${factor * 1}))`;
+            stars.style.transform = `scale(${1 + factor * 0.15})`;
+          }
+        } else {
+          inner.style.transform = "scale(1)";
+          inner.style.opacity = "0.75";
+          if (stars) {
+            stars.style.filter = "none";
+            stars.style.transform = "scale(1)";
+          }
+        }
+      });
+
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function startLoop() {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(tick);
+    }
+  }
+
+  function setupKitsParallax() {
+    const card = document.getElementById("kitsBannerCard");
+    const bg = document.getElementById("kitsParallaxBg");
+    const text = document.getElementById("kitsParallaxText");
+    const btn = document.getElementById("kitsParallaxBtn");
+
+    if (!card || !bg || !text || !btn) return;
+
+    let rafId = 0;
+    let isIntersecting = false;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isIntersecting = entry.isIntersecting;
+          if (isIntersecting) {
+            startParallaxLoop();
+          } else {
+            cancelAnimationFrame(rafId);
+          }
+        });
+      },
+      { threshold: 0.02 }
+    );
+
+    observer.observe(card);
+
+    function updateParallax() {
+      if (!isIntersecting) return;
+
+      const rect = card!.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // When the card is within or near the viewport
+      if (rect.bottom >= -150 && rect.top <= windowHeight + 150) {
+        const bannerCenter = rect.top + rect.height / 2;
+        const viewportCenter = windowHeight / 2;
+        // Offset in pixels from the screen center
+        const offset = bannerCenter - viewportCenter;
+
+        // 1. Fundo (Background Image): deslocamento suave e sutil (fundo em 3D)
+        const bgY = offset * 0.08;
+        bg!.style.transform = `translate3d(0px, ${bgY.toFixed(1)}px, -15px) scale(1.15)`;
+
+        // 2. Texto Poético: deslocamento suave intermediário
+        const textY = offset * -0.05;
+        text!.style.transform = `translate3d(0px, ${textY.toFixed(1)}px, 15px)`;
+
+        // 3. Botão Dourado: deslocamento suave no primeiro plano
+        const btnY = offset * -0.10;
+        btn!.style.transform = `translate3d(0px, ${btnY.toFixed(1)}px, 30px)`;
+      }
+
+      rafId = requestAnimationFrame(updateParallax);
+    }
+
+    function startParallaxLoop() {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateParallax);
+    }
+
+    // Direct scroll event listener for instant response
+    window.addEventListener("scroll", updateParallax, { passive: true });
+  }
+
+  function initInteractiveEffects() {
+    setupTestimonialsCenterGlow();
+    setupKitsParallax();
+  }
+
+  initInteractiveEffects();
+  document.addEventListener("astro:page-load", initInteractiveEffects);
+</script>

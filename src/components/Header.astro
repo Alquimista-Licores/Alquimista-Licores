@@ -9,15 +9,27 @@ const NAV = [
   { href: "/kits", label: "Kits & Presentes" },
   { href: "/monte-seu-kit", label: "Monte seu Kit" },
   { href: "/sobre", label: "Sobre" },
+  { href: "/sobre#jornada", label: "Jornada" },
   { href: "/contato", label: "Contato" },
 ];
 ---
 
-<header id="site-header" class="fixed top-0 inset-x-0 z-40 transition-all duration-500 bg-transparent">
-  <div class="max-w-7xl mx-auto px-6 lg:px-10 h-16 lg:h-20 flex items-center justify-between gap-6">
+<header
+  id="site-header"
+  class="fixed top-0 inset-x-0 z-40 transition-all duration-500 bg-transparent border-b border-transparent select-none"
+>
+  <!-- Interactive Hover Spotlight Layers (Cursor follower) -->
+  <div class="header-spotlight-bg pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300" aria-hidden="true"></div>
+  <div class="header-spotlight-border pointer-events-none absolute bottom-0 inset-x-0 h-px opacity-0 transition-opacity duration-300" aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 h-16 lg:h-20 flex items-center justify-between gap-6">
     <!-- LOGO -->
     <a href="/" class="flex items-center group">
-      <img src="/assets/logo-alquimista.png" alt="Alquimista Licores" class="h-10 lg:h-12 w-auto" />
+      <img
+        src="/assets/logo-alquimista.png"
+        alt="Alquimista Licores"
+        class="h-7 md:h-8 lg:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+      />
     </a>
 
     <!-- DESKTOP NAV -->
@@ -27,7 +39,7 @@ const NAV = [
         return (
           <a
             href={n.href}
-            class={`header-nav-link text-[0.80rem] uppercase relative py-1 transition-colors duration-300 ${
+            class={`header-nav-link text-[0.80rem] uppercase relative py-0.5 transition-colors duration-300 ${
               isActive ? "active text-[var(--gold-light)] font-normal" : "text-[var(--text-soft)] hover:text-[var(--gold-light)] font-light"
             }`}
           >
@@ -92,6 +104,41 @@ const NAV = [
 </header>
 
 <style>
+  #site-header {
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+  }
+
+  /* Scrolled State: Dark Semi-transparent Glass + Blur */
+  #site-header.is-scrolled {
+    background-color: rgba(10, 10, 10, 0.80);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom-color: rgba(200, 169, 126, 0.18);
+    box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.75);
+  }
+
+  /* Interactive Hover: Spotlight background centered at cursor */
+  #site-header:hover .header-spotlight-bg {
+    opacity: 1;
+    background: radial-gradient(
+      450px circle at var(--mouse-x) var(--mouse-y),
+      rgba(200, 169, 126, 0.14),
+      transparent 80%
+    );
+  }
+
+  /* Interactive Hover: Bottom border lights up near cursor */
+  #site-header:hover .header-spotlight-border {
+    opacity: 1;
+    background: radial-gradient(
+      320px circle at var(--mouse-x) 50%,
+      rgba(212, 178, 58, 0.95) 0%,
+      rgba(200, 169, 126, 0.5) 45%,
+      transparent 80%
+    );
+  }
+
   .header-nav-link {
     font-family: 'Century Gothic', 'Questrial', 'Outfit', -apple-system, sans-serif;
     letter-spacing: 0.22em;
@@ -101,12 +148,12 @@ const NAV = [
   .header-nav-link::after {
     content: '';
     position: absolute;
-    bottom: -3px;
+    bottom: 0px;
     left: 0;
     width: 0;
-    height: 1.5px;
+    height: 1px;
     background: var(--gold);
-    box-shadow: 0 0 8px var(--gold);
+    box-shadow: 0 0 5px rgba(200, 169, 126, 0.6);
     transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -125,16 +172,30 @@ const NAV = [
     const closeIcon = document.getElementById("close-icon");
     const cartBtn = document.getElementById("cart-toggle-btn");
 
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 30) {
-        header?.classList.add("bg-[var(--background)]/90", "backdrop-blur-xl", "border-b", "border-[var(--gold)]/15", "shadow-lg");
-        header?.classList.remove("bg-transparent");
+    if (!header) return;
+
+    // 1. Scroll State Management
+    function handleScroll() {
+      if (window.scrollY > 15) {
+        header?.classList.add("is-scrolled");
       } else {
-        header?.classList.remove("bg-[var(--background)]/90", "backdrop-blur-xl", "border-b", "border-[var(--gold)]/15", "shadow-lg");
-        header?.classList.add("bg-transparent");
+        header?.classList.remove("is-scrolled");
       }
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    // 2. Cursor Spotlight Tracking for Background and Border Glow
+    header.addEventListener("mousemove", (e) => {
+      const rect = header.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      header.style.setProperty("--mouse-x", `${x}px`);
+      header.style.setProperty("--mouse-y", `${y}px`);
     });
 
+    // 3. Mobile Menu Toggle
     mobileBtn?.addEventListener("click", () => {
       const isHidden = mobileMenu?.classList.contains("hidden");
       if (isHidden) {
@@ -148,11 +209,12 @@ const NAV = [
       }
     });
 
+    // 4. Cart Open Dispatch
     cartBtn?.addEventListener("click", () => {
       window.dispatchEvent(new CustomEvent("open-cart"));
     });
 
-    // Update cart badge from local storage
+    // 5. Update cart badge from local storage
     function updateBadge() {
       try {
         const raw = localStorage.getItem("alquimista-cart");

@@ -4,12 +4,18 @@ interface Ritual {
   id: string;
   numeral: string;
   title: string;
+  subtitle: string;
   desc: string;
   image: string;
   alt: string;
   glyph: string;
+  element: string;
+  idealTemp: string;
+  technique: string;
   ambientNotes: string;
-  suggestedPotions: { name: string; id: string }[];
+  highlightLabel: string;
+  highlightText: string;
+  suggestedPotions: { name: string; sabor: string; id: string; badge: string }[];
 }
 
 const RITUALS: Ritual[] = [
@@ -17,56 +23,84 @@ const RITUALS: Ritual[] = [
     id: "puro-gelado",
     numeral: "I",
     title: "PURO & GELADO",
-    desc: "Preserve a essência da poção.",
+    subtitle: "O Digestivo Solo & Essência Botânica",
+    desc: "Preserve a essência pura, a textura aveludada e o buquê botânico solo.",
     image: "/assets/rituals/ritual-puro-gelado.jpg",
-    alt: "Ritual Puro e Gelado — Licor servido em cálice de cristal gelado",
+    alt: "Ritual Puro e Gelado — Licor servido em cálice de cristal resfriado",
     glyph: "🜄",
-    ambientNotes: "Servido bem gelado em pequenos cálices de cristal, mantendo a textura aveludada e a densidade aromática pura.",
+    element: "Água",
+    idealTemp: "10°C a 15°C em taça pequena",
+    technique: "Servir em pequenos cálices ou taças de cristal levemente resfriadas. A temperatura controlada intensifica a cremosidade do leite e preserva os óleos essenciais das frutas nativas sem necessidade de diluição.",
+    ambientNotes: "Degustar solo após a refeição como um digestivo aromático nobre.",
+    highlightLabel: "Harmonização de Temperatura",
+    highlightText: "Poções com especiarias ganham sedosidade a 10–15°C; poções de frutas nativas (Butiá, Jabuticaba) revelam frescor cítrico e acidez vibrante quando bem geladas.",
     suggestedPotions: [
-      { name: "Poção Néctar Místico (Butiá)", id: "6fe04098-9cd1-4cb7-a903-1e3ae1147671" },
-      { name: "Poção Silvestre (Jabuticaba)", id: "37758861-8dc5-4a9d-8995-b341c91ba200" }
+      { name: "Poção da Prosperidade", sabor: "Ouro Especial", id: "af94b5a9-33d4-4a6b-abb1-0e59a49d3ec7", badge: "12.5°GL · Cacau & Especiarias" },
+      { name: "Poção Néctar Místico", sabor: "Butiá", id: "6fe04098-9cd1-4cb7-a903-1e3ae1147671", badge: "16°GL · Acidez Tropical" },
+      { name: "Poção Silvestre", sabor: "Jabuticaba", id: "37758861-8dc5-4a9d-8995-b341c91ba200", badge: "15°GL · Frutado Aveludado" }
     ]
   },
   {
     id: "sobre-gelo",
     numeral: "II",
     title: "SOBRE GELO",
-    desc: "Deixe aromas e sabores se revelarem lentamente.",
+    subtitle: "Oxigenação Lenta & Abertura Cítrica",
+    desc: "Deixe notas tropicais e botânicos ocultos se revelarem à medida que a poção respira.",
     image: "/assets/rituals/ritual-sobre-gelo.jpg",
-    alt: "Ritual Sobre Gelo — Licor sobre esfera de gelo em copo de cristal",
+    alt: "Ritual Sobre Gelo — Licor servido sobre esfera de gelo em copo Old Fashioned",
     glyph: "🜃",
-    ambientNotes: "Uma pedra de gelo translúcido suaviza a intensidade e abre notas aromáticas ocultas conforme o licor respira.",
+    element: "Terra",
+    idealTemp: "Copo baixo com esfera translúcida (On The Rocks)",
+    technique: "Uma única pedra grande de gelo translúcido no copo baixo. A fusão lenta oxigena a bebida, suaviza a graduação alcoólica e desprende notas cítricas e amadeiradas sem aguar a textura.",
+    ambientNotes: "Ideal para tardes quentes, recepções intimistas ou como refresco sofisticado.",
+    highlightLabel: "Abertura Aromática",
+    highlightText: "O abacaxi desprende nuances de cravo-da-índia, o maracujá equilibra acidez e doçura viva, e as folhas de figueira liberam notas verdes e florais de bosque.",
     suggestedPotions: [
-      { name: "Poção Tropical (Abacaxi)", id: "9e6a58a9-8d88-4613-9ce7-2dfb8afca29e" },
-      { name: "Poção da Serenidade (Maracujá)", id: "b679b884-73a2-48cc-81af-2bc99abecee1" }
+      { name: "Poção Tropical", sabor: "Abacaxi", id: "9e6a58a9-8d88-4613-9ce7-2dfb8afca29e", badge: "16.5°GL · Cravo & Cítrico" },
+      { name: "Poção da Serenidade", sabor: "Maracujá", id: "b679b884-73a2-48cc-81af-2bc99abecee1", badge: "15°GL · Refrescante" },
+      { name: "Poção da Conexão", sabor: "Figo", id: "f57e85ca-3e25-4885-a9b8-8febeac0421a", badge: "21°GL · Notas Herbáceas" }
     ]
   },
   {
     id: "a-mesa",
     numeral: "III",
-    title: "À MESA",
-    desc: "Encontre novas notas através da harmonização.",
+    title: "À MESA & HARMONIZAÇÃO",
+    subtitle: "O Banquete Alquímico: Queijos Nobres & Sobremesas",
+    desc: "O fecho nobre para banquetes: queijos finos, doces intensos e café expresso.",
     image: "/assets/rituals/ritual-a-mesa.jpg",
-    alt: "Ritual À Mesa — Licor harmonizado com queijos finos, chocolate e figos frescos",
+    alt: "Ritual À Mesa — Licor harmonizado com queijos finos, chocolate e sobremesas",
     glyph: "🜁",
-    ambientNotes: "O fecho nobre para banquetes e encontros: harmoniza com queijos curados, trufas de cacau e frutas frescas.",
+    element: "Ar",
+    idealTemp: "Servido em temperatura de sobremesa ou como calda",
+    technique: "Criar pontes de contraste e afinidade gastronômica: queijos de cabra e ricota fresca cortam a doçura frutada; sobremesas de chocolate e café ganham profundidade caramelizada.",
+    ambientNotes: "Transforme sobremesas em rituais usando a poção como calda sobre sorvetes artesanais, cheesecakes ou panquecas.",
+    highlightLabel: "Exemplos de Harmonização",
+    highlightText: "Doce de Leite com pudim e brigadeiro gourmet; Chocolate 50% com tortas e cappuccino; Banana & Baunilha com tortas de maçã e queijos suaves.",
     suggestedPotions: [
-      { name: "Poção da Conexão (Figo)", id: "f57e85ca-3e25-4885-a9b8-8febeac0421a" },
-      { name: "Poção da Alegria (Banana)", id: "b0d77291-b5ed-4548-8837-887f674c1b4c" }
+      { name: "Poção do Doce Deleite", sabor: "Doce de Leite", id: "03b9242c-50a5-4c7d-bb5e-0211b266b421", badge: "12.5°GL · Caramelo & Baunilha" },
+      { name: "Poção do Desejo", sabor: "Chocolate Cremoso", id: "d5941952-c8de-4cfa-a2d5-9ca89b0cf19a", badge: "11.5°GL · Cacau 50%" },
+      { name: "Poção da Alegria", sabor: "Banana", id: "b0d77291-b5ed-4548-8837-887f674c1b4c", badge: "22.5°GL · Canela & Mascavo" }
     ]
   },
   {
     id: "em-alquimia",
     numeral: "IV",
-    title: "EM ALQUIMIA",
-    desc: "Transforme a poção em uma nova criação.",
+    title: "EM ALQUIMIA & MIXOLOGIA",
+    subtitle: "Coquetelaria Autoral & Releituras Clássicas",
+    desc: "Transforme a poção em coquetéis autorais refinados com botânicos e especiarias.",
     image: "/assets/rituals/ritual-em-alquimia.jpg",
     alt: "Ritual Em Alquimia — Coquetelaria autoral com infusão de botânicos e especiarias",
     glyph: "🜂",
-    ambientNotes: "Como elixir base em mixologia artesanal: unas gotas adicionam camadas místicas a tônicas e coquetéis clássicos.",
+    element: "Fogo",
+    idealTemp: "Batido na coqueteleira com gelo ou servido em taça Coupe",
+    technique: "Substitua bases tradicionais por poções alquímicas para aportar corpo aveludado e camadas complexas de sabor em coquetéis clássicos e contemporâneos.",
+    ambientNotes: "Proporciona textura acetinada sem necessidade de xaropes industriais.",
+    highlightLabel: "Receitas de Coquetelaria",
+    highlightText: "Espresso Martini Alquímico (Poção de Café & Laranja + Expresso); Canela Sour (Poção de Canela + Limão Siciliano + Anis); Velvet Batida (Poção de Maracujá Cremoso batida com gelo).",
     suggestedPotions: [
-      { name: "Poção do Aconchego (Canela)", id: "631512a9-16dc-4e4f-8f07-98278a207c0a" },
-      { name: "Poção da Inspiração (Café & Laranja)", id: "c1245fd9-cb5b-43e8-bf20-1495ff5c1aee" }
+      { name: "Poção da Inspiração", sabor: "Café & Laranja", id: "c1245fd9-cb5b-43e8-bf20-1495ff5c1aee", badge: "16°GL · Espresso Martini" },
+      { name: "Poção do Aconchego", sabor: "Canela", id: "631512a9-16dc-4e4f-8f07-98278a207c0a", badge: "18°GL · Canela Sour" },
+      { name: "Poção do Doce Sossego", sabor: "Maracujá Cremoso", id: "4a8abdb5-e5d4-4ab6-9fd8-4db419c17ed9", badge: "12.5°GL · Velvet Tropical" }
     ]
   }
 ];
@@ -157,8 +191,8 @@ const RITUALS: Ritual[] = [
             <div class="ritual-active-highlight" aria-hidden="true"></div>
 
             <!-- Top Row: Roman Numeral + Title + Glyph -->
-            <div class="flex items-baseline justify-between gap-4 mb-2">
-              <div class="flex items-baseline gap-3 md:gap-4">
+            <div class="flex items-baseline justify-between gap-4 mb-1">
+              <div class="flex items-baseline gap-3 md:gap-4 flex-wrap">
                 <span class="ritual-numeral font-decorative text-lg md:text-xl font-bold transition-all duration-400">
                   {ritual.numeral}
                 </span>
@@ -171,6 +205,11 @@ const RITUALS: Ritual[] = [
               </span>
             </div>
 
+            <!-- Subtitle / Context -->
+            <div class="text-[11px] md:text-xs font-sans uppercase tracking-[0.18em] text-[var(--gold)]/70 mb-2">
+              {ritual.subtitle}
+            </div>
+
             <!-- Thin Expanding Gold Underline -->
             <div class="ritual-ornament-line" aria-hidden="true"></div>
 
@@ -181,28 +220,47 @@ const RITUALS: Ritual[] = [
 
             <!-- Expanded Details & Suggested Potions (Visible on Active) -->
             <div class="ritual-expanded-content transition-all duration-500">
-              <p class="text-xs md:text-sm text-[var(--text-soft)] font-light leading-relaxed mt-2.5 mb-4">
-                {ritual.ambientNotes}
+              <!-- Serving Technique & Temp Badge -->
+              <div class="flex flex-wrap items-center gap-2 mt-3 mb-2.5">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-sm bg-[var(--gold)]/10 border border-[var(--gold)]/25 text-[11px] font-sans text-[var(--gold-light)] font-medium">
+                  <span class="text-[var(--gold)]">✦</span> {ritual.idealTemp}
+                </span>
+              </div>
+
+              <!-- Technique narrative -->
+              <p class="text-xs md:text-sm text-[var(--text-soft)] font-light leading-relaxed mb-3">
+                {ritual.technique}
               </p>
 
-              <!-- Discreet Suggested Potions -->
-              <div class="ritual-potions-strip pt-3 border-t border-[var(--gold)]/15 flex flex-wrap items-center gap-x-2 gap-y-1.5">
-                <span class="text-[10px] uppercase font-sans tracking-[0.2em] text-[var(--gold)]/80 font-medium">
-                  Poções indicadas:
+              <!-- Concrete Highlight / Recipe -->
+              <div class="p-3 rounded-sm bg-black/25 border-l-2 border-[var(--gold)]/60 text-xs font-sans mb-4">
+                <span class="text-[var(--gold-bright)] font-semibold uppercase tracking-wider text-[10px] block mb-0.5">
+                  {ritual.highlightLabel}
                 </span>
-                {ritual.suggestedPotions.map((potion, pIdx) => (
-                  <button
-                    type="button"
-                    class="potion-suggestion-link text-xs font-sans text-[var(--cream)]/90 hover:text-[var(--gold-bright)] transition-all flex items-center gap-1 group/link"
-                    data-potion-id={potion.id}
-                  >
-                    <span>{potion.name}</span>
-                    <span class="text-[var(--gold)] text-[10px] transform group-hover/link:translate-x-0.5 transition-transform">→</span>
-                    {pIdx < ritual.suggestedPotions.length - 1 && (
-                      <span class="text-[var(--gold)]/30 ml-1.5">·</span>
-                    )}
-                  </button>
-                ))}
+                <span class="text-[var(--cream)]/90 font-light leading-relaxed">
+                  {ritual.highlightText}
+                </span>
+              </div>
+
+              <!-- Suggested Potions Strip with Modal Trigger Buttons -->
+              <div class="ritual-potions-strip pt-3 border-t border-[var(--gold)]/15 flex flex-wrap items-center gap-2">
+                <span class="text-[10px] uppercase font-sans tracking-[0.2em] text-[var(--gold)]/80 font-medium w-full sm:w-auto">
+                  Poções do Ritual:
+                </span>
+                <div class="flex flex-wrap gap-1.5">
+                  {ritual.suggestedPotions.map((potion) => (
+                    <button
+                      type="button"
+                      class="potion-suggestion-link text-xs font-sans px-2.5 py-1 rounded-sm bg-[var(--surface-elevated)]/40 hover:bg-[var(--gold)]/20 border border-[var(--gold)]/25 hover:border-[var(--gold)] text-[var(--cream)] hover:text-[var(--gold-bright)] transition-all flex items-center gap-1.5 group/link"
+                      data-potion-id={potion.id}
+                      title={`Ver detalhes de ${potion.name}`}
+                    >
+                      <span class="font-medium">{potion.name}</span>
+                      <span class="text-[10px] text-[var(--text-faded)] group-hover/link:text-[var(--gold-light)]">({potion.sabor})</span>
+                      <span class="text-[var(--gold)] text-[10px] transform group-hover/link:translate-x-0.5 transition-transform">→</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -386,7 +444,7 @@ const RITUALS: Ritual[] = [
   }
 
   .ritual-card.is-active .ritual-expanded-content {
-    max-height: 180px;
+    max-height: 480px;
     opacity: 1;
     transform: translateY(0);
   }

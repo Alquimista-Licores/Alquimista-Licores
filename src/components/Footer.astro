@@ -6,8 +6,12 @@ import { SITE, waUrl } from '../lib/data';
   <div class="max-w-7xl mx-auto px-6 lg:px-10 py-14 grid gap-10 md:grid-cols-3 items-start text-center md:text-left">
     <!-- BRAND / ORIGIN -->
     <div class="flex flex-col items-center md:items-start">
-      <a href="/" class="font-decorative text-xl text-[var(--gold)] tracking-[0.15em] uppercase mb-2">
-        Alquimista Licores
+      <a href="/" class="inline-block mb-3 group">
+        <img
+          src="/assets/logo-alquimista.png"
+          alt="Alquimista Licores"
+          class="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+        />
       </a>
       <p class="font-sans italic text-[var(--text-soft)] text-sm">Feito com (c)alma.</p>
       <p class="text-xs text-[var(--text-faded)] mt-2">Produção artesanal em Criciúma, Santa Catarina.</p>
@@ -18,9 +22,8 @@ import { SITE, waUrl } from '../lib/data';
       <a href="/" class="hover:text-[var(--gold)] transition-colors">Início</a>
       <a href="/pocoes" class="hover:text-[var(--gold)] transition-colors">As Poções</a>
       <a href="/kits" class="hover:text-[var(--gold)] transition-colors">Kits</a>
-      <a href="/monte-seu-kit" class="hover:text-[var(--gold)] transition-colors">Monte seu Kit</a>
       <a href="/sobre" class="hover:text-[var(--gold)] transition-colors">Sobre</a>
-      <a href="/contato" class="hover:text-[var(--gold)] transition-colors">Contato</a>
+      <a href="/sobre#jornada" class="hover:text-[var(--gold)] transition-colors">Jornada</a>
     </nav>
 
     <!-- SOCIAL & CONTACT -->
