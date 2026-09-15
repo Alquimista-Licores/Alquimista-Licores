@@ -98,7 +98,7 @@ Para garantir que modais, header, vídeo hero, botão do WhatsApp e partículas 
 
 | Rota | Arquivo Fonte | Descrição |
 |---|---|---|
-| `/` | `src/pages/index.astro` | Home completa: Hero Vídeo → **Infinite Marquee** → Story → Poções Destaque → **Rituais de Degustação** → Kits Banner → Depoimentos |
+| `/` | `src/pages/index.astro` | Home completa: Hero Vídeo → **Infinite Marquee** → Poções Destaque → **Rituais de Degustação** → Kits Banner → Depoimentos → **Story Quote ("Feito com (c)alma")** |
 | `/pocoes` | `src/pages/pocoes.astro` | Catálogo de licores com filtros de categoria (Finos, Cremosos, Especiais) |
 | `/kits` | `src/pages/kits.astro` | Página informativa de kits e opções de presente |
 | `/monte-seu-kit` | `src/pages/monte-seu-kit.astro` | Wizard interativo para montagem de Kit Degustação (3 mini-poções 50ml) e Kit Presenteável |
@@ -277,6 +277,9 @@ npm run build
      - *Ritual IV — EM COQUETÉIS*
   4. **Sincronização do Selo Dourado:** Badge flutuante sobre a imagem dinâmica sincronizada com os 4 novos títulos.
   5. **Validação:** Build estático aprovado com sucesso (`astro build` executado em 5.42s).
+
+### [15/09/2026] — Reordenação de Seções na Home (Story Quote pós-Depoimentos)
+- A dobra poética/manifesto *"Feito com (c)alma"* foi movida para o fechamento da página inicial ([`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro)), posicionando-se logo abaixo do carrossel de avaliações dos clientes e servindo como um convite intimista para conhecer a história do Alquimista antes do rodapé.
 
 ---
 
