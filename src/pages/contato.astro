@@ -42,6 +42,7 @@ const FAQ = [
     />
 
     <!-- CONTACT CHANNELS -->
+    <h2 class="sr-only">Canais de Atendimento</h2>
     <div class="grid md:grid-cols-3 gap-6">
       <!-- WHATSAPP -->
       <a
@@ -55,9 +56,9 @@ const FAQ = [
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
           </svg>
         </div>
-        <div class="font-display text-base tracking-[0.2em] uppercase text-[var(--gold)] font-bold">
+        <h3 class="font-display text-base tracking-[0.2em] uppercase text-[var(--gold)] font-bold">
           WhatsApp
-        </div>
+        </h3>
         <div class="text-sm text-[var(--text-soft)] mt-2">
           (48) 99173-7692
         </div>
@@ -77,9 +78,9 @@ const FAQ = [
             <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
           </svg>
         </div>
-        <div class="font-display text-base tracking-[0.2em] uppercase text-[var(--gold)] font-bold">
+        <h3 class="font-display text-base tracking-[0.2em] uppercase text-[var(--gold)] font-bold">
           Instagram
-        </div>
+        </h3>
         <div class="text-sm text-[var(--text-soft)] mt-2">
           @alquimistalicores
         </div>
@@ -98,9 +99,9 @@ const FAQ = [
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
           </svg>
         </div>
-        <div class="font-display text-base tracking-[0.2em] uppercase text-[var(--gold)] font-bold">
+        <h3 class="font-display text-base tracking-[0.2em] uppercase text-[var(--gold)] font-bold">
           Retirada
-        </div>
+        </h3>
         <div class="text-xs text-[var(--text-soft)] mt-2 leading-relaxed">
           Rod. Antonio Darós, 1105<br />São João, Criciúma — SC
         </div>
@@ -119,24 +120,26 @@ const FAQ = [
       <div class="border-t border-[var(--gold)]/15 divide-y divide-[var(--gold)]/10">
         {FAQ.map((f, i) => (
           <div class="faq-item">
-            <button
-              type="button"
-              class="faq-trigger w-full py-5 flex justify-between items-center text-left group transition-colors"
-              aria-expanded={i === 0 ? "true" : "false"}
-            >
-              <span class="font-body text-base md:text-lg text-[var(--cream)] group-hover:text-[var(--gold)] transition-colors pr-4 font-medium">
-                {f.q}
-              </span>
-              <svg
-                class="faq-chevron w-5 h-5 text-[var(--gold)] shrink-0 transition-transform duration-300"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
+            <h3 class="m-0 p-0 font-normal">
+              <button
+                type="button"
+                class="faq-trigger w-full py-5 flex justify-between items-center text-left group transition-colors"
+                aria-expanded={i === 0 ? "true" : "false"}
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
+                <span class="font-body text-base md:text-lg text-[var(--cream)] group-hover:text-[var(--gold)] transition-colors pr-4 font-medium">
+                  {f.q}
+                </span>
+                <svg
+                  class="faq-chevron w-5 h-5 text-[var(--gold)] shrink-0 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </h3>
             <div class={`faq-content overflow-hidden transition-all duration-300 ${i === 0 ? "max-h-60 opacity-100" : "max-h-0 opacity-0"}`}>
               <p class="pb-6 font-sans italic text-sm md:text-base text-[var(--text-soft)] leading-relaxed">
                 {f.a}

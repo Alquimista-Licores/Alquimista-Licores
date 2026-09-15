@@ -79,9 +79,9 @@ const hasPrep = needsPrep(p);
 
   <!-- DESKTOP: Bottom Info Layer -->
   <div class="hidden md:block absolute inset-x-0 bottom-0 p-5 bg-[var(--surface)] transition-colors duration-700 md:group-hover:bg-transparent">
-    <div class="font-display font-bold text-base lg:text-lg text-[var(--gold)] tracking-wider uppercase leading-tight">
+    <h3 class="font-display font-bold text-base lg:text-lg text-[var(--gold)] tracking-wider uppercase leading-tight">
       {p.nome}
-    </div>
+    </h3>
     <div class="font-body text-sm text-[var(--text-soft)] mt-1.5">{p.sabor}</div>
     <div class="flex items-end justify-between mt-4 pt-3 border-t border-[var(--gold)]/15">
       <div class="font-display font-bold text-2xl lg:text-3xl text-[var(--gold)]">{fmtPrice(p.preco)}</div>

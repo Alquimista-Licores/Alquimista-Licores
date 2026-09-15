@@ -226,9 +226,20 @@ npm run build
   4. **Atmosfera Contínua:** Canvas 2D em 3 camadas com repulsão ao mouse e ondas de choque ao clique, auroras boreais escuras, textura de ruído e cursores dourados vetoriais.
   5. **Validação no Navegador:** 0 erros no console JavaScript, 100% responsivo.
 
+### [15/09/2026] — Revisão e Padronização da Hierarquia de Títulos (H1, H2, H3)
+- **Hierarquia Semântica e SEO Consolidada em 100% das Páginas:**
+  1. **Apenas UM `<h1>` por página:**
+     - `src/pages/index.astro`: Título principal exclusivo no Hero Cinematográfico (*"Licores artesanais feitos como antigamente."*).
+     - `src/pages/pocoes.astro`, `src/pages/kits.astro`, `src/pages/sobre.astro`, `src/pages/contato.astro`, `src/pages/monte-seu-kit.astro`: Centralizado via `PageHeader.astro` (`<h1>`). Em `monte-seu-kit.astro`, o título do wizard foi ajustado para `<h2>` para evitar duplicidade de `<h1>` no DOM.
+     - `src/pages/404.astro`: `<h1>Poção não encontrada</h1>`.
+     - `src/pages/manutencao.astro`: `<h1>Alquimia em Pausa</h1>`.
+  2. **`<h2>` para Seções Principais:**
+     - Todas as seções e blocos primários (Story quote, Poções em destaque, Rituais de Degustação, Banner de Kits, Depoimentos, Jornada/História, Kits Degustação/Presenteável, Perguntas Frequentes, Canais de Atendimento) utilizam `<h2>`.
+  3. **`<h3>` para Subitens e Cards:**
+     - Nomes de poções nos cards (`ProductCard.astro`), títulos individuais dos rituais (`RituaisDegustacao.astro`), autores de depoimentos (`index.astro`), canais de contato e perguntas de FAQ (`contato.astro`), e opções/itens de seleção no wizard de montagem (`monte-seu-kit.astro`) foram padronizados como `<h3>`.
+  4. **Preservação Visual 100% Intacta:** Todas as classes CSS, tipografias e utilitários visuais foram rigorosamente mantidos sem nenhuma alteração no layout.
+  5. **Validação:** `npm run build` executado e aprovado com sucesso para todas as 8 rotas estáticas.
+
 ---
 
 *Nota: Ao realizar futuras mudanças de código, adicione uma nova entrada na seção 7 deste arquivo e atualize as seções correspondentes.*
-
-
-
