@@ -298,7 +298,8 @@ npm run build
   4. **Links e Logo do Header & Footer + Área de Rituais:** Ao passar sobre a logo, links do Header/Footer ou sobre a área/fundo dos cards de rituais, o círculo externo **não engloba** os elementos; ele permanece livre e transiciona suavemente para **50% de opacidade** com efeito de fade-in e retorna com fade-out.
   5. **Botões e Cards (Contorno Transparente Flush Fit & Sincronização 3D):** Ao englobar botões, cards de produto (`.product-card`), botões de poções (`.potion-suggestion-link`) e abas de filtro, o anel engloba **exatamente rente à borda** (0 padding) com **fundo 100% transparente**. Nos cards com efeito de tilt/paralaxe 3D, a moldura do cursor herda e replica o ângulo de inclinação e rotação 3D (`perspective`, `rotateX`, `rotateY`, `translateY`) em tempo real, acompanhando perfeitamente as bordas inclinadas no espaço.
   6. **Brilho do Mouse nos Cards (Glare Refinado):** A área de brilho radial (`.product-glare`) gerada pelo mouse nos cards foi reduzida para um raio conciso e elegante de 130px com queda suave e translúcida, mantendo o visual limpo sem ofuscar a arte do produto.
-  7. **Ícones Circulares (WhatsApp FAB e Caldeirão):** O botão flutuante do WhatsApp e o botão do Caldeirão no header são englobados de forma **perfeitamente redonda** (`border-radius: 9999px`).
+  7. **Ícones Circulares (WhatsApp FAB, Instagram Footer e Caldeirão):** O botão flutuante do WhatsApp, o botão do Instagram no footer (`a[aria-label="Instagram do Alquimista"]`) e o botão do Caldeirão no header são englobados de forma **perfeitamente redonda** (`border-radius: 9999px`).
+  8. **Botão de CTA do Vídeo Hero ("Conheça as Poções"):** O botão `#glassCtaBtn` (`.glass-cta-button`) exibido sobre o vídeo cinematográfico da Home é plenamente reconhecido pelo cursor e englobado de forma rente à sua borda com atração magnética quando visível após o scroll.
 
 ---
 
