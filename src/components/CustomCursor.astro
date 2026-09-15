@@ -1,83 +1,126 @@
 ---
-// Animated Luxury Custom Cursor in #B28C46 (Shadcn / Animate-UI style)
+// Custom Cursor Component — React Bits / Shadcn Specification in #B28C46
+// Docs: https://pro.reactbits.dev/docs/components/custom-cursor
+
+interface Props {
+  color?: string;
+  dotSize?: number;
+  ringSize?: number;
+  hoverScale?: number;
+  smoothness?: number;
+  hideNativeCursor?: boolean;
+  className?: string;
+}
+
+const {
+  color = "#B28C46",
+  dotSize = 8,
+  ringSize = 34,
+  hoverScale = 1.6,
+  smoothness = 0.18,
+  hideNativeCursor = true,
+  className = "",
+} = Astro.props;
 ---
 
 <div
-  id="custom-cursor-container"
-  class="pointer-events-none fixed inset-0 z-[9999] hidden select-none md:block opacity-0 transition-opacity duration-300"
+  id="custom-cursor-root"
+  class={`pointer-events-none fixed inset-0 z-[99999] hidden select-none md:block opacity-0 transition-opacity duration-300 ${className}`}
+  data-color={color}
+  data-dot-size={dotSize}
+  data-ring-size={ringSize}
+  data-hover-scale={hoverScale}
+  data-smoothness={smoothness}
+  data-hide-native={hideNativeCursor ? "true" : "false"}
+  style={`--cursor-color: ${color};`}
   aria-hidden="true"
 >
-  <!-- Center Precision Dot -->
+  <!-- Inner Precision Dot -->
   <div
     id="custom-cursor-dot"
-    class="fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none will-change-transform"
-    style="background-color: #B28C46; box-shadow: 0 0 8px rgba(178, 140, 70, 0.8);"
+    class="fixed top-0 left-0 rounded-full pointer-events-none will-change-transform"
+    style={`width: ${dotSize}px; height: ${dotSize}px; background-color: var(--cursor-color); box-shadow: 0 0 10px rgba(178, 140, 70, 0.8); transform: translate3d(-50%, -50%, 0);`}
   ></div>
 
-  <!-- Smooth Trailing Follower Ring -->
+  <!-- Outer Spring / Follower Ring with Target Morphing -->
   <div
     id="custom-cursor-ring"
-    class="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none border border-[#B28C46]/60 will-change-transform transition-[width,height,background-color,border-color,box-shadow,transform] duration-200 ease-out"
-    style="box-shadow: 0 0 12px rgba(178, 140, 70, 0.2);"
-  ></div>
+    class="fixed top-0 left-0 rounded-full pointer-events-none will-change-transform transition-[width,height,background-color,border-color,box-shadow,opacity,border-radius] duration-250 ease-out"
+    style={`width: ${ringSize}px; height: ${ringSize}px; border: 1.5px solid rgba(178, 140, 70, 0.6); box-shadow: 0 0 14px rgba(178, 140, 70, 0.25); transform: translate3d(-50%, -50%, 0);`}
+  >
+    <span
+      id="custom-cursor-label"
+      class="absolute inset-0 flex items-center justify-center font-mono text-[9px] uppercase tracking-wider text-[var(--cream)] opacity-0 transition-opacity duration-200"
+    ></span>
+  </div>
 </div>
 
 <style>
-  /* Hide native cursor only when custom cursor is active on fine pointer devices */
+  /* Hide native cursor globally on fine pointer devices when enabled */
   @media (hover: hover) and (pointer: fine) {
-    html,
-    body,
-    a,
-    button,
-    [role="button"],
-    [role="link"],
-    summary,
-    label[for],
-    select,
-    input,
-    textarea,
-    .cursor-pointer,
-    .cursor-default {
+    html:has(#custom-cursor-root[data-hide-native="true"]),
+    html:has(#custom-cursor-root[data-hide-native="true"]) * {
       cursor: none !important;
     }
   }
 
-  /* Ring interactive states */
+  /* Ring Interactive Morph States */
   #custom-cursor-ring.cursor-hover {
-    width: 3rem;
-    height: 3rem;
-    background-color: rgba(178, 140, 70, 0.15);
-    border-color: #B28C46;
-    box-shadow: 0 0 20px rgba(178, 140, 70, 0.45);
+    background-color: rgba(178, 140, 70, 0.14);
+    border-color: var(--cursor-color);
+    box-shadow: 0 0 24px rgba(178, 140, 70, 0.5), inset 0 0 12px rgba(178, 140, 70, 0.1);
   }
 
   #custom-cursor-ring.cursor-active {
     transform: translate3d(-50%, -50%, 0) scale(0.8) !important;
-    background-color: rgba(178, 140, 70, 0.3);
+    background-color: rgba(178, 140, 70, 0.28);
+    border-color: var(--cursor-color);
+  }
+
+  #custom-cursor-ring.cursor-has-label {
+    width: 4.5rem !important;
+    height: 4.5rem !important;
+    background-color: rgba(16, 13, 11, 0.85);
+    border-color: var(--cursor-color);
+    box-shadow: 0 0 30px rgba(178, 140, 70, 0.6);
+  }
+
+  #custom-cursor-ring.cursor-has-label #custom-cursor-label {
+    opacity: 1;
   }
 
   #custom-cursor-dot.cursor-hover {
-    transform: translate3d(-50%, -50%, 0) scale(0.5) !important;
-    opacity: 0.6;
+    transform: translate3d(-50%, -50%, 0) scale(0.4) !important;
+    opacity: 0.5;
   }
 
   #custom-cursor-dot.cursor-active {
-    transform: translate3d(-50%, -50%, 0) scale(1.4) !important;
+    transform: translate3d(-50%, -50%, 0) scale(1.5) !important;
+    opacity: 1;
+  }
+
+  #custom-cursor-dot.cursor-hidden {
+    opacity: 0 !important;
   }
 </style>
 
 <script>
-  function initCustomCursor() {
-    // Only run on desktop devices with mouse/fine pointer
+  function setupCustomCursor() {
+    // Check fine pointer media query (desktop with mouse)
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
       return;
     }
 
-    const container = document.getElementById("custom-cursor-container");
+    const root = document.getElementById("custom-cursor-root");
     const dot = document.getElementById("custom-cursor-dot");
     const ring = document.getElementById("custom-cursor-ring");
+    const label = document.getElementById("custom-cursor-label");
 
-    if (!container || !dot || !ring) return;
+    if (!root || !dot || !ring || !label) return;
+
+    const baseRingSize = parseFloat(root.getAttribute("data-ring-size") || "34");
+    const hoverScale = parseFloat(root.getAttribute("data-hover-scale") || "1.6");
+    const smoothness = parseFloat(root.getAttribute("data-smoothness") || "0.18");
 
     let mouseX = -100;
     let mouseY = -100;
@@ -86,12 +129,13 @@
     let isVisible = false;
     let isHovering = false;
     let isActive = false;
-    let animationFrameId: number | null = null;
+    let hasLabel = false;
+    let animId: number | null = null;
 
     const interactiveSelector = `
       a, button, [role="button"], [role="link"], summary, label[for],
       select, input:not([type="hidden"]), textarea, .cursor-pointer,
-      .product-card, .ritual-card, .filter-tab-btn, [tabindex="0"]
+      .product-card, .ritual-card, .filter-tab-btn, [data-cursor], [tabindex="0"]
     `;
 
     function onMouseMove(e: MouseEvent) {
@@ -102,26 +146,50 @@
         isVisible = true;
         ringX = mouseX;
         ringY = mouseY;
-        container.style.opacity = "1";
+        root.style.opacity = "1";
       }
 
-      // Dot moves instantaneously to follow the mouse with 0 lag
+      // Zero-latency Dot tracking
       dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate3d(-50%, -50%, 0) ${
-        isActive ? "scale(1.4)" : isHovering ? "scale(0.5)" : "scale(1)"
+        isActive ? "scale(1.5)" : isHovering ? "scale(0.4)" : "scale(1)"
       }`;
 
-      // Check if hovering interactive target
+      // Target Detection & Morphing
       const target = e.target as HTMLElement | null;
-      if (target && target.closest(interactiveSelector)) {
+      const interactiveEl = target ? target.closest(interactiveSelector) as HTMLElement | null : null;
+
+      if (interactiveEl) {
         if (!isHovering) {
           isHovering = true;
           ring.classList.add("cursor-hover");
           dot.classList.add("cursor-hover");
         }
-      } else if (isHovering) {
-        isHovering = false;
-        ring.classList.remove("cursor-hover");
-        dot.classList.remove("cursor-hover");
+
+        // Check custom label data attribute (e.g. data-cursor-text="Abrir")
+        const customText = interactiveEl.getAttribute("data-cursor-text");
+        if (customText) {
+          label.textContent = customText;
+          hasLabel = true;
+          ring.classList.add("cursor-has-label");
+          dot.classList.add("cursor-hidden");
+        } else if (hasLabel) {
+          hasLabel = false;
+          label.textContent = "";
+          ring.classList.remove("cursor-has-label");
+          dot.classList.remove("cursor-hidden");
+        }
+      } else {
+        if (isHovering) {
+          isHovering = false;
+          ring.classList.remove("cursor-hover");
+          dot.classList.remove("cursor-hover");
+        }
+        if (hasLabel) {
+          hasLabel = false;
+          label.textContent = "";
+          ring.classList.remove("cursor-has-label");
+          dot.classList.remove("cursor-hidden");
+        }
       }
     }
 
@@ -139,27 +207,35 @@
 
     function onMouseLeave() {
       isVisible = false;
-      container.style.opacity = "0";
+      root.style.opacity = "0";
     }
 
     function onMouseEnter() {
       isVisible = true;
-      container.style.opacity = "1";
+      root.style.opacity = "1";
     }
 
-    // Smooth Lerp loop for trailing ring
+    // Spring/Lerp Loop for outer ring
     function render() {
       if (isVisible) {
-        // Lerp factor (0.2 for snappy fluid feel)
-        ringX += (mouseX - ringX) * 0.2;
-        ringY += (mouseY - ringY) * 0.2;
+        ringX += (mouseX - ringX) * smoothness;
+        ringY += (mouseY - ringY) * smoothness;
+
+        const currentScale = isHovering && !hasLabel ? hoverScale : 1;
+        const width = baseRingSize * currentScale;
+        const height = baseRingSize * currentScale;
+
+        if (!hasLabel) {
+          ring.style.width = `${width}px`;
+          ring.style.height = `${height}px`;
+        }
 
         ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate3d(-50%, -50%, 0) ${
           isActive ? "scale(0.8)" : ""
         }`;
       }
 
-      animationFrameId = requestAnimationFrame(render);
+      animId = requestAnimationFrame(render);
     }
 
     window.addEventListener("mousemove", onMouseMove, { passive: true });
@@ -168,11 +244,10 @@
     document.addEventListener("mouseleave", onMouseLeave);
     document.addEventListener("mouseenter", onMouseEnter);
 
-    animationFrameId = requestAnimationFrame(render);
+    animId = requestAnimationFrame(render);
 
-    // Cleanup on page transitions if needed
     document.addEventListener("astro:before-swap", () => {
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      if (animId) cancelAnimationFrame(animId);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mouseup", onMouseUp);
@@ -181,7 +256,6 @@
     }, { once: true });
   }
 
-  // Setup on initial load and Astro page transitions
-  initCustomCursor();
-  document.addEventListener("astro:page-load", initCustomCursor);
+  setupCustomCursor();
+  document.addEventListener("astro:page-load", setupCustomCursor);
 </script>
