@@ -182,12 +182,12 @@ const RITUALS: Ritual[] = [
 
             <!-- Top Row: Roman Numeral + Dash + Title + Glyph -->
             <div class="flex items-center justify-between gap-3 mb-1.5">
-              <div class="flex items-center gap-2.5 md:gap-3.5 flex-nowrap min-w-0">
-                <span class="ritual-numeral font-decorative text-lg md:text-xl font-bold shrink-0 transition-all duration-400">
+              <div class="flex items-center gap-2 md:gap-3 flex-nowrap min-w-0">
+                <span class="ritual-numeral font-decorative text-lg md:text-xl font-bold shrink-0 transition-colors duration-300">
                   {ritual.numeral}
                 </span>
                 <span class="text-[var(--gold)]/50 font-light text-sm select-none shrink-0">—</span>
-                <h3 class="ritual-title font-display text-base sm:text-lg md:text-xl font-semibold tracking-wide transition-colors duration-400 truncate sm:overflow-visible">
+                <h3 class="ritual-title font-display text-base sm:text-lg md:text-xl font-semibold tracking-wide transition-colors duration-300">
                   {ritual.title}
                 </h3>
               </div>
@@ -419,9 +419,8 @@ const RITUALS: Ritual[] = [
   }
 
   .ritual-card.is-active .ritual-title {
-    background: linear-gradient(135deg, #FFFFFF 15%, var(--gold-light) 60%, var(--gold) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #FFFFFF;
+    text-shadow: 0 0 14px rgba(200, 169, 126, 0.45);
   }
 
   .ritual-card.is-active .ritual-glyph {
