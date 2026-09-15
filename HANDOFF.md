@@ -290,14 +290,13 @@ npm run build
    - Atualizado texto com quebra de linha equilibrada em 3 linhas antes de *"pois aqui tudo é"*.
    - Tipografia da citação ajustada para `Lato` itálico com aspas discretas em cor de acento no início.
    - Espaçamento inferior reduzido para aproximar a frase do título *"FEITO COM (C)ALMA."*.
-### [15/09/2026] — Implementação do Custom Cursor Animado Moderno (#B28C46)
+### [15/09/2026] — Refinamento do Custom Cursor (#B28C46)
 - **Componente Dedicado ([`src/components/CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro)) integrado globalmente em [`src/layouts/Layout.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/layouts/Layout.astro):**
-  1. **Ponto Central de Precisão (Dot):** Esfera sólida de 8px na cor `#B28C46` com brilho áureo (`box-shadow: 0 0 8px rgba(178, 140, 70, 0.8)`), rastreando a coordenada exata do mouse em tempo real sem latência.
-  2. **Anel Seguidor Fluido (Trailing Ring):** Círculo orbital de 32px com física de interpolação linear (`lerp` em `requestAnimationFrame`) que persegue o cursor com inércia suave.
-  3. **Estados Interativos (Hover & Click):**
-     - Ao passar sobre elementos clicáveis (`a`, `button`, `.product-card`, `.ritual-card`, inputs, seletores), o anel expande para 48px com preenchimento dourado translúcido e glow intensificado, enquanto o ponto central se retrai suavemente.
-     - Ao clicar (`mousedown`), o anel contrai com feedback tátil elástico instantâneo.
-  4. **Performance & Responsividade:** Ativo exclusivamente no desktop com mouse (`@media (hover: hover) and (pointer: fine)`); ocultado em telas sensíveis ao toque para preservar 100% da experiência nativa mobile.
+  1. **Ponto Central (Dot):** Acompanha instantaneamente a coordenada do mouse com 0 lag (`translate3d` no evento de `mousemove`), tamanho de 6px na cor `#B28C46`.
+  2. **Círculo Externo (Trailing Follower):** Anel circular perfeito de 40px com espessura fina de **1px** (metade da anterior), seguindo com atraso suave e fluido (`lerp factor 0.12`) em loop `requestAnimationFrame`.
+  3. **Sem Distorções:** Preserva geometria 100% circular e uniforme em todas as velocidades sem deformações ovais (sem elastic stretch).
+  4. **Estados Interativos:** Expansão sutil ao passar sobre botões, links, cards e inputs clicáveis; contração tátil no clique (`mousedown`).
+  5. **Desktop Exclusivo:** Inativo em dispositivos móveis e telas touch (`@media (hover: hover) and (pointer: fine)`).
 
 ---
 
