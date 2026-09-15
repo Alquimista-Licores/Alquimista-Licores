@@ -290,12 +290,12 @@ npm run build
    - Atualizado texto com quebra de linha equilibrada em 3 linhas antes de *"pois aqui tudo é"*.
    - Tipografia da citação ajustada para `Lato` itálico com aspas discretas em cor de acento no início.
    - Espaçamento inferior reduzido para aproximar a frase do título *"FEITO COM (C)ALMA."*.
-### [15/09/2026] — Refinamento do Custom Cursor Magnético (#B28C46)
+### [15/09/2026] — Refinamento das Regras de Interação do Custom Cursor (#B28C46)
 - **Componente Dedicado ([`src/components/CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro)) integrado globalmente em [`src/layouts/Layout.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/layouts/Layout.astro):**
-  1. **Ponto Central (Dot):** Acompanha instantaneamente a coordenada do mouse com 0 lag (`translate3d` no evento de `mousemove`), tamanho de 6px na cor `#B28C46`.
-  2. **Círculo Externo (Trailing Follower):** Anel circular perfeito de 40px com espessura fina de **1px**, seguindo com atraso suave e fluido (`lerp factor 0.14`) em loop `requestAnimationFrame`.
-  3. **Englobamento Magnético no Hover (Target Enclosing Morph):** Ao passar o mouse sobre botões, links, cards (`.product-card`, `.ritual-card`) ou inputs, o círculo externo atrai e se molda ao formato e dimensões exatas do elemento clicável, envolvendo-o com borda `#B28C46` de 1px e suave brilho áureo translúcido (`box-shadow: 0 0 20px rgba(178, 140, 70, 0.45)`). Ao sair do elemento, retorna suavemente à forma circular livre.
-  4. **Desktop Exclusivo:** Inativo em dispositivos móveis e telas touch (`@media (hover: hover) and (pointer: fine)`).
+  1. **Ponto Central (Dot):** Permanece 100% visível em todas as situações (inclusive durante o hover), rastreando a coordenada física do mouse instantaneamente com 0 lag. O cursor nativo do sistema operacional é estritamente ocultado (`cursor: none !important`), impedindo que a mãozinha padrão do navegador apareça.
+  2. **Links e Logo do Header & Footer:** Ao passar sobre a logo ou links de navegação do topo e do rodapé, o círculo externo **não engloba** os elementos; ele continua livre e transiciona suavemente para **50% de opacidade** com efeito de fade-in e retorna com fade-out.
+  3. **Botões e Cards (Flush Fit):** Ao pairar sobre botões, cards (`.product-card`, `.ritual-card`), abas de filtro e inputs, o anel externo engloba o elemento **exatamente rente à borda** (0 padding), aplicando contorno dourado `#B28C46` de 1px com suave brilho áureo translúcido.
+  4. **Ícones Circulares (WhatsApp FAB e Caldeirão):** O botão flutuante do WhatsApp e o botão do Caldeirão no header são englobados de forma **perfeitamente redonda** (`border-radius: 9999px`).
 
 ---
 
