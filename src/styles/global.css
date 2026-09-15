@@ -576,16 +576,16 @@
     background: rgba(20, 18, 16, 0.95);
   }
 
-  /* Badge Ember Pill (Wine / Urgent / Rarity) */
+  /* Badge Ember Pill (Warm Amber Yellow / Sob Encomenda / Rarity) */
   .badge-pill-ember {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
     padding: 0.35rem 0.75rem;
     border-radius: var(--radius-sm, 4px);
-    background: rgba(168, 50, 50, 0.18);
-    border: 1px solid rgba(251, 44, 54, 0.55);
-    color: #FFA5A5;
+    background: rgba(217, 119, 6, 0.16);
+    border: 1px solid rgba(245, 158, 11, 0.65);
+    color: #FBBF24;
     font-family: var(--font-mono);
     font-size: 0.75rem;
     letter-spacing: 0.05em;
@@ -593,8 +593,9 @@
     transition: all 0.25s ease;
   }
   .badge-pill-ember:hover {
-    background: rgba(168, 50, 50, 0.28);
-    box-shadow: 0 0 15px rgba(251, 44, 54, 0.35);
+    background: rgba(217, 119, 6, 0.26);
+    border-color: rgba(251, 191, 36, 0.85);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
   }
 
   /* Contextual Tooltip Helper */

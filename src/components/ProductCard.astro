@@ -23,7 +23,7 @@ const hasPrep = needsPrep(p);
   <!-- IMAGE LAYER -->
   <div
     class={`relative w-full aspect-square md:absolute md:inset-x-0 md:top-0 md:h-[62%] md:aspect-auto md:w-auto bg-gradient-to-b from-[var(--surface-elevated)] to-[var(--background)] overflow-hidden transition-[height,opacity] duration-700 ease-out md:group-hover:h-full md:group-hover:opacity-35 ${
-      isOutOfStock ? "opacity-50" : ""
+      isOutOfStock ? "opacity-80" : ""
     }`}
   >
     <div class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[radial-gradient(circle_at_50%_0%,_rgba(184,111,42,0.35)_0%,_transparent_60%)] z-10"></div>
@@ -42,20 +42,22 @@ const hasPrep = needsPrep(p);
 
     {/* Top Badges */}
     <div class="hidden md:flex absolute top-3 left-3 z-20 gap-1.5 pointer-events-none">
-      <Badge variant="gold" size="sm" symbol="🜚">
+      <Badge variant="gold" size="sm">
         {categoriaLabel(p.categoria)}
       </Badge>
     </div>
 
     {hasPrep && !isOutOfStock && (
-      <div class="absolute top-0 inset-x-0 bg-[var(--amber-warm)]/90 text-[var(--background)] text-[10px] md:text-xs font-mono tracking-widest uppercase text-center py-1 backdrop-blur-sm z-20 font-bold">
-        Sob encomenda · 2 dias
+      <div class="absolute top-3 right-3 z-20 pointer-events-none">
+        <Badge variant="ember" size="sm">
+          Sob Encomenda
+        </Badge>
       </div>
     )}
 
     {isOutOfStock && (
-      <div class="absolute inset-0 z-20 flex items-center justify-center bg-[var(--background)]/70 backdrop-blur-[2px]">
-        <Badge variant="ember" symbol="🜂" size="md" class="shadow-2xl font-bold uppercase tracking-widest scale-110">
+      <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/35 backdrop-blur-[0.5px]">
+        <Badge variant="ember" size="md" class="shadow-2xl font-bold uppercase tracking-widest scale-105">
           Lote Esgotado
         </Badge>
       </div>
@@ -66,7 +68,7 @@ const hasPrep = needsPrep(p);
       <div class="font-mono text-[10px] text-[var(--gold)] tracking-widest uppercase">
         {categoriaLabel(p.categoria)}
       </div>
-      <div class="font-serif text-xs text-[var(--cream)] mt-0.5 leading-tight font-medium">
+      <div class="font-serif text-sm text-[var(--cream)] mt-0.5 leading-tight font-medium">
         {p.sabor}
       </div>
     </div>
@@ -93,7 +95,7 @@ const hasPrep = needsPrep(p);
     <h3 class="font-display font-semibold text-base lg:text-lg text-[var(--gold)] tracking-wider leading-tight">
       {p.nome}
     </h3>
-    <div class="font-serif italic text-sm text-[var(--text-soft)] mt-1.5">{p.sabor}</div>
+    <div class="font-serif italic text-base text-[var(--gold-soft)] mt-1.5 font-medium">{p.sabor}</div>
     <div class="flex items-end justify-between mt-3 pt-3 border-t border-[var(--gold)]/15">
       <div class="font-display font-bold text-lg lg:text-xl text-[var(--gold)]">{fmtPrice(p.preco)}</div>
       {!isOutOfStock && (
