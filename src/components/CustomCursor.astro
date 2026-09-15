@@ -152,6 +152,33 @@ const {
       [data-cursor-enclose], ${roundCircularSelector}
     `;
 
+    // Helper to check if an element is strictly visible, rendered, and not inside a collapsed accordion
+    function isTargetActuallyVisible(el: HTMLElement): boolean {
+      // If inside a ritual card, it MUST be inside the active ritual card (.is-active)
+      const ritualParent = el.closest('.ritual-card');
+      if (ritualParent && !ritualParent.classList.contains('is-active')) {
+        return false;
+      }
+
+      // Check client/bounding dimensions
+      const rect = el.getBoundingClientRect();
+      if (rect.width <= 2 || rect.height <= 2) return false;
+
+      // Check computed visibility styles
+      const style = window.getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0' || style.pointerEvents === 'none') {
+        return false;
+      }
+
+      // Check if hidden inside a collapsed height wrapper
+      const expandedWrapper = el.closest('.ritual-expanded-wrapper');
+      if (expandedWrapper && (expandedWrapper.clientHeight <= 2 || window.getComputedStyle(expandedWrapper).visibility === 'hidden')) {
+        return false;
+      }
+
+      return true;
+    }
+
     // Magnetic proximity detection (100px magnetic attraction range)
     function findMagneticTarget(x: number, y: number, proximity = 100): HTMLElement | null {
       // 1. Direct hit check under point
@@ -162,7 +189,7 @@ const {
           return null;
         }
         const directHit = elUnderPoint.closest(enclosingSelector) as HTMLElement | null;
-        if (directHit) return directHit;
+        if (directHit && isTargetActuallyVisible(directHit)) return directHit;
       }
 
       // 2. Proximity check within 100px
@@ -176,8 +203,10 @@ const {
           continue;
         }
 
+        // Must be strictly visible
+        if (!isTargetActuallyVisible(el)) continue;
+
         const rect = el.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) continue;
         if (rect.bottom < -proximity || rect.top > window.innerHeight + proximity) continue;
 
         // Calculate shortest distance from point (x, y) to rectangle
@@ -217,7 +246,7 @@ const {
         const softTarget = target.closest(softLinksSelector) as HTMLElement | null;
         const isInsidePotionOrBtn = target.closest('.potion-suggestion-link, #cart-toggle-btn, a[aria-label*="WhatsApp"]') as HTMLElement | null;
 
-        if (softTarget && !isInsidePotionOrBtn) {
+        if (softTarget && (!isInsidePotionOrBtn || !isTargetActuallyVisible(isInsidePotionOrBtn))) {
           if (hoveredEncloseEl) {
             hoveredEncloseEl = null;
             circle.classList.remove("cursor-enclosing");
@@ -284,7 +313,7 @@ const {
     // Smooth Trailing & Morphing loop
     function loop() {
       if (isVisible) {
-        if (hoveredEncloseEl && document.body.contains(hoveredEncloseEl)) {
+        if (hoveredEncloseEl && document.body.contains(hoveredEncloseEl) && isTargetActuallyVisible(hoveredEncloseEl)) {
           const rect = hoveredEncloseEl.getBoundingClientRect();
           const isRound = hoveredEncloseEl.matches(roundCircularSelector);
 
@@ -320,6 +349,14 @@ const {
             }`;
           }
         } else {
+          if (hoveredEncloseEl) {
+            hoveredEncloseEl = null;
+            circle.classList.remove("cursor-enclosing");
+            circle.style.width = `${baseCircleSize}px`;
+            circle.style.height = `${baseCircleSize}px`;
+            circle.style.borderRadius = "9999px";
+          }
+
           // Free-floating circle trailing the mouse
           circleX += (mouseX - circleX) * delay;
           circleY += (mouseY - circleY) * delay;
