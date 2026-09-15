@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Pastas locais ignoradas
+site_antigo/
+treino antigravity/
