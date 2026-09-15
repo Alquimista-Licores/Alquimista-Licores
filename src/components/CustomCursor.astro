@@ -2,8 +2,9 @@
 // Custom Cursor in #B28C46
 // - Central dot: Always visible at mouse coordinate (0 lag) across all states
 // - OS native cursor: Strictly hidden (no native pointer hand)
-// - Header & Footer links/logo: Circle does NOT enclose; instead it fades to 50% opacity with smooth fade-in/out
-// - Buttons & Cards: Circle encloses with 0 padding (exact border flush fit) and glowing #B28C46 contour
+// - Transparent enclosing: No background color alteration (transparent fill), only 1px #B28C46 contour + soft glow
+// - Header, Footer & Ritual card background: Does NOT enclose (smooth 50% opacity fade-in/out)
+// - Ritual Potion Buttons, Product Cards & CTAs: Encloses exactly flush to borders (0 padding)
 // - WhatsApp FAB & Header Cauldron button: Encloses with perfect circular shape (9999px border-radius)
 // - Desktop only: Disabled on touch devices
 
@@ -42,11 +43,11 @@ const {
     style={`width: ${dotSize}px; height: ${dotSize}px; background-color: var(--cursor-color); box-shadow: 0 0 8px rgba(178, 140, 70, 0.9); transform: translate3d(-50%, -50%, 0);`}
   ></div>
 
-  <!-- Outer Morphing Circle -->
+  <!-- Outer Morphing Circle (Transparent background, glowing 1px contour) -->
   <div
     id="reactbits-cursor-circle"
     class="fixed top-0 left-0 pointer-events-none will-change-transform transition-[width,height,border-radius,background-color,border-color,box-shadow,opacity] duration-200 ease-out"
-    style={`width: ${circleSize}px; height: ${circleSize}px; border-radius: 9999px; border: ${borderWidth}px solid var(--cursor-color); box-shadow: 0 0 12px rgba(178, 140, 70, 0.22); transform: translate3d(-50%, -50%, 0); mix-blend-mode: normal; opacity: 1;`}
+    style={`width: ${circleSize}px; height: ${circleSize}px; border-radius: 9999px; border: ${borderWidth}px solid var(--cursor-color); box-shadow: 0 0 12px rgba(178, 140, 70, 0.22); transform: translate3d(-50%, -50%, 0); mix-blend-mode: normal; opacity: 1; background-color: transparent;`}
   ></div>
 </div>
 
@@ -73,25 +74,24 @@ const {
     }
   }
 
-  /* Soft fade state: Header / Footer links & logos */
+  /* Soft fade state: Header / Footer links & logos, and Ritual card background */
   #reactbits-cursor-circle.cursor-soft {
     opacity: 0.5 !important;
-    background-color: transparent;
+    background-color: transparent !important;
     box-shadow: 0 0 8px rgba(178, 140, 70, 0.2);
   }
 
-  /* Morph enclosing state: Buttons & Cards (exact flush fit with golden glow) */
+  /* Morph enclosing state: Pure transparent background, 1px contour with soft glow */
   #reactbits-cursor-circle.cursor-enclosing {
-    background-color: rgba(178, 140, 70, 0.12);
+    background-color: transparent !important;
     border-color: var(--cursor-color);
-    box-shadow: 0 0 20px rgba(178, 140, 70, 0.45), inset 0 0 10px rgba(178, 140, 70, 0.12);
+    box-shadow: 0 0 18px rgba(178, 140, 70, 0.45);
     opacity: 1 !important;
   }
 
   /* Active / Click press state */
   #reactbits-cursor-circle.cursor-active {
-    background-color: rgba(178, 140, 70, 0.25);
-    box-shadow: 0 0 16px rgba(178, 140, 70, 0.6);
+    box-shadow: 0 0 14px rgba(178, 140, 70, 0.6);
   }
 </style>
 
@@ -127,19 +127,22 @@ const {
       a[aria-label*="WhatsApp"], a[href*="wa.me"], a[href*="whatsapp.com"], .whatsapp-fab
     `;
 
-    // Selectors for Header & Footer links and logos (Soft 50% opacity, no enclose)
+    // Selectors for Header & Footer links, logos, and ritual card accordion area (Soft 50% opacity, no enclose)
     const softLinksSelector = `
       header a:not(${roundCircularSelector}),
       header nav a,
       .header-nav-link,
       footer a,
-      footer button:not(.btn-primary)
+      footer button:not(.btn-primary),
+      .ritual-card
     `;
 
-    // Selectors for Enclosing targets (Buttons, Cards, Inputs, Modals, etc.)
+    // Selectors for Enclosing targets (Buttons, Potion suggestion badges in rituals, Product cards, CTAs, Inputs)
     const enclosingSelector = `
-      button, a.btn-primary, [role="button"],
-      .product-card, .ritual-card, .filter-tab-btn,
+      .potion-suggestion-link,
+      button:not(#cart-toggle-btn):not(.ritual-card),
+      a.btn-primary, a.btn-ghost, a.btn-shimmer, a.btn-outline,
+      .product-card, .filter-tab-btn,
       input:not([type="hidden"]), select, textarea,
       [data-cursor-enclose], ${roundCircularSelector}
     `;
@@ -163,7 +166,19 @@ const {
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
-      // 1. Check if hovering Round Circular button (WhatsApp / Cauldron)
+      // 1. Check if hovering inside potion buttons inside ritual or specific buttons/cards
+      const potionOrBtn = target.closest(".potion-suggestion-link, button, a.btn-primary, a.btn-ghost, a.btn-shimmer, a.btn-outline, .product-card, .filter-tab-btn") as HTMLElement | null;
+      if (potionOrBtn) {
+        isSoftHover = false;
+        circle.classList.remove("cursor-soft");
+        if (hoveredEncloseEl !== potionOrBtn) {
+          hoveredEncloseEl = potionOrBtn;
+          circle.classList.add("cursor-enclosing");
+        }
+        return;
+      }
+
+      // 2. Check if hovering Round Circular button (WhatsApp / Cauldron)
       const roundTarget = target.closest(roundCircularSelector) as HTMLElement | null;
       if (roundTarget) {
         isSoftHover = false;
@@ -175,7 +190,7 @@ const {
         return;
       }
 
-      // 2. Check if hovering Header / Footer links or logo (Soft 50% opacity mode)
+      // 3. Check if hovering Header / Footer links or Ritual Card area (Soft 50% opacity mode, no enclose)
       const softTarget = target.closest(softLinksSelector) as HTMLElement | null;
       if (softTarget) {
         if (hoveredEncloseEl) {
@@ -195,7 +210,7 @@ const {
         circle.classList.remove("cursor-soft");
       }
 
-      // 3. Check if hovering Enclosing target (Buttons, Cards, Badges)
+      // 4. General enclosing target check
       const encloseTarget = target.closest(enclosingSelector) as HTMLElement | null;
       if (encloseTarget) {
         if (hoveredEncloseEl !== encloseTarget) {
