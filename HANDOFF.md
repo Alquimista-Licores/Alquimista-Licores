@@ -290,9 +290,14 @@ npm run build
    - Atualizado texto com quebra de linha equilibrada em 3 linhas antes de *"pois aqui tudo é"*.
    - Tipografia da citação ajustada para `Lato` itálico com aspas discretas em cor de acento no início.
    - Espaçamento inferior reduzido para aproximar a frase do título *"FEITO COM (C)ALMA."*.
-2. **Cursor Padrão do Windows na cor #B28C46 ([`src/styles/global.css`](file:///d:/projetos%20antigravity/site_alquimista/src/styles/global.css)):**
-   - Geometria do cursor padrão do Windows vetorizada em SVG (`M1 1 L1 18 L5.5 13.5 L8.5 21 L11.5 19.5 L8.5 12.2 L14.5 12.2 Z`).
-   - Aplicada a cor `#B28C46` com contorno escuro contrastante para legibilidade em qualquer fundo do site, mantendo o estilo para cursores interativos (mãozinha/pointer, texto/I-beam e not-allowed).
+### [15/09/2026] — Implementação do Custom Cursor Animado Moderno (#B28C46)
+- **Componente Dedicado ([`src/components/CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro)) integrado globalmente em [`src/layouts/Layout.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/layouts/Layout.astro):**
+  1. **Ponto Central de Precisão (Dot):** Esfera sólida de 8px na cor `#B28C46` com brilho áureo (`box-shadow: 0 0 8px rgba(178, 140, 70, 0.8)`), rastreando a coordenada exata do mouse em tempo real sem latência.
+  2. **Anel Seguidor Fluido (Trailing Ring):** Círculo orbital de 32px com física de interpolação linear (`lerp` em `requestAnimationFrame`) que persegue o cursor com inércia suave.
+  3. **Estados Interativos (Hover & Click):**
+     - Ao passar sobre elementos clicáveis (`a`, `button`, `.product-card`, `.ritual-card`, inputs, seletores), o anel expande para 48px com preenchimento dourado translúcido e glow intensificado, enquanto o ponto central se retrai suavemente.
+     - Ao clicar (`mousedown`), o anel contrai com feedback tátil elástico instantâneo.
+  4. **Performance & Responsividade:** Ativo exclusivamente no desktop com mouse (`@media (hover: hover) and (pointer: fine)`); ocultado em telas sensíveis ao toque para preservar 100% da experiência nativa mobile.
 
 ---
 
