@@ -285,7 +285,14 @@ npm run build
 - Substituído o banner anterior de kits por uma experiência cinematográfica de **Fixed Background Reveal** (`[clip-path:inset(0)]` com viewport fixo) em [`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro):
   1. **Divisória Nobre:** Linha fina dourada contínua de uma ponta à outra posicionada imediatamente após a seção de Rituais de Degustação.
   2. **Efeito Janela de Revelação:** A fotografia da caixa de kits (`/assets/caixa-premium.png`) permanece perfeitamente estática no viewport enquanto a dobra do site rola sobre ela, revelando-a organicamente sem distorção, sem zoom e sem cálculos pesados de parallax.
-  3. **Tipografia & CTA:** Texto poético *"Para quem merece algo raro. Kits artesanais para ocasiões especiais"* com botão `<Button variant="outline">` translúcido direcionando para a página `/kits`.
+### [15/09/2026] — Refinamento do Manifesto Home e Padronização do Cursor Windows #B28C46
+1. **Manifesto Home ([`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro)):**
+   - Atualizado texto com quebra de linha equilibrada em 3 linhas antes de *"pois aqui tudo é"*.
+   - Tipografia da citação ajustada para `Lato` itálico com aspas discretas em cor de acento no início.
+   - Espaçamento inferior reduzido para aproximar a frase do título *"FEITO COM (C)ALMA."*.
+2. **Cursor Padrão do Windows na cor #B28C46 ([`src/styles/global.css`](file:///d:/projetos%20antigravity/site_alquimista/src/styles/global.css)):**
+   - Geometria do cursor padrão do Windows vetorizada em SVG (`M1 1 L1 18 L5.5 13.5 L8.5 21 L11.5 19.5 L8.5 12.2 L14.5 12.2 Z`).
+   - Aplicada a cor `#B28C46` com contorno escuro contrastante para legibilidade em qualquer fundo do site, mantendo o estilo para cursores interativos (mãozinha/pointer, texto/I-beam e not-allowed).
 
 ---
 
