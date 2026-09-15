@@ -1,10 +1,11 @@
 ---
-// Custom Cursor in #B28C46
+// Custom Cursor in #B28C46 with 20px Magnetic Attraction
 // - Central dot: Always visible at mouse coordinate (0 lag) across all states
 // - OS native cursor: Strictly hidden (no native pointer hand)
+// - Magnetic attraction: Pulls outer circle like a magnet when within 20px of encloseable elements
 // - Transparent enclosing: No background color alteration (transparent fill), only 1px #B28C46 contour + soft glow
 // - Header, Footer & Ritual card background: Does NOT enclose (smooth 50% opacity fade-in/out)
-// - Ritual Potion Buttons, Product Cards & CTAs: Encloses exactly flush to borders (0 padding)
+// - Ritual Potion Buttons, Product Cards & CTAs: Encloses exactly flush to borders (0 padding), tilts with 3D parallax
 // - WhatsApp FAB & Header Cauldron button: Encloses with perfect circular shape (9999px border-radius)
 // - Desktop only: Disabled on touch devices
 
@@ -43,7 +44,7 @@ const {
     style={`width: ${dotSize}px; height: ${dotSize}px; background-color: var(--cursor-color); box-shadow: 0 0 8px rgba(178, 140, 70, 0.9); transform: translate3d(-50%, -50%, 0);`}
   ></div>
 
-  <!-- Outer Morphing Circle (Transparent background, glowing 1px contour) -->
+  <!-- Outer Morphing Circle (Magnetic 20px snap, transparent background, glowing 1px contour) -->
   <div
     id="reactbits-cursor-circle"
     class="fixed top-0 left-0 pointer-events-none will-change-transform transition-[width,height,border-radius,background-color,border-color,box-shadow,opacity] duration-200 ease-out"
@@ -147,6 +148,48 @@ const {
       [data-cursor-enclose], ${roundCircularSelector}
     `;
 
+    // Magnetic proximity detection (20px magnetic attraction range)
+    function findMagneticTarget(x: number, y: number, proximity = 20): HTMLElement | null {
+      // 1. Direct hit check under point
+      const elUnderPoint = document.elementFromPoint(x, y) as HTMLElement | null;
+      if (elUnderPoint) {
+        // If it's a soft target (header/footer links or ritual card background), don't magnetic pull
+        if (elUnderPoint.closest(softLinksSelector) && !elUnderPoint.closest('.potion-suggestion-link, #cart-toggle-btn, a[aria-label*="WhatsApp"]')) {
+          return null;
+        }
+        const directHit = elUnderPoint.closest(enclosingSelector) as HTMLElement | null;
+        if (directHit) return directHit;
+      }
+
+      // 2. Proximity check within 20px
+      const candidates = document.querySelectorAll<HTMLElement>(enclosingSelector);
+      let closest: HTMLElement | null = null;
+      let minDistance = Infinity;
+
+      for (let i = 0; i < candidates.length; i++) {
+        const el = candidates[i];
+        if (el.closest(softLinksSelector) && !el.matches(roundCircularSelector) && !el.classList.contains('potion-suggestion-link')) {
+          continue;
+        }
+
+        const rect = el.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) continue;
+        if (rect.bottom < -proximity || rect.top > window.innerHeight + proximity) continue;
+
+        // Calculate shortest distance from point (x, y) to rectangle
+        const dx = Math.max(rect.left - x, 0, x - rect.right);
+        const dy = Math.max(rect.top - y, 0, y - rect.bottom);
+        const dist = Math.hypot(dx, dy);
+
+        if (dist <= proximity && dist < minDistance) {
+          minDistance = dist;
+          closest = el;
+        }
+      }
+
+      return closest;
+    }
+
     function onMouseMove(e: MouseEvent) {
       mouseX = e.clientX;
       mouseY = e.clientY;
@@ -164,57 +207,39 @@ const {
       }`;
 
       const target = e.target as HTMLElement | null;
-      if (!target) return;
 
-      // 1. Check if hovering inside potion buttons inside ritual or specific buttons/cards
-      const potionOrBtn = target.closest(".potion-suggestion-link, button, a.btn-primary, a.btn-ghost, a.btn-shimmer, a.btn-outline, .product-card, .filter-tab-btn") as HTMLElement | null;
-      if (potionOrBtn) {
-        isSoftHover = false;
-        circle.classList.remove("cursor-soft");
-        if (hoveredEncloseEl !== potionOrBtn) {
-          hoveredEncloseEl = potionOrBtn;
-          circle.classList.add("cursor-enclosing");
+      // 1. Check if direct hit is a Soft Hover element (Header/Footer links or Ritual card background)
+      if (target) {
+        const softTarget = target.closest(softLinksSelector) as HTMLElement | null;
+        const isInsidePotionOrBtn = target.closest('.potion-suggestion-link, #cart-toggle-btn, a[aria-label*="WhatsApp"]') as HTMLElement | null;
+
+        if (softTarget && !isInsidePotionOrBtn) {
+          if (hoveredEncloseEl) {
+            hoveredEncloseEl = null;
+            circle.classList.remove("cursor-enclosing");
+            circle.style.width = `${baseCircleSize}px`;
+            circle.style.height = `${baseCircleSize}px`;
+            circle.style.borderRadius = "9999px";
+          }
+          if (!isSoftHover) {
+            isSoftHover = true;
+            circle.classList.add("cursor-soft");
+          }
+          return;
         }
-        return;
       }
 
-      // 2. Check if hovering Round Circular button (WhatsApp / Cauldron)
-      const roundTarget = target.closest(roundCircularSelector) as HTMLElement | null;
-      if (roundTarget) {
-        isSoftHover = false;
-        circle.classList.remove("cursor-soft");
-        if (hoveredEncloseEl !== roundTarget) {
-          hoveredEncloseEl = roundTarget;
-          circle.classList.add("cursor-enclosing");
-        }
-        return;
-      }
-
-      // 3. Check if hovering Header / Footer links or Ritual Card area (Soft 50% opacity mode, no enclose)
-      const softTarget = target.closest(softLinksSelector) as HTMLElement | null;
-      if (softTarget) {
-        if (hoveredEncloseEl) {
-          hoveredEncloseEl = null;
-          circle.classList.remove("cursor-enclosing");
-          circle.style.width = `${baseCircleSize}px`;
-          circle.style.height = `${baseCircleSize}px`;
-          circle.style.borderRadius = "9999px";
-        }
-        if (!isSoftHover) {
-          isSoftHover = true;
-          circle.classList.add("cursor-soft");
-        }
-        return;
-      } else if (isSoftHover) {
+      if (isSoftHover) {
         isSoftHover = false;
         circle.classList.remove("cursor-soft");
       }
 
-      // 4. General enclosing target check
-      const encloseTarget = target.closest(enclosingSelector) as HTMLElement | null;
-      if (encloseTarget) {
-        if (hoveredEncloseEl !== encloseTarget) {
-          hoveredEncloseEl = encloseTarget;
+      // 2. 20px Magnetic Attraction check
+      const magneticTarget = findMagneticTarget(mouseX, mouseY, 20);
+
+      if (magneticTarget) {
+        if (hoveredEncloseEl !== magneticTarget) {
+          hoveredEncloseEl = magneticTarget;
           circle.classList.add("cursor-enclosing");
         }
       } else if (hoveredEncloseEl) {
@@ -262,9 +287,9 @@ const {
           const targetCenterX = rect.left + rect.width / 2;
           const targetCenterY = rect.top + rect.height / 2;
 
-          // Smooth magnetic pull to target center
-          circleX += (targetCenterX - circleX) * 0.24;
-          circleY += (targetCenterY - circleY) * 0.24;
+          // Smooth magnetic pull to target center (acceleration factor 0.26)
+          circleX += (targetCenterX - circleX) * 0.26;
+          circleY += (targetCenterY - circleY) * 0.26;
 
           if (isRound) {
             // Perfect circular shape for WhatsApp & Cauldron icon
