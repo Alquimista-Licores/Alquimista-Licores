@@ -237,20 +237,20 @@ const RITUALS: Ritual[] = [
                 </div>
 
                 <!-- Suggested Potions Strip with Modal Trigger Buttons -->
-                <div class="ritual-potions-strip pt-3 pb-1 border-t border-[var(--gold)]/15 flex flex-wrap items-center gap-2">
-                  <span class="text-[10px] uppercase font-mono tracking-[0.2em] text-[var(--gold)]/80 font-medium w-full sm:w-auto">
+                <div class="ritual-potions-strip pt-3 pb-1 border-t border-[var(--gold)]/15">
+                  <span class="text-[9.5px] md:text-[10px] uppercase font-mono tracking-[0.18em] text-[var(--gold)]/75 font-medium block mb-2">
                     Poções do Ritual:
                   </span>
-                  <div class="flex flex-wrap gap-1.5">
+                  <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 md:gap-2">
                     {ritual.suggestedPotions.map((potion) => (
                       <button
                         type="button"
-                        class="potion-suggestion-link text-xs px-2.5 py-1 rounded-sm bg-[var(--surface-elevated)]/50 hover:bg-[var(--gold)]/20 border border-[var(--gold)]/25 hover:border-[var(--gold)] text-[var(--cream)] hover:text-[var(--gold-bright)] transition-all flex items-center gap-1.5 group/link font-sans"
+                        class="potion-suggestion-link text-[10.5px] lg:text-[11px] px-2 lg:px-2.5 py-1 rounded-sm bg-[var(--surface-elevated)]/50 hover:bg-[var(--gold)]/20 border border-[var(--gold)]/25 hover:border-[var(--gold)] text-[var(--cream)] hover:text-[var(--gold-bright)] transition-all flex items-center justify-center gap-1 group/link font-sans shrink-0 whitespace-nowrap"
                         data-potion-id={potion.id}
                         title={`Ver detalhes de ${potion.name}`}
                       >
-                        <span class="font-medium font-display text-[11px] md:text-xs">{potion.name}</span>
-                        <span class="text-[var(--gold)] text-[10px] transform group-hover/link:translate-x-0.5 transition-transform">→</span>
+                        <span class="font-medium font-display">{potion.name}</span>
+                        <span class="text-[var(--gold)] text-[9.5px] transform group-hover/link:translate-x-0.5 transition-transform">→</span>
                       </button>
                     ))}
                   </div>
