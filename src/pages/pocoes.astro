@@ -7,10 +7,10 @@ import { fetchProducts } from '../lib/data';
 const products = await fetchProducts();
 
 const TABS = [
-  { id: "all", label: "Todas as Poções", symbol: "🜚" },
-  { id: "fino", label: "Licores Finos", symbol: "⚗" },
-  { id: "cremoso", label: "Licores Cremosos", symbol: "✦" },
-  { id: "especial", label: "Edições Especiais", symbol: "👑" },
+  { id: "all", label: "Todas as Poções" },
+  { id: "fino", label: "Licores Finos" },
+  { id: "cremoso", label: "Licores Cremosos" },
+  { id: "especial", label: "Edições Especiais" },
 ];
 ---
 
@@ -29,14 +29,13 @@ const TABS = [
       {TABS.map((t) => (
         <button
           type="button"
-          class={`filter-tab-btn px-4 py-2 rounded-sm text-xs font-mono tracking-wider transition-all duration-300 font-semibold cursor-pointer flex items-center gap-2 ${
+          class={`filter-tab-btn px-4 py-2 rounded-sm text-xs font-mono tracking-wider transition-all duration-300 font-semibold cursor-pointer flex items-center justify-center ${
             t.id === "all"
               ? "bg-[var(--gold)] text-[var(--background)] shadow-lg border border-[var(--gold)]"
               : "bg-[var(--surface)]/80 border border-[var(--gold)]/25 text-[var(--gold-soft)] hover:border-[var(--gold)] hover:bg-[var(--gold)]/10"
           }`}
           data-category={t.id}
         >
-          <span class="leading-none">{t.symbol}</span>
           <span>{t.label}</span>
         </button>
       ))}
