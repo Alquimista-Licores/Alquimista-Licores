@@ -1,42 +1,24 @@
 ---
-// Custom Cursor — Exact React Bits Configuration in #B28C46
-// Settings from Configuration Panel:
-// - Circle Size: 40px
-// - Dot Size: 6px
-// - Circle Border Width: 2px
-// - Mix Blend Mode: normal
-// - Circle Stiffness: 150
-// - Circle Damping: 20
-// - Dot Stiffness: 300
-// - Dot Damping: 30
-// - Target Padding: 0px
-// - Elastic Stretch: enabled
-// - Show on Touch: disabled
-// - Show Custom Content: disabled
-// - Color: #B28C46
+// Custom Cursor in #B28C46
+// - Central dot: Exactly follows mouse with 0 lag
+// - Outer circle: Gentle delay (smooth follower), 1px border (half thickness), perfectly circular without distortion
+// - Interactive hover: Subtle scale-up over clickable elements
+// - Desktop only: Disabled on touch devices
 
 interface Props {
   color?: string;
   circleSize?: number;
   dotSize?: number;
   borderWidth?: number;
-  circleStiffness?: number;
-  circleDamping?: number;
-  dotStiffness?: number;
-  dotDamping?: number;
-  elasticStretch?: boolean;
+  delayFactor?: number;
 }
 
 const {
   color = "#B28C46",
   circleSize = 40,
   dotSize = 6,
-  borderWidth = 2,
-  circleStiffness = 150,
-  circleDamping = 20,
-  dotStiffness = 300,
-  dotDamping = 30,
-  elasticStretch = true,
+  borderWidth = 1,
+  delayFactor = 0.12,
 } = Astro.props;
 ---
 
@@ -47,26 +29,22 @@ const {
   data-circle-size={circleSize}
   data-dot-size={dotSize}
   data-border-width={borderWidth}
-  data-circle-stiffness={circleStiffness}
-  data-circle-damping={circleDamping}
-  data-dot-stiffness={dotStiffness}
-  data-dot-damping={dotDamping}
-  data-elastic-stretch={elasticStretch ? "true" : "false"}
+  data-delay-factor={delayFactor}
   style={`--cursor-color: ${color};`}
   aria-hidden="true"
 >
-  <!-- Dot (6px, 300 stiffness, 30 damping) -->
+  <!-- Dot (Tracks mouse instantaneously with 0 lag) -->
   <div
     id="reactbits-cursor-dot"
     class="fixed top-0 left-0 rounded-full pointer-events-none will-change-transform"
     style={`width: ${dotSize}px; height: ${dotSize}px; background-color: var(--cursor-color); box-shadow: 0 0 8px rgba(178, 140, 70, 0.7); transform: translate3d(-50%, -50%, 0);`}
   ></div>
 
-  <!-- Circle (40px, 2px border, 150 stiffness, 20 damping, elastic stretch) -->
+  <!-- Outer Circle (Half thickness: 1px border, smooth trailing delay, no distortion) -->
   <div
     id="reactbits-cursor-circle"
-    class="fixed top-0 left-0 rounded-full pointer-events-none will-change-transform transition-[background-color,border-color,box-shadow] duration-200 ease-out"
-    style={`width: ${circleSize}px; height: ${circleSize}px; border: ${borderWidth}px solid var(--cursor-color); box-shadow: 0 0 14px rgba(178, 140, 70, 0.22); transform: translate3d(-50%, -50%, 0); mix-blend-mode: normal;`}
+    class="fixed top-0 left-0 rounded-full pointer-events-none will-change-transform transition-[background-color,box-shadow] duration-200 ease-out"
+    style={`width: ${circleSize}px; height: ${circleSize}px; border: ${borderWidth}px solid var(--cursor-color); box-shadow: 0 0 12px rgba(178, 140, 70, 0.2); transform: translate3d(-50%, -50%, 0); mix-blend-mode: normal;`}
   ></div>
 </div>
 
@@ -92,42 +70,21 @@ const {
 
   /* Circle Hover and Active States */
   #reactbits-cursor-circle.cursor-hover {
-    background-color: rgba(178, 140, 70, 0.16);
-    box-shadow: 0 0 22px rgba(178, 140, 70, 0.5), inset 0 0 10px rgba(178, 140, 70, 0.12);
+    background-color: rgba(178, 140, 70, 0.12);
+    box-shadow: 0 0 18px rgba(178, 140, 70, 0.45), inset 0 0 8px rgba(178, 140, 70, 0.1);
   }
 
   #reactbits-cursor-circle.cursor-active {
-    background-color: rgba(178, 140, 70, 0.3);
+    background-color: rgba(178, 140, 70, 0.25);
   }
 
   #reactbits-cursor-dot.cursor-hover {
-    opacity: 0.5;
+    opacity: 0.6;
   }
 </style>
 
 <script>
-  class Spring {
-    pos: number;
-    vel: number;
-    stiffness: number;
-    damping: number;
-
-    constructor(stiffness: number, damping: number, initial = 0) {
-      this.pos = initial;
-      this.vel = 0;
-      this.stiffness = stiffness;
-      this.damping = damping;
-    }
-
-    update(target: number, dt: number) {
-      const force = -this.stiffness * (this.pos - target) - this.damping * this.vel;
-      this.vel += force * dt;
-      this.pos += this.vel * dt;
-      return this.pos;
-    }
-  }
-
-  function initReactBitsCursor() {
+  function initCustomCursor() {
     // Only on fine pointer devices (desktop with mouse)
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
       return;
@@ -139,25 +96,16 @@ const {
 
     if (!root || !dot || !circle) return;
 
-    const circleSize = parseFloat(root.getAttribute("data-circle-size") || "40");
-    const cStiff = parseFloat(root.getAttribute("data-circle-stiffness") || "150");
-    const cDamp = parseFloat(root.getAttribute("data-circle-damping") || "20");
-    const dStiff = parseFloat(root.getAttribute("data-dot-stiffness") || "300");
-    const dDamp = parseFloat(root.getAttribute("data-dot-damping") || "30");
-    const isElastic = root.getAttribute("data-elastic-stretch") === "true";
+    const delay = parseFloat(root.getAttribute("data-delay-factor") || "0.12");
 
-    let targetX = -100;
-    let targetY = -100;
+    let mouseX = -100;
+    let mouseY = -100;
+    let circleX = -100;
+    let circleY = -100;
     let isVisible = false;
     let isHovering = false;
     let isActive = false;
-    let lastTime = performance.now();
     let animId: number | null = null;
-
-    const dotSpringX = new Spring(dStiff, dDamp, targetX);
-    const dotSpringY = new Spring(dStiff, dDamp, targetY);
-    const circleSpringX = new Spring(cStiff, cDamp, targetX);
-    const circleSpringY = new Spring(cStiff, cDamp, targetY);
 
     const interactiveSelector = `
       a, button, [role="button"], [role="link"], summary, label[for],
@@ -166,18 +114,22 @@ const {
     `;
 
     function onMouseMove(e: MouseEvent) {
-      targetX = e.clientX;
-      targetY = e.clientY;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
 
       if (!isVisible) {
         isVisible = true;
-        dotSpringX.pos = targetX;
-        dotSpringY.pos = targetY;
-        circleSpringX.pos = targetX;
-        circleSpringY.pos = targetY;
+        circleX = mouseX;
+        circleY = mouseY;
         root.style.opacity = "1";
       }
 
+      // Dot tracks the mouse coordinate INSTANTANEOUSLY (0 lag)
+      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate3d(-50%, -50%, 0) ${
+        isActive ? "scale(1.3)" : isHovering ? "scale(0.6)" : "scale(1)"
+      }`;
+
+      // Check interactive hover
       const target = e.target as HTMLElement | null;
       if (target && target.closest(interactiveSelector)) {
         if (!isHovering) {
@@ -212,42 +164,16 @@ const {
       root.style.opacity = "1";
     }
 
-    function loop(time: number) {
-      const dt = Math.min((time - lastTime) / 1000, 0.032);
-      lastTime = time;
-
+    // Smooth trailing loop for the outer circle
+    function loop() {
       if (isVisible) {
-        const dotX = dotSpringX.update(targetX, dt);
-        const dotY = dotSpringY.update(targetY, dt);
-        const circX = circleSpringX.update(targetX, dt);
-        const circY = circleSpringY.update(targetY, dt);
+        // Smooth gentle delay (lerp)
+        circleX += (mouseX - circleX) * delay;
+        circleY += (mouseY - circleY) * delay;
 
-        dot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate3d(-50%, -50%, 0) ${
-          isActive ? "scale(1.4)" : isHovering ? "scale(0.5)" : "scale(1)"
-        }`;
-
-        // Calculate Elastic Stretch based on circle velocity
-        let stretchTransform = "";
-        if (isElastic && !isActive) {
-          const vx = circleSpringX.vel;
-          const vy = circleSpringY.vel;
-          const speed = Math.hypot(vx, vy);
-          if (speed > 40) {
-            const angle = Math.atan2(vy, vx) * (180 / Math.PI);
-            const stretch = Math.min(speed / 900, 0.45);
-            const scaleX = (1 + stretch) * (isHovering ? 1.35 : 1);
-            const scaleY = (1 / (1 + stretch)) * (isHovering ? 1.35 : 1);
-            stretchTransform = `rotate(${angle}deg) scale(${scaleX}, ${scaleY}) rotate(${-angle}deg)`;
-          } else if (isHovering) {
-            stretchTransform = "scale(1.35)";
-          }
-        } else if (isActive) {
-          stretchTransform = "scale(0.8)";
-        } else if (isHovering) {
-          stretchTransform = "scale(1.35)";
-        }
-
-        circle.style.transform = `translate3d(${circX}px, ${circY}px, 0) translate3d(-50%, -50%, 0) ${stretchTransform}`;
+        // Perfectly circular: No distortion, pure uniform scale
+        const scale = isActive ? "scale(0.85)" : isHovering ? "scale(1.35)" : "scale(1)";
+        circle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) translate3d(-50%, -50%, 0) ${scale}`;
       }
 
       animId = requestAnimationFrame(loop);
@@ -271,6 +197,6 @@ const {
     }, { once: true });
   }
 
-  initReactBitsCursor();
-  document.addEventListener("astro:page-load", initReactBitsCursor);
+  initCustomCursor();
+  document.addEventListener("astro:page-load", initCustomCursor);
 </script>
