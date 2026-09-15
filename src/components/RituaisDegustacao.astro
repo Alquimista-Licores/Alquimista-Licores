@@ -204,58 +204,60 @@ const RITUALS: Ritual[] = [
               “{ritual.shortDesc}”
             </p>
 
-            <!-- Expanded Details & Suggested Potions (Visible on Active) -->
-            <div class="ritual-expanded-content transition-all duration-500">
-              <!-- Practical Line / Badge -->
-              <div class="flex flex-wrap items-center gap-2 mt-3.5 mb-3">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-[var(--gold)]/10 border border-[var(--gold)]/25 text-[11px] font-mono text-[var(--gold-light)] font-medium">
-                  <span class="text-[var(--gold)]">✦</span> {ritual.badgeTag}
-                </span>
-              </div>
+            <!-- Expanded Details & Suggested Potions (Smooth Grid Accordion) -->
+            <div class="ritual-expanded-wrapper">
+              <div class="ritual-expanded-inner">
+                <!-- Practical Line / Badge -->
+                <div class="flex flex-wrap items-center gap-2 mt-3.5 mb-3">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-[var(--gold)]/10 border border-[var(--gold)]/25 text-[11px] font-mono text-[var(--gold-light)] font-medium">
+                    <span class="text-[var(--gold)]">✦</span> {ritual.badgeTag}
+                  </span>
+                </div>
 
-              <!-- Main Paragraph -->
-              <p class="text-xs md:text-sm text-[var(--cream)]/85 font-body font-light leading-relaxed mb-3">
-                {ritual.mainText}
-              </p>
+                <!-- Main Paragraph -->
+                <p class="text-xs md:text-sm text-[var(--cream)]/85 font-body font-light leading-relaxed mb-3">
+                  {ritual.mainText}
+                </p>
 
-              <!-- Auxiliary Block (Dica / Inspirações) -->
-              <div class="p-3 rounded-sm bg-black/30 border-l-2 border-[var(--gold)]/70 text-xs font-body mb-4">
-                <span class="text-[var(--gold-bright)] font-mono font-semibold uppercase tracking-wider text-[10px] block mb-1">
-                  {ritual.highlightLabel}
-                </span>
-                {ritual.highlightItems ? (
-                  <div class="space-y-1 text-[var(--text-soft)] font-light leading-relaxed">
-                    {ritual.highlightItems.map((item) => (
-                      <div class="flex items-start gap-1.5">
-                        <span class="text-[var(--gold)] text-[10px] mt-0.5">•</span>
-                        <span>{item}</span>
-                      </div>
+                <!-- Auxiliary Block (Dica / Inspirações) -->
+                <div class="p-3 rounded-sm bg-black/30 border-l-2 border-[var(--gold)]/70 text-xs font-body mb-4">
+                  <span class="text-[var(--gold-bright)] font-mono font-semibold uppercase tracking-wider text-[10px] block mb-1">
+                    {ritual.highlightLabel}
+                  </span>
+                  {ritual.highlightItems ? (
+                    <div class="space-y-1 text-[var(--text-soft)] font-light leading-relaxed">
+                      {ritual.highlightItems.map((item) => (
+                        <div class="flex items-start gap-1.5">
+                          <span class="text-[var(--gold)] text-[10px] mt-0.5">•</span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p class="text-[var(--text-soft)] font-light leading-relaxed">
+                      {ritual.highlightText}
+                    </p>
+                  )}
+                </div>
+
+                <!-- Suggested Potions Strip with Modal Trigger Buttons -->
+                <div class="ritual-potions-strip pt-3 pb-1 border-t border-[var(--gold)]/15 flex flex-wrap items-center gap-2">
+                  <span class="text-[10px] uppercase font-mono tracking-[0.2em] text-[var(--gold)]/80 font-medium w-full sm:w-auto">
+                    Poções do Ritual:
+                  </span>
+                  <div class="flex flex-wrap gap-1.5">
+                    {ritual.suggestedPotions.map((potion) => (
+                      <button
+                        type="button"
+                        class="potion-suggestion-link text-xs px-2.5 py-1 rounded-sm bg-[var(--surface-elevated)]/50 hover:bg-[var(--gold)]/20 border border-[var(--gold)]/25 hover:border-[var(--gold)] text-[var(--cream)] hover:text-[var(--gold-bright)] transition-all flex items-center gap-1.5 group/link font-sans"
+                        data-potion-id={potion.id}
+                        title={`Ver detalhes de ${potion.name}`}
+                      >
+                        <span class="font-medium font-display text-[11px] md:text-xs">{potion.name}</span>
+                        <span class="text-[var(--gold)] text-[10px] transform group-hover/link:translate-x-0.5 transition-transform">→</span>
+                      </button>
                     ))}
                   </div>
-                ) : (
-                  <p class="text-[var(--text-soft)] font-light leading-relaxed">
-                    {ritual.highlightText}
-                  </p>
-                )}
-              </div>
-
-              <!-- Suggested Potions Strip with Modal Trigger Buttons -->
-              <div class="ritual-potions-strip pt-3 border-t border-[var(--gold)]/15 flex flex-wrap items-center gap-2">
-                <span class="text-[10px] uppercase font-mono tracking-[0.2em] text-[var(--gold)]/80 font-medium w-full sm:w-auto">
-                  Poções do Ritual:
-                </span>
-                <div class="flex flex-wrap gap-1.5">
-                  {ritual.suggestedPotions.map((potion) => (
-                    <button
-                      type="button"
-                      class="potion-suggestion-link text-xs px-2.5 py-1 rounded-sm bg-[var(--surface-elevated)]/50 hover:bg-[var(--gold)]/20 border border-[var(--gold)]/25 hover:border-[var(--gold)] text-[var(--cream)] hover:text-[var(--gold-bright)] transition-all flex items-center gap-1.5 group/link font-sans"
-                      data-potion-id={potion.id}
-                      title={`Ver detalhes de ${potion.name}`}
-                    >
-                      <span class="font-medium font-display text-[11px] md:text-xs">{potion.name}</span>
-                      <span class="text-[var(--gold)] text-[10px] transform group-hover/link:translate-x-0.5 transition-transform">→</span>
-                    </button>
-                  ))}
                 </div>
               </div>
             </div>
@@ -290,7 +292,7 @@ const RITUALS: Ritual[] = [
     height: 14px;
     border-color: var(--gold);
     opacity: 0.45;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: opacity 0.4s ease;
     pointer-events: none;
     z-index: 25;
   }
@@ -301,10 +303,9 @@ const RITUALS: Ritual[] = [
 
   .ritual-frame-container:hover .corner-bracket {
     opacity: 0.85;
-    transform: scale(1.05);
   }
 
-  /* 2. Image Stack & Cinematic Crossfade */
+  /* 2. Image Stack & Static Crossfade (Pure Opacity Fade In/Out) */
   .ritual-image-deck {
     border: 1px solid rgba(200, 169, 126, 0.22);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(200, 169, 126, 0.08);
@@ -317,18 +318,13 @@ const RITUALS: Ritual[] = [
 
   .ritual-deck-img {
     opacity: 0;
-    transform: scale(1.02);
-    filter: blur(3px);
-    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1;
+    pointer-events: none;
   }
 
   .ritual-deck-img.is-active {
     opacity: 1;
-    transform: scale(1);
-    filter: blur(0);
     z-index: 2;
   }
 
@@ -341,6 +337,7 @@ const RITUALS: Ritual[] = [
     outline: none;
     position: relative;
     user-select: none;
+    transition: border-color 0.45s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   .ritual-card:focus-visible {
@@ -356,23 +353,24 @@ const RITUALS: Ritual[] = [
     background: linear-gradient(90deg, rgba(200, 169, 126, 0.06) 0%, transparent 100%);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
     border-radius: 0 4px 4px 0;
   }
 
   /* Inactive typography defaults */
   .ritual-numeral {
     color: rgba(200, 169, 126, 0.55);
-    transform: translateX(0);
   }
 
   .ritual-title {
     color: var(--text-soft);
+    transition: color 0.35s ease;
   }
 
   .ritual-glyph {
     color: var(--gold);
     opacity: 0.35;
+    transition: opacity 0.4s ease, color 0.4s ease;
   }
 
   .ritual-ornament-line {
@@ -380,21 +378,26 @@ const RITUALS: Ritual[] = [
     height: 1px;
     background: linear-gradient(90deg, var(--gold) 0%, rgba(200, 169, 126, 0) 100%);
     box-shadow: 0 0 6px rgba(200, 169, 126, 0.4);
-    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   .ritual-quote {
     color: var(--text-faded);
+    transition: color 0.4s ease;
   }
 
-  .ritual-expanded-content {
-    max-height: 0;
+  /* Ultra-smooth CSS Grid Transition for Expansion & Collapse */
+  .ritual-expanded-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
     opacity: 0;
+    transition: grid-template-rows 0.55s cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .ritual-expanded-inner {
     overflow: hidden;
-    transform: translateY(6px);
-    transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.4s ease,
-                transform 0.4s ease;
+    min-height: 0;
   }
 
   /* Hover state */
@@ -437,10 +440,9 @@ const RITUALS: Ritual[] = [
     color: var(--cream);
   }
 
-  .ritual-card.is-active .ritual-expanded-content {
-    max-height: 480px;
+  .ritual-card.is-active .ritual-expanded-wrapper {
+    grid-template-rows: 1fr;
     opacity: 1;
-    transform: translateY(0);
   }
 
   /* 4. Reveal Animation */
@@ -465,12 +467,9 @@ const RITUALS: Ritual[] = [
     }
     .ritual-deck-img {
       transition: opacity 0.2s ease !important;
-      transform: none !important;
-      filter: none !important;
     }
-    .ritual-expanded-content {
-      transition: opacity 0.2s ease !important;
-      transform: none !important;
+    .ritual-expanded-wrapper {
+      transition: none !important;
     }
   }
 </style>
@@ -482,7 +481,6 @@ const RITUALS: Ritual[] = [
 
     const cards = section.querySelectorAll<HTMLElement>(".ritual-card");
     const images = section.querySelectorAll<HTMLImageElement>(".ritual-deck-img");
-    const frame = document.getElementById("ritualFrame");
     const activeGlyph = document.getElementById("activeGlyph");
     const activeBadgeText = document.getElementById("activeBadgeText");
 
@@ -510,7 +508,7 @@ const RITUALS: Ritual[] = [
         }
       });
 
-      // Crossfade images
+      // Pure crossfade images (fade-in / fade-out without translation/scale)
       images.forEach((img, idx) => {
         if (idx === index) {
           img.classList.add("is-active");
@@ -556,62 +554,6 @@ const RITUALS: Ritual[] = [
         }
       });
     });
-
-    // Subtle image parallax on mousemove (Max ±3px in X, ±2px in Y)
-    const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
-    const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (!isTouch && !isReducedMotion && frame) {
-      let rect: DOMRect | null = null;
-      let rafId: number | null = null;
-      let targetX = 0;
-      let targetY = 0;
-      let currentX = 0;
-      let currentY = 0;
-
-      const updateRect = () => {
-        if (frame) rect = frame.getBoundingClientRect();
-      };
-      updateRect();
-      window.addEventListener("resize", updateRect, { passive: true });
-
-      frame.addEventListener("mousemove", (e: MouseEvent) => {
-        if (!rect) updateRect();
-        if (!rect) return;
-
-        const relX = (e.clientX - rect.left) / rect.width - 0.5;
-        const relY = (e.clientY - rect.top) / rect.height - 0.5;
-
-        targetX = relX * 6; // ±3px
-        targetY = relY * 4; // ±2px
-
-        if (!rafId) {
-          rafId = requestAnimationFrame(animateParallax);
-        }
-      });
-
-      frame.addEventListener("mouseleave", () => {
-        targetX = 0;
-        targetY = 0;
-      });
-
-      function animateParallax() {
-        currentX += (targetX - currentX) * 0.1;
-        currentY += (targetY - currentY) * 0.1;
-
-        images.forEach((img) => {
-          if (img.classList.contains("is-active")) {
-            img.style.transform = `scale(1.03) translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0)`;
-          }
-        });
-
-        if (Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05) {
-          rafId = requestAnimationFrame(animateParallax);
-        } else {
-          rafId = null;
-        }
-      }
-    }
 
     // Suggested potions click -> opens product modal or navigates
     const potionButtons = section.querySelectorAll<HTMLButtonElement>(".potion-suggestion-link");
