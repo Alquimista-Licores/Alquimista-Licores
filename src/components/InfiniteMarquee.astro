@@ -7,10 +7,10 @@ interface Props {
 const { class: className = '', speedSeconds = 35 } = Astro.props;
 
 const items = [
-  "Produção artesanal",
-  "Sem corantes artificiais",
-  "Garrafas reutilizadas",
-  "Pequenos lotes",
+  { text: "Produção artesanal", symbol: "🜃" },
+  { text: "Sem corantes artificiais", symbol: "🜁" },
+  { text: "Garrafas reutilizadas", symbol: "🜄" },
+  { text: "Pequenos lotes", symbol: "🜂" },
 ];
 
 // Repetimos os itens várias vezes em cada conjunto para garantir preenchimento fluido em qualquer resolução
@@ -18,7 +18,7 @@ const repeatedItems = [...items, ...items];
 ---
 
 <section 
-  class={`marquee-container relative z-10 border-y border-[var(--border)] bg-[#120E0A]/70 backdrop-blur-xs py-4 md:py-5.5 overflow-hidden select-none ${className}`}
+  class={`marquee-container relative z-10 border-y border-[var(--gold)]/20 bg-[#120E0A]/70 backdrop-blur-xs py-3 md:py-3.5 overflow-hidden select-none ${className}`}
   aria-label="Destaques da Alquimia"
 >
   <!-- Fade gradiente nas extremidades para transição suave -->
@@ -32,13 +32,13 @@ const repeatedItems = [...items, ...items];
     >
       <!-- Conjunto 1 -->
       <div class="marquee-group flex shrink-0 items-center">
-        {repeatedItems.map((text) => (
-          <div class="marquee-item inline-flex items-center mx-5 md:mx-7 lg:mx-9 group cursor-default">
-            <span class="font-display font-medium text-base sm:text-lg md:text-xl lg:text-2xl tracking-[0.2em] md:tracking-[0.25em] uppercase text-[var(--gold-soft)]/90 group-hover:text-[var(--gold)] transition-colors duration-300">
-              {text}
+        {repeatedItems.map((item) => (
+          <div class="marquee-item inline-flex items-center mx-4 md:mx-6 lg:mx-8 group cursor-default">
+            <span class="font-display font-medium text-xs sm:text-sm md:text-[15px] tracking-[0.22em] md:tracking-[0.28em] uppercase text-[var(--gold-soft)]/90 group-hover:text-[var(--gold)] transition-colors duration-300">
+              {item.text}
             </span>
-            <span class="marquee-star ml-8 md:ml-12 lg:ml-16 text-[var(--gold)] text-base md:text-lg lg:text-xl opacity-80 group-hover:opacity-100 group-hover:scale-125 transition-all duration-300" aria-hidden="true">
-              ✦
+            <span class="marquee-glyph ml-6 md:ml-8 lg:ml-10 text-[var(--gold)] text-sm md:text-base opacity-75 group-hover:opacity-100 group-hover:scale-115 transition-all duration-300" aria-hidden="true">
+              {item.symbol}
             </span>
           </div>
         ))}
@@ -46,13 +46,13 @@ const repeatedItems = [...items, ...items];
 
       <!-- Conjunto 2 (clone para loop infinito contínuo) -->
       <div class="marquee-group flex shrink-0 items-center" aria-hidden="true">
-        {repeatedItems.map((text) => (
-          <div class="marquee-item inline-flex items-center mx-5 md:mx-7 lg:mx-9 group cursor-default">
-            <span class="font-display font-medium text-base sm:text-lg md:text-xl lg:text-2xl tracking-[0.2em] md:tracking-[0.25em] uppercase text-[var(--gold-soft)]/90 group-hover:text-[var(--gold)] transition-colors duration-300">
-              {text}
+        {repeatedItems.map((item) => (
+          <div class="marquee-item inline-flex items-center mx-4 md:mx-6 lg:mx-8 group cursor-default">
+            <span class="font-display font-medium text-xs sm:text-sm md:text-[15px] tracking-[0.22em] md:tracking-[0.28em] uppercase text-[var(--gold-soft)]/90 group-hover:text-[var(--gold)] transition-colors duration-300">
+              {item.text}
             </span>
-            <span class="marquee-star ml-8 md:ml-12 lg:ml-16 text-[var(--gold)] text-base md:text-lg lg:text-xl opacity-80 group-hover:opacity-100 group-hover:scale-125 transition-all duration-300" aria-hidden="true">
-              ✦
+            <span class="marquee-glyph ml-6 md:ml-8 lg:ml-10 text-[var(--gold)] text-sm md:text-base opacity-75 group-hover:opacity-100 group-hover:scale-115 transition-all duration-300" aria-hidden="true">
+              {item.symbol}
             </span>
           </div>
         ))}
@@ -70,8 +70,9 @@ const repeatedItems = [...items, ...items];
     animation-play-state: paused;
   }
 
-  .marquee-star {
-    text-shadow: 0 0 10px rgba(200, 169, 126, 0.4);
+  .marquee-glyph {
+    text-shadow: 0 0 8px rgba(200, 169, 126, 0.4);
+    font-family: var(--font-decorative), serif;
   }
 
   @keyframes scrollMarquee {

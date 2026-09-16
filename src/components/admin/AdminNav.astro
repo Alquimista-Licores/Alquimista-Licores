@@ -1,0 +1,75 @@
+---
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = "/admin" } = Astro.props;
+
+const NAV_ITEMS = [
+  { path: "/admin", label: "Dashboard", icon: "⚗" },
+  { path: "/admin/pedidos", label: "Pedidos", icon: "📜" },
+  { path: "/admin/jornada", label: "Jornada", icon: "🔮" },
+  { path: "/admin/produtos", label: "Produtos", icon: "🏺" },
+  { path: "/admin/kits", label: "Kits", icon: "🎁" },
+  { path: "/admin/depoimentos", label: "Depoimentos", icon: "💬" },
+  { path: "/admin/destaques", label: "Destaques", icon: "⭐" },
+  { path: "/admin/backup", label: "Backup", icon: "💾" },
+];
+---
+
+<aside class="w-full lg:w-60 shrink-0">
+  <div class="p-4 lg:p-6 bg-[var(--surface)]/80 border border-[var(--gold)]/15 rounded-md backdrop-blur-md sticky top-6">
+    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[var(--gold)]/15">
+      <span class="text-2xl text-[var(--gold)]">⚗</span>
+      <div>
+        <div class="font-display text-xs tracking-[0.25em] text-[var(--gold)] uppercase font-semibold">Alquimista</div>
+        <div class="text-[10px] text-[var(--cream)]/40 uppercase tracking-widest">Painel Mestre</div>
+      </div>
+    </div>
+
+    <nav class="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 scrollbar-none" aria-label="Navegação Administrativa">
+      {NAV_ITEMS.map((item) => {
+        const isActive = item.path === "/admin" 
+          ? currentPath === "/admin" || currentPath === "/admin/"
+          : currentPath.startsWith(item.path);
+
+        return (
+          <a
+            href={item.path}
+            class={`flex items-center gap-3 px-3 py-2.5 text-xs rounded-sm whitespace-nowrap transition-all duration-200 ${
+              isActive
+                ? "bg-[var(--gold)]/15 text-[var(--gold)] border-l-2 border-[var(--gold)] font-medium pl-3 shadow-[0_0_12px_rgba(200,169,126,0.15)]"
+                : "text-[var(--cream)]/70 hover:text-[var(--gold)] hover:bg-[var(--gold)]/5"
+            }`}
+            aria-current={isActive ? "page" : undefined}
+          >
+            <span class="text-sm opacity-80">{item.icon}</span>
+            <span class="tracking-wider uppercase font-sans text-[11px]">{item.label}</span>
+          </a>
+        );
+      })}
+
+      <div class="pt-3 mt-3 border-t border-[var(--gold)]/10 flex lg:flex-col gap-2">
+        <a 
+          href="/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="flex items-center gap-2 px-3 py-2 text-[11px] text-[var(--cream)]/50 hover:text-[var(--gold)] transition-colors rounded-sm hover:bg-white/5"
+          title="Abrir vitrine em nova guia"
+        >
+          <span>↗</span>
+          <span class="tracking-wider">Ver Loja</span>
+        </a>
+
+        <button
+          id="admin-logout-btn"
+          type="button"
+          class="flex items-center gap-2 px-3 py-2 text-[11px] text-red-400/80 hover:text-red-300 hover:bg-red-500/10 transition-colors rounded-sm text-left w-full cursor-pointer"
+        >
+          <span>⏻</span>
+          <span class="tracking-wider uppercase font-sans">Sair</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+</aside>

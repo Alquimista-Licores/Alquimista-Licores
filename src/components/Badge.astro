@@ -1,0 +1,50 @@
+---
+interface Props {
+  variant?: 'gold' | 'dark' | 'ember';
+  symbol?: string;
+  tooltip?: string;
+  size?: 'sm' | 'md';
+  class?: string;
+  [key: string]: any;
+}
+
+const {
+  variant = 'gold',
+  symbol,
+  tooltip,
+  size = 'md',
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const variantClasses: Record<string, string> = {
+  gold: 'badge-pill-gold',
+  dark: 'badge-pill-dark',
+  ember: 'badge-pill-ember',
+};
+
+const sizeClasses: Record<string, string> = {
+  sm: 'text-[11px] py-1 px-2.5',
+  md: 'text-xs py-1.5 px-3.5',
+};
+
+const resolvedVariant = variantClasses[variant] || 'badge-pill-gold';
+const resolvedSize = sizeClasses[size] || sizeClasses.md;
+const tooltipClass = tooltip ? 'has-tooltip' : '';
+
+const finalClasses = [
+  resolvedVariant,
+  resolvedSize,
+  tooltipClass,
+  className
+].filter(Boolean).join(' ');
+---
+
+<span
+  class={finalClasses}
+  data-tooltip={tooltip}
+  {...rest}
+>
+  {symbol && <span class="badge-symbol leading-none">{symbol}</span>}
+  <slot />
+</span>

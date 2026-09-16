@@ -37,6 +37,17 @@ export interface KitPrice {
   preco: number;
 }
 
+export interface StockAlert {
+  id?: string;
+  product_id: string;
+  product_name: string;
+  customer_name?: string;
+  customer_contact: string;
+  contact_channel?: 'whatsapp' | 'email';
+  status?: 'pending' | 'notified' | 'cancelled';
+  created_at?: string;
+}
+
 export const SITE = {
   name: "Alquimista Licores",
   title: "Alquimista - Licores Artesanais",
@@ -46,12 +57,21 @@ export const SITE = {
   address: "Rod. Antonio Darós, 1105 - São João, Criciúma - SC, 88816-195",
   mapsUrl: "https://maps.app.goo.gl/aytmRg4bwkG1ZK528",
   reviewUrl: "https://g.page/r/CWzwaZr9lnaDEAE/review",
-  instagram: "https://instagram.com/alquimistalicores",
+  instagram: "https://www.instagram.com/alquimista.licores",
   origin: { lat: -28.7184, lng: -49.3523 },
 };
 
-const SUPABASE_URL = "https://crsjmyrkbpawxqgvfmrv.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyc2pteXJrYnBhd3hxZ3ZmbXJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5ODA5MzEsImV4cCI6MjEwMTU1NjkzMX0.sSZYBvyoPiQgVSBSKThee6_Pvhp41NJ_ioZf2JF_ado";
+const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL || "https://bktegbisdaqdhpqtxqxy.supabase.co";
+const SUPABASE_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.SUPABASE_PUBLISHABLE_KEY || "";
+
+function getSupabaseHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {};
+  if (SUPABASE_KEY) {
+    headers["apikey"] = SUPABASE_KEY;
+    headers["Authorization"] = `Bearer ${SUPABASE_KEY}`;
+  }
+  return headers;
+}
 
 export const FALLBACK_PRODUCTS: Product[] = [
   {
@@ -65,7 +85,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Tropical • Doce • Cítrica",
     descricao: "Fruta tropical que se revela a cada gole, com doçura natural e frescor cítrico.",
     sugestoes: "Servir gelado, puro ou on the rocks. \nEm coquetéis tropicais (ex: Piña Colada, Margarita).\nAcompanha pratos leves (frutos do mar grelhados, saladas) e sobremesas tropicais (coco, manga).",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466111214-ldr0bl/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466111214-ldr0bl/card.webp",
     ativo: true,
     graduacao_gl: 16.5,
     brix: 20,
@@ -86,7 +106,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Doce • Aveludada • Baunilha",
     descricao: "Bebida com bastante perfume da fruta e com doçura suave",
     sugestoes: "Degustar gelado, puro.\nEm coquetéis com gin ou rum (ex: Banana Daiquiri).\nHarmoniza com sobremesas cremosas (chocolate, doce de leite) e café.",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466211910-2f3x4n/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466211910-2f3x4n/card.webp",
     ativo: true,
     graduacao_gl: 22.5,
     brix: 25,
@@ -107,7 +127,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Cítrica • Frutada • Leve",
     descricao: "Sabor exótico, com doçura suave e com notas citricas.",
     sugestoes: "Servir gelado, puro ou on the rocks.\nEm drinks sour cítricos (ex: butiá sour com cachaça e limão).\nAcompanha pratos leves (saladas tropicais, peixes) ou queijos suaves.",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466237265-amfdmc/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466237265-amfdmc/card.webp",
     ativo: true,
     graduacao_gl: 16,
     brix: 35,
@@ -128,7 +148,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Torrefação • Cítrica • Amarga",
     descricao: "Intenso e marcante, mistura o amargor do café com o frescor cítrico da laranja.",
     sugestoes: "Servir gelado como digestivo.\nEm coquetéis de café (Espresso Martini, Irish Coffee).\nAcompanha sobremesas com café ou chocolate (tiramisu, brownies) e drinks cremosos.",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466281130-kvnx5l/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466281130-kvnx5l/card.webp",
     ativo: true,
     graduacao_gl: 16,
     brix: 36,
@@ -149,7 +169,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Especiado • Quente • Amadeirado",
     descricao: "Aroma quente e envolvente, especiaria suave que aquece o paladar.",
     sugestoes: "Servir gelado, puro, após refeições (digestivo).\nEm coquetéis autorais (ex: Canela Sour) ou para aromatizar vinho quente (quentão).\nCombina com sobremesas de canela, chocolate e frutas assadas (maçã, pera).",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466298321-gico88/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466298321-gico88/card.webp",
     ativo: true,
     graduacao_gl: 18,
     brix: 41,
@@ -170,7 +190,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Herbácea • Frutada Suave • Leve",
     descricao: "Notas verdes e amadeiradas com doçura sutil, lembra tardes de verão. ",
     sugestoes: "Servir gelado, puro ou com gelo.\nPode ser usado em coquetéis com gin ou vodka para realçar o aroma herbal.\nHarmoniza com queijos frescos (cabra, ricota), frutas secas e saladas delicadas.",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466315741-2c4axn/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466315741-2c4axn/card.webp",
     ativo: true,
     graduacao_gl: 21,
     brix: 31,
@@ -191,7 +211,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Frutada • Adocicada • Leve Acidez",
     descricao: "Sabores intensos de jabuticaba madura, frutado e aveludado.",
     sugestoes: "Servir gelado, puro ou on the rocks.\nEm coquetéis vermelhos (caipirinha de jabuticaba) ou misturado a espumantes suaves.\nCombina com sobremesas de frutas vermelhas, chocolates finos e queijos de pasta mole.",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466361965-9ey0h6/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466361965-9ey0h6/card.webp",
     ativo: true,
     graduacao_gl: 15,
     brix: 31,
@@ -212,7 +232,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Tropical • Cítrica • Refrescante",
     descricao: "Notas tropicais vibrantes, equilibranco acidez marcante com doçura.",
     sugestoes: "Em coquetéis tropicais (caipirinha de maracujá, mojito).\nServir gelado, puro ou com gelo como refresco.\nHarmoniza com frutas frescas, sobremesas geladas (sorbete, panna cotta) e pratos exóticos.",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466383948-e9bzfg/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466383948-e9bzfg/card.webp",
     ativo: true,
     graduacao_gl: 15,
     brix: 44,
@@ -233,7 +253,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Intenso • Cacau • Aveludado",
     descricao: "Licor cremoso com cacau e chocolate nobre meio amargo, textura aveludada e final intenso e marcante.",
     sugestoes: "Puro e gelado em taça pequena, como digestivo. Serve para encerrar uma refeição com aveludado sabor de cacau.\nSobre sobremesas: como pudim de leite, sorvetes e bolos de chocolate. \nBebidas quentes como café expresso ou cappuccino, realçando notas torradas.\nCoquetelaria: base para drinks cremosos (White Russian, Alexander) substituindo licor de café. Garante cor e sabor chocolate intenso.",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466401507-ibzz7o/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466401507-ibzz7o/card.webp",
     ativo: true,
     graduacao_gl: 11.5,
     brix: 37,
@@ -254,7 +274,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Tropical • Cítrico • Doce",
     descricao: "Licor cremoso artesanal de maracujá, doce e levemente cítrico. Textura aveludada e sabor tropical, equilibrado e fresco.",
     sugestoes: "Bem gelado, realçando frescor e acidez característica.\nDrinques tropicais: em batidas ou coquetéis (ex. caipirinha de maracujá ou com vodka) para um toque frutado.\nCom frutas: acompanha saladas de frutas frescas ou torta de maracujá. A combinação reforça o caráter tropical.",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466419519-mhjt7u/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466419519-mhjt7u/card.webp",
     ativo: true,
     graduacao_gl: 12.5,
     brix: 37,
@@ -275,7 +295,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Cremoso • Caramelo • Canela",
     descricao: "Licor cremoso artesanal de doce de leite com baunilha e canela. Doce e aconchegante, com textura aveludada e aroma caramelizado.",
     sugestoes: "Dose gelada: servir como digestivo em copo pequeno. Gelar intensifica a cremosidade.\nSobremesas intensas: ideal com doces de café ou chocolate amargo (ex., brigadeiro gourmet, pudim ou mousse de café). O licor adoça e complementa sabores caramelizados.\nDrinks cremosos: experimente em coquetéis como versão doce do Espress Martini (café + licor de doce de leite). Confere textura aveludada e aroma de caramelo.\nCoberturas: pode ser usado como calda sobre sorvetes, cheesecakes ou panquecas, ampliando camadas de sabor.",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466440655-rs4xq5/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466440655-rs4xq5/card.webp",
     ativo: true,
     graduacao_gl: 12.5,
     brix: 28,
@@ -296,7 +316,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Mística • Especiado • Aromático",
     descricao: "Licor sedoso à base de leite, com infusão de café e especiarias. Notas de baunilha, cacau e noz-moscada, com leve toque cítrico, final suave e aveludado.",
     sugestoes: "Temperatura levemente fria: servir em taça pequena a cerca de 10–15 °C. \nPuro ou com gelo: degustar solo, como digestivo aromático após refeição. Não exagerar em gelo para não ofuscar as especiarias.\nDrinks criativos: substituir aguardente ou vodka em coquetéis de café (ex., martini de baunilha) para obter cremosidade extra.",
-    foto_url: "https://crsjmyrkbpawxqgvfmrv.supabase.co/storage/v1/object/public/product-images/1786466461895-nxr6jl/card.webp",
+    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466461895-nxr6jl/card.webp",
     ativo: true,
     graduacao_gl: 12.5,
     brix: 31,
@@ -331,13 +351,14 @@ export const FALLBACK_KIT_PRICES: KitPrice[] = [
   { id: "70983a81-ef05-44ba-b87b-f0cdb078aec0", kit_type: "degustacao", licor_categoria: null, embalagem: null, preco: 20 },
 ];
 
+export const POCOES_OFICIAIS = FALLBACK_PRODUCTS;
+export const DEPOIMENTOS_OFICIAIS = FALLBACK_TESTIMONIALS;
+
+
 export async function fetchProducts(): Promise<Product[]> {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&ativo=eq.true&order=ordem`, {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`
-      }
+      headers: getSupabaseHeaders()
     });
     if (!res.ok) throw new Error("Failed to fetch products");
     const data = await res.json();
@@ -350,10 +371,7 @@ export async function fetchProducts(): Promise<Product[]> {
 export async function fetchTestimonials(): Promise<Testimonial[]> {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/testimonials?select=*&ativo=eq.true`, {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`
-      }
+      headers: getSupabaseHeaders()
     });
     if (!res.ok) throw new Error("Failed to fetch testimonials");
     const data = await res.json();
@@ -366,10 +384,7 @@ export async function fetchTestimonials(): Promise<Testimonial[]> {
 export async function fetchKitPrices(): Promise<KitPrice[]> {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/kit_prices?select=*`, {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`
-      }
+      headers: getSupabaseHeaders()
     });
     if (!res.ok) throw new Error("Failed to fetch kit prices");
     const data = await res.json();
@@ -408,4 +423,32 @@ export function waUrl(text: string) {
     text,
   });
   return `https://api.whatsapp.com/send?${params.toString()}`;
+}
+
+export async function createStockAlert(alert: StockAlert): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/stock_alerts`, {
+      method: "POST",
+      headers: {
+        ...getSupabaseHeaders(),
+        "Content-Type": "application/json",
+        Prefer: "return=minimal"
+      },
+      body: JSON.stringify({
+        product_id: alert.product_id,
+        product_name: alert.product_name,
+        customer_name: alert.customer_name || null,
+        customer_contact: alert.customer_contact,
+        contact_channel: alert.contact_channel || "whatsapp",
+        status: "pending"
+      })
+    });
+    if (!res.ok) {
+      const errData = await res.text();
+      return { success: false, error: errData || "Erro ao registrar alerta." };
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message || "Erro de conexão." };
+  }
 }

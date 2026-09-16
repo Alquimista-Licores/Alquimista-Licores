@@ -1,0 +1,42 @@
+---
+interface Props {
+  label: string;
+  value: string | number;
+  subtext?: string;
+  icon?: string;
+  trend?: string;
+  highlight?: boolean;
+}
+
+const { label, value, subtext, icon, trend, highlight = false } = Astro.props;
+---
+
+<div class={`p-5 rounded-md border transition-all duration-300 relative overflow-hidden group ${
+  highlight 
+    ? "bg-amber-500/10 border-amber-500/30 text-amber-200 shadow-[0_0_15px_rgba(217,119,6,0.1)]" 
+    : "bg-[var(--surface)]/70 border-[var(--gold)]/15 hover:border-[var(--gold)]/35 text-[var(--cream)] shadow-sm"
+}`}>
+  <!-- Cantoneiras alquímicas sutis -->
+  <span class="absolute top-1 left-1.5 text-[8px] text-[var(--gold)]/20 pointer-events-none select-none">⌜</span>
+  <span class="absolute top-1 right-1.5 text-[8px] text-[var(--gold)]/20 pointer-events-none select-none">⌝</span>
+  <span class="absolute bottom-1 left-1.5 text-[8px] text-[var(--gold)]/20 pointer-events-none select-none">⌞</span>
+  <span class="absolute bottom-1 right-1.5 text-[8px] text-[var(--gold)]/20 pointer-events-none select-none">⌟</span>
+
+  <div class="flex items-center justify-between gap-2 mb-2">
+    <span class="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/50 font-medium">
+      {label}
+    </span>
+    {icon && <span class="text-sm opacity-60 group-hover:scale-110 transition-transform">{icon}</span>}
+  </div>
+
+  <div class="font-display text-2xl lg:text-3xl text-[var(--gold)] font-bold tracking-tight">
+    {value}
+  </div>
+
+  {(subtext || trend) && (
+    <div class="mt-2 flex items-center justify-between text-[11px] text-[var(--cream)]/40">
+      {subtext && <span>{subtext}</span>}
+      {trend && <span class="text-[var(--gold)]/80 font-mono text-[10px]">{trend}</span>}
+    </div>
+  )}
+</div>

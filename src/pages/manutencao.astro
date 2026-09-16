@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import CauldronIcon from '../components/CauldronIcon.astro';
+import Button from '../components/Button.astro';
 ---
 
 <Layout
@@ -22,18 +23,20 @@ import CauldronIcon from '../components/CauldronIcon.astro';
       Em breve, novos licores e experiências estarão prontos para você.
     </p>
 
-    <div class="p-6 border border-[var(--gold)]/25 rounded-sm bg-[var(--surface)]/50 gold-glow mb-10 max-w-lg">
+    <div class="p-6 border border-[var(--gold)]/25 rounded-md bg-[var(--surface)]/50 gold-glow mb-10 max-w-lg">
       <p class="text-lg md:text-2xl text-[var(--gold)] font-sans italic">
         "A paciência é o segredo do alquimista."
       </p>
     </div>
 
-    <a
+    <Button
       href="/"
-      class="px-8 py-3.5 border border-[var(--gold)]/40 text-[var(--gold)] font-display tracking-widest text-xs uppercase hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-sm font-bold"
+      variant="outline"
+      size="md"
     >
-      Voltar para o início
-    </a>
+      <span>Voltar para o início</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+    </Button>
 
     <div class="text-xs text-[var(--text-faded)] mt-12">
       Alquimista Licores Artesanais · Criciúma/SC

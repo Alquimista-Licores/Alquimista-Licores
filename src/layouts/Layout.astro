@@ -7,6 +7,8 @@ import ProductModal from '../components/ProductModal.astro';
 import AgeGate from '../components/AgeGate.astro';
 import BackgroundParticles from '../components/BackgroundParticles.astro';
 import WhatsAppFAB from '../components/WhatsAppFAB.astro';
+import Toast from '../components/Toast.astro';
+import CustomCursor from '../components/CustomCursor.astro';
 import { SITE } from '../lib/data';
 
 interface Props {
@@ -49,11 +51,11 @@ const {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <!-- Fonts -->
+    <!-- Fonts Preconnect & High-End Typefaces CDN (Design System 2.0) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cinzel+Decorative:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Questrial&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel+Decorative:wght@400;600;700;900&family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Manrope:wght@200;300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Syncopate:wght@400;700&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -69,50 +71,10 @@ const {
     {!hideChrome && <Footer />}
     {!hideChrome && <WhatsAppFAB />}
 
-    <!-- Global Cart Drawer and Product Detail Modal -->
+    <!-- Global Cart Drawer, Product Detail Modal, Toast & Desktop Custom Cursor -->
     <CartDrawer />
     <ProductModal />
-
-    <!-- TOAST NOTIFICATION CONTAINER -->
-    <div
-      id="toast-container"
-      class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[110] flex flex-col items-center gap-2 pointer-events-none"
-    ></div>
-
-    <script>
-      function setupToasts() {
-        const container = document.getElementById("toast-container");
-        
-        window.addEventListener("show-toast", (e: any) => {
-          const text = e.detail?.text || "Item atualizado";
-          const toast = document.createElement("div");
-          toast.className = "px-5 py-3 bg-[var(--surface-elevated)] border border-[var(--gold)]/50 text-[var(--gold)] text-xs md:text-sm font-display tracking-widest uppercase rounded-sm shadow-2xl transition-all duration-300 opacity-0 translate-y-3 pointer-events-auto gold-glow font-bold";
-          toast.textContent = text;
-          container?.appendChild(toast);
-
-          requestAnimationFrame(() => {
-            toast.classList.remove("opacity-0", "translate-y-3");
-            toast.classList.add("opacity-100", "translate-y-0");
-          });
-
-          setTimeout(() => {
-            toast.classList.remove("opacity-100", "translate-y-0");
-            toast.classList.add("opacity-0", "translate-y-3");
-            setTimeout(() => toast.remove(), 300);
-          }, 3200);
-        });
-
-        // Trigger toast on adding to cart
-        window.addEventListener("add-to-cart", (e: any) => {
-          const name = e.detail?.nome || "Poção";
-          window.dispatchEvent(new CustomEvent("show-toast", {
-            detail: { text: `✦ ${name} adicionada ao caldeirão` }
-          }));
-        });
-      }
-
-      setupToasts();
-      document.addEventListener("astro:page-load", setupToasts);
-    </script>
+    <Toast />
+    <CustomCursor />
   </body>
 </html>

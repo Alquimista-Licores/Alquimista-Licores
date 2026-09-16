@@ -1,0 +1,277 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="Gestão de Depoimentos" sectionTitle="Avaliações dos Clientes" activePath="/admin/depoimentos">
+  
+  <div class="flex items-center justify-between gap-4 mb-6">
+    <p class="text-xs text-[var(--cream)]/60 max-w-xl">
+      Gerencie os relatos e avaliações que alimentam o carrossel de depoimentos na página inicial.
+    </p>
+
+    <button
+      id="btn-new-testimonial"
+      type="button"
+      class="px-4 py-2 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] transition-all flex items-center gap-2 cursor-pointer shrink-0 shadow-sm"
+    >
+      <span>+</span> Novo Depoimento
+    </button>
+  </div>
+
+  <div class="border border-[var(--gold)]/15 bg-[var(--surface)]/70 rounded-md overflow-hidden backdrop-blur-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs text-[var(--cream)]/80">
+        <thead class="bg-[var(--surface-elevated)] border-b border-[var(--gold)]/15 text-[10px] uppercase font-display tracking-[0.2em] text-[var(--gold)]">
+          <tr>
+            <th class="py-3 px-4">Autor</th>
+            <th class="py-3 px-4">Depoimento</th>
+            <th class="py-3 px-4">Status</th>
+            <th class="py-3 px-4 text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="testimonials-table-body" class="divide-y divide-[var(--gold)]/10 font-sans">
+          <tr>
+            <td colspan="4" class="py-8 text-center text-xs text-[var(--cream)]/50 font-mono">
+              <span class="inline-block animate-spin mr-2">⚗</span> Consultando depoimentos no Supabase...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal de Depoimento -->
+  <div id="testimonial-modal-backdrop" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-[var(--surface)] border border-[var(--gold)]/30 w-full max-w-md rounded-md shadow-[0_0_50px_rgba(0,0,0,0.9)] relative flex flex-col">
+      <div class="px-6 py-4 border-b border-[var(--gold)]/15 flex items-center justify-between shrink-0 bg-[var(--surface-elevated)]">
+        <h3 id="testimonial-modal-title" class="font-display text-sm text-[var(--gold)] font-bold uppercase tracking-wider">
+          Novo Depoimento
+        </h3>
+        <button id="btn-close-testimonial-modal" class="text-[var(--cream)]/50 hover:text-[var(--gold)] text-lg cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <form id="testimonial-form" class="p-6 space-y-4 text-xs">
+        <input type="hidden" id="testimonial-id" />
+
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Nome do Cliente</label>
+          <input type="text" id="testimonial-nome" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: Lucas M., Criciúma/SC" />
+        </div>
+
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Texto do Depoimento</label>
+          <textarea id="testimonial-texto" rows="4" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none leading-relaxed" placeholder="Escreva a avaliação completa do cliente..."></textarea>
+        </div>
+
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="testimonial-ativo" class="rounded border-[var(--gold)]/30 text-[var(--gold)] focus:ring-0 cursor-pointer" checked />
+          <label for="testimonial-ativo" class="text-xs text-[var(--cream)]/80 cursor-pointer select-none">
+            Depoimento Ativo (visível no carrossel da Home)
+          </label>
+        </div>
+      </form>
+
+      <div class="px-6 py-4 border-t border-[var(--gold)]/15 flex items-center justify-end gap-3 shrink-0 bg-[var(--surface-elevated)]">
+        <button id="btn-cancel-testimonial-modal" class="px-4 py-2 text-xs text-[var(--cream)]/60 hover:text-[var(--cream)] cursor-pointer">
+          Cancelar
+        </button>
+        <button id="btn-save-testimonial" class="px-5 py-2.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] cursor-pointer">
+          Salvar Depoimento
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from "../../integrations/supabase/client";
+    import { DEPOIMENTOS_OFICIAIS } from "../../lib/data";
+
+    let testimonialsList: any[] = [];
+    const tableBody = document.getElementById("testimonials-table-body");
+    const modalBackdrop = document.getElementById("testimonial-modal-backdrop");
+    const modalTitle = document.getElementById("testimonial-modal-title");
+    const btnNew = document.getElementById("btn-new-testimonial");
+    const btnClose = document.getElementById("btn-close-testimonial-modal");
+    const btnCancel = document.getElementById("btn-cancel-testimonial-modal");
+    const btnSave = document.getElementById("btn-save-testimonial");
+
+    async function fetchTestimonials() {
+      try {
+        const { data, error } = await supabase.from("testimonials").select("*").order("created_at", { ascending: false });
+        if (error || !data || data.length === 0) {
+          testimonialsList = DEPOIMENTOS_OFICIAIS.map((t: any, idx: number) => ({
+            id: t.id || "test-" + idx,
+            nome: t.autor || t.nome || "Cliente",
+            texto: t.texto || "",
+            ativo: true
+          }));
+        } else {
+          testimonialsList = data;
+        }
+      } catch (err) {
+        console.error("Erro ao buscar depoimentos:", err);
+      }
+      renderTable();
+    }
+
+    function renderTable() {
+      if (!tableBody) return;
+
+      if (testimonialsList.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="4" class="py-8 text-center text-xs text-[var(--cream)]/40 font-mono">
+              Nenhum depoimento cadastrado.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tableBody.innerHTML = testimonialsList.map((t) => `
+        <tr class="hover:bg-[var(--surface-elevated)]/50 transition-colors">
+          <td class="py-3.5 px-4 font-display font-bold text-[var(--gold)] text-xs">
+            ${t.nome}
+          </td>
+          <td class="py-3.5 px-4 text-xs text-[var(--cream)]/80 max-w-md">
+            "${t.texto}"
+          </td>
+          <td class="py-3.5 px-4">
+            <button 
+              data-id="${t.id}" 
+              data-active="${t.ativo !== false}" 
+              class="btn-toggle-active inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono cursor-pointer border ${
+                t.ativo !== false 
+                  ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30' 
+                  : 'bg-zinc-800 text-zinc-400 border-zinc-700'
+              }"
+            >
+              <span class="w-1.5 h-1.5 rounded-full ${t.ativo !== false ? 'bg-emerald-400' : 'bg-zinc-500'}"></span>
+              ${t.ativo !== false ? 'Ativo' : 'Oculto'}
+            </button>
+          </td>
+          <td class="py-3.5 px-4 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <button 
+                data-id="${t.id}" 
+                class="btn-edit-test px-3 py-1 border border-[var(--gold)]/30 text-[var(--gold)] hover:bg-[var(--gold)] hover:text-black rounded text-[10px] uppercase font-display tracking-widest cursor-pointer transition-all"
+              >
+                Editar
+              </button>
+              <button 
+                data-id="${t.id}" 
+                class="btn-del-test px-2 py-1 text-red-400 hover:bg-red-500/10 rounded text-[10px] cursor-pointer transition-colors"
+                title="Excluir"
+              >
+                🗑
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      document.querySelectorAll(".btn-toggle-active").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          const el = e.currentTarget as HTMLElement;
+          const id = el.getAttribute("data-id");
+          const cur = el.getAttribute("data-active") === "true";
+          const novoStatus = !cur;
+
+          try {
+            await supabase.from("testimonials").update({ ativo: novoStatus }).eq("id", id);
+          } catch (err) {
+            console.warn("Update status error:", err);
+          }
+          const item = testimonialsList.find((x) => String(x.id) === String(id));
+          if (item) item.ativo = novoStatus;
+          renderTable();
+        });
+      });
+
+      document.querySelectorAll(".btn-edit-test").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          const id = (e.currentTarget as HTMLElement).getAttribute("data-id");
+          const item = testimonialsList.find((x) => String(x.id) === String(id));
+          if (item) openModal(item);
+        });
+      });
+
+      document.querySelectorAll(".btn-del-test").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          if (!confirm("Deseja realmente remover este depoimento?")) return;
+          const id = (e.currentTarget as HTMLElement).getAttribute("data-id");
+          if (!id) return;
+
+          try {
+            await supabase.from("testimonials").delete().eq("id", id);
+          } catch (err) {
+            console.warn("Delete error:", err);
+          }
+          testimonialsList = testimonialsList.filter((x) => String(x.id) !== String(id));
+          renderTable();
+        });
+      });
+    }
+
+    function openModal(item: any = null) {
+      if (modalTitle) {
+        modalTitle.textContent = item ? "Editar Depoimento" : "Novo Depoimento";
+      }
+      (document.getElementById("testimonial-id") as HTMLInputElement).value = item?.id || "";
+      (document.getElementById("testimonial-nome") as HTMLInputElement).value = item?.nome || "";
+      (document.getElementById("testimonial-texto") as HTMLTextAreaElement).value = item?.texto || "";
+      (document.getElementById("testimonial-ativo") as HTMLInputElement).checked = item ? item.ativo !== false : true;
+
+      modalBackdrop?.classList.remove("hidden");
+      modalBackdrop?.classList.add("flex");
+    }
+
+    function closeModal() {
+      modalBackdrop?.classList.add("hidden");
+      modalBackdrop?.classList.remove("flex");
+    }
+
+    btnNew?.addEventListener("click", () => openModal(null));
+    btnClose?.addEventListener("click", closeModal);
+    btnCancel?.addEventListener("click", closeModal);
+
+    btnSave?.addEventListener("click", async () => {
+      const id = (document.getElementById("testimonial-id") as HTMLInputElement).value;
+      const nome = (document.getElementById("testimonial-nome") as HTMLInputElement).value.trim();
+      const texto = (document.getElementById("testimonial-texto") as HTMLTextAreaElement).value.trim();
+      const ativo = (document.getElementById("testimonial-ativo") as HTMLInputElement).checked;
+
+      if (!nome || !texto) {
+        alert("Preencha o nome e o depoimento.");
+        return;
+      }
+
+      const payload = { nome, texto, ativo };
+
+      try {
+        if (id) {
+          await supabase.from("testimonials").update(payload).eq("id", id);
+          const idx = testimonialsList.findIndex((x) => String(x.id) === String(id));
+          if (idx >= 0) testimonialsList[idx] = { ...testimonialsList[idx], ...payload };
+        } else {
+          const newId = "test-" + Date.now();
+          await supabase.from("testimonials").insert({ ...payload, id: newId });
+          testimonialsList.unshift({ ...payload, id: newId });
+        }
+      } catch (err) {
+        console.warn("Erro ao salvar no Supabase:", err);
+      }
+
+      closeModal();
+      renderTable();
+    });
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fetchTestimonials);
+    } else {
+      fetchTestimonials();
+    }
+  </script>
+</AdminLayout>

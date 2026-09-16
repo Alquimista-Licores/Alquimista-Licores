@@ -1,0 +1,112 @@
+---
+// Global Alchemical Toast Component based on Design System
+---
+
+<div
+  id="alchemicalToast"
+  class="toast-notification"
+  role="alert"
+  aria-live="polite"
+>
+  <div class="toast-icon-box" id="toastIconBox">
+    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 6L9 17l-5-5"/>
+    </svg>
+  </div>
+  <span id="toastText" class="toast-text font-mono">Fórmula enviada aos Alquimistas de Criciúma!</span>
+</div>
+
+<style>
+  .toast-notification {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: rgba(16, 13, 11, 0.95);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius-sm, 4px);
+    padding: 0.9rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--cream);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85), 0 0 20px rgba(200, 169, 126, 0.25);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 9999;
+    transform: translateY(100px) scale(0.96);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+    max-width: min(90vw, 460px);
+  }
+
+  .toast-notification.show {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .toast-icon-box {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: rgba(200, 169, 126, 0.1);
+  }
+
+  .toast-text {
+    font-size: 0.84rem;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 767px) {
+    .toast-notification {
+      left: 1rem;
+      right: 1rem;
+      bottom: 1.5rem;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  let toastTimer: number | null = null;
+
+  function showToast(message: string, duration = 3500) {
+    const toast = document.getElementById('alchemicalToast');
+    const text = document.getElementById('toastText');
+    if (!toast || !text) return;
+
+    text.textContent = message;
+    toast.classList.add('show');
+
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => {
+      toast.classList.remove('show');
+    }, duration);
+  }
+
+  // Expose to global window object
+  (window as any).showToast = showToast;
+
+  // Listen to global CustomEvent 'show-toast'
+  window.addEventListener('show-toast', ((e: CustomEvent) => {
+    const msg = e.detail?.message || e.detail?.text;
+    if (msg) {
+      showToast(msg, e.detail.duration || 3500);
+    }
+  }) as EventListener);
+
+  // Listen to global CustomEvent 'add-to-cart'
+  window.addEventListener('add-to-cart', ((e: CustomEvent) => {
+    const name = e.detail?.nome || e.detail?.name || 'Poção';
+    showToast(`${name} adicionada ao caldeirão!`);
+  }) as EventListener);
+</script>

@@ -1,7 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
-import { fetchProducts, fetchKitPrices } from '../lib/data';
+import Badge from '../components/Badge.astro';
+import { fetchProducts, fetchKitPrices, needsPrep } from '../lib/data';
 
 const products = await fetchProducts();
 const kitPrices = await fetchKitPrices();
@@ -20,44 +21,56 @@ const kitPrices = await fetchKitPrices();
         <button
           type="button"
           id="pick-degustacao-btn"
-          class="p-6 border border-[var(--gold)]/30 rounded-sm hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-all text-left gold-glow-hover group bg-[var(--surface)]/40"
+          class="kit-mode-card p-6 border border-[var(--gold)]/30 rounded-md hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-all text-left gold-glow-hover group bg-[var(--surface)]/40 flex flex-col justify-between"
         >
-          <div class="aspect-[4/3] mb-4 overflow-hidden rounded-sm bg-[var(--surface-elevated)] border border-[var(--gold)]/10">
-            <img
-              src="/assets/kits-degustacao.jpg"
-              alt="Kit Degustação"
-              loading="lazy"
-              decoding="async"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
+          <div>
+            <div class="aspect-[4/3] mb-4 overflow-hidden rounded-md bg-[var(--surface-elevated)] border border-[var(--gold)]/10">
+              <img
+                src="/assets/kits-degustacao.jpg"
+                alt="Kit Degustação"
+                loading="lazy"
+                decoding="async"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+            <h2 class="font-display text-[var(--gold)] tracking-widest uppercase text-2xl md:text-3xl font-medium">
+              Kit Degustação
+            </h2>
+            <p class="font-sans text-[var(--text-soft)] text-sm mt-2 leading-relaxed">
+              Três mini-poções de 50ml para descobrir o universo do Alquimista. Ideal para experimentar antes de escolher seu favorito.
+            </p>
           </div>
-          <h2 class="font-display text-[var(--gold)] tracking-widest uppercase text-2xl md:text-3xl font-medium">
-            Kit Degustação
-          </h2>
-          <div class="font-sans italic text-[var(--text-soft)] text-sm mt-2">
-            3 mini-poções (50ml) por R$ 20,00
+          <div class="mt-4 pt-3 border-t border-[var(--gold)]/15 flex items-baseline justify-between">
+            <span class="font-mono text-xs uppercase tracking-wider text-[var(--text-faded)]">apenas</span>
+            <span class="font-display text-xl text-[var(--gold)] font-bold">R$ 20</span>
           </div>
         </button>
 
         <button
           type="button"
           id="pick-presenteavel-btn"
-          class="p-6 border border-[var(--gold)]/30 rounded-sm hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-all text-left gold-glow-hover group bg-[var(--surface)]/40"
+          class="kit-mode-card p-6 border border-[var(--gold)]/30 rounded-md hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-all text-left gold-glow-hover group bg-[var(--surface)]/40 flex flex-col justify-between"
         >
-          <div class="aspect-[4/3] mb-4 overflow-hidden rounded-sm bg-[var(--surface-elevated)] border border-[var(--gold)]/10">
-            <img
-              src="/assets/kits-caixa-premium.jpg"
-              alt="Kit Presenteável"
-              loading="lazy"
-              decoding="async"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
+          <div>
+            <div class="aspect-[4/3] mb-4 overflow-hidden rounded-md bg-[var(--surface-elevated)] border border-[var(--gold)]/10">
+              <img
+                src="/assets/kits-caixa-premium.jpg"
+                alt="Kit Presenteável"
+                loading="lazy"
+                decoding="async"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+            <h2 class="font-display text-[var(--gold)] tracking-widest uppercase text-2xl md:text-3xl font-medium">
+              Kit Presenteável
+            </h2>
+            <p class="font-sans text-[var(--text-soft)] text-sm mt-2 leading-relaxed">
+              Um presente completo: Garrafa de 500ml à escolha acompanhada de doce artesanal, tacinha de vidro, chaveiro exclusivo e embalagem personalizada.
+            </p>
           </div>
-          <h2 class="font-display text-[var(--gold)] tracking-widest uppercase text-2xl md:text-3xl font-medium">
-            Kit Presenteável
-          </h2>
-          <div class="font-sans italic text-[var(--text-soft)] text-sm mt-2">
-            Licor 500ml + acompanhamento + caixa personalizada
+          <div class="mt-4 pt-3 border-t border-[var(--gold)]/15 flex items-baseline justify-between">
+            <span class="font-mono text-xs uppercase tracking-wider text-[var(--text-faded)]">a partir de</span>
+            <span class="font-display text-xl text-[var(--gold)] font-bold">R$ 110</span>
           </div>
         </button>
       </div>
@@ -79,61 +92,104 @@ const kitPrices = await fetchKitPrices();
       <div id="flow-degustacao" class="hidden space-y-8">
         <!-- DEG STEP 1: SABORES -->
         <div id="deg-step-1" class="space-y-6">
-          <p class="font-sans italic text-[var(--text-soft)] text-center text-sm md:text-base">
-            Escolha 3 sabores (pode repetir). Cada um vem em mini-garrafa de 50ml.
+          <p class="font-sans italic text-[var(--text-soft)] text-center text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+            Três mini-poções de 50ml para descobrir o universo do Alquimista. Ideal para experimentar antes de escolher seu favorito. Escolha 3 sabores (pode repetir):
           </p>
 
-          <div id="deg-counter" class="text-center text-sm md:text-base text-[var(--gold)] font-display tracking-widest uppercase font-bold">
+          <div id="deg-counter" class="text-center text-sm md:text-base text-[var(--gold)] font-display tracking-widest uppercase font-bold transition-all">
             Você escolheu 0 de 3
           </div>
 
           <div id="deg-selected-chips" class="flex flex-wrap gap-2 justify-center min-h-[2rem]"></div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {products.map((p) => (
-              <button
-                type="button"
-                class={`deg-product-pick p-3 border rounded-sm text-left transition-all relative ${
-                  p.estoque <= 0 ? "opacity-40 cursor-not-allowed border-[var(--border)]" : "border-[var(--gold)]/20 hover:border-[var(--gold)] bg-[var(--surface)]/40 hover:bg-[var(--gold)]/5"
-                }`}
-                data-id={p.id}
-                data-name={p.nome}
-                data-sabor={p.sabor}
-                data-stock={p.estoque}
-                disabled={p.estoque <= 0}
-              >
-                <div class="aspect-square bg-[var(--surface-elevated)] rounded-sm overflow-hidden mb-2">
-                  {p.foto_url ? (
-                    <img src={p.foto_url} alt={p.nome} class="w-full h-full object-cover" />
-                  ) : (
-                    <div class="w-full h-full flex items-center justify-center text-2xl text-[var(--gold)]/30">⚗</div>
-                  )}
-                </div>
-                <h3 class="font-display font-bold text-xs md:text-sm text-[var(--gold)] uppercase truncate">{p.nome}</h3>
-                <div class="font-body text-xs text-[var(--text-soft)] italic truncate">{p.sabor}</div>
-                {p.estoque <= 0 && (
-                  <div class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-sm">
-                    <span class="text-[9px] font-display uppercase tracking-wider text-[var(--gold)] font-bold">Esgotado</span>
+          <!-- FULL PRODUCTS GRID (Visible when < 3 selected, normal size) -->
+          <div id="deg-products-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 transition-all duration-200">
+            {products.map((p) => {
+              const hasPrep = needsPrep(p);
+              const isOutOfStock = p.estoque <= 0;
+              return (
+                <button
+                  type="button"
+                  class={`deg-product-pick group p-3 border rounded-md text-left transition-all relative ${
+                    isOutOfStock
+                      ? "opacity-60 cursor-not-allowed border-[var(--border)] pointer-events-none select-none"
+                      : "border-[var(--gold)]/20 hover:border-[var(--gold)] bg-[var(--surface)]/40 hover:bg-[var(--gold)]/5"
+                  }`}
+                  data-id={p.id}
+                  data-name={p.nome}
+                  data-sabor={p.sabor}
+                  data-foto={p.foto_url || ""}
+                  data-stock={p.estoque}
+                  disabled={isOutOfStock}
+                  tabindex={isOutOfStock ? "-1" : "0"}
+                  aria-disabled={isOutOfStock ? "true" : "false"}
+                >
+                  <div class="aspect-square bg-[var(--surface-elevated)] rounded-md overflow-hidden mb-2 relative">
+                    {p.foto_url ? (
+                      <img src={p.foto_url} alt={p.nome} class="w-full h-full object-cover" />
+                    ) : (
+                      <div class="w-full h-full flex items-center justify-center text-2xl text-[var(--gold)]/30">⚗</div>
+                    )}
                   </div>
-                )}
-              </button>
-            ))}
+
+                  {/* Top Right "Sob Encomenda" Badge */}
+                  {hasPrep && !isOutOfStock && (
+                    <div class="absolute top-2 right-2 z-20 pointer-events-none">
+                      <Badge
+                        variant="ember"
+                        size="sm"
+                        class="!text-[9px] sm:!text-[9.5px] !py-0.5 !px-1.5 shadow-md font-bold uppercase tracking-wider text-center"
+                      >
+                        Sob Encomenda
+                      </Badge>
+                    </div>
+                  )}
+
+                  {/* Contextual Tooltip on Hover */}
+                  {hasPrep && !isOutOfStock && (
+                    <div class="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-200 z-40 px-2.5 py-1.5 bg-[var(--background)]/95 border border-[var(--gold)] text-[var(--gold-soft)] font-mono text-[10.5px] leading-tight text-center rounded-sm whitespace-nowrap shadow-2xl backdrop-blur-md">
+                      Preparado sob demanda<br />
+                      <span class="text-[9.5px] text-[var(--cream)]/85">(2 dias de maceração)</span>
+                    </div>
+                  )}
+
+                  <h3 class="font-display font-bold text-xs md:text-sm text-[var(--gold)] uppercase truncate">{p.nome}</h3>
+                  <div class="font-body text-xs text-[var(--text-soft)] italic truncate">{p.sabor}</div>
+
+                  {isOutOfStock && (
+                    <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-[0.5px] rounded-md p-1.5 pointer-events-none">
+                      <Badge variant="ember" size="sm" class="!text-[10px] !py-0.5 !px-2 shadow-2xl font-bold uppercase tracking-wider text-center scale-95 sm:scale-100">
+                        Lote Esgotado
+                      </Badge>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <!-- TRIO SELECTED VIEW (Visible when 3 selected, slightly smaller cards with X button) -->
+          <div id="deg-selected-trio-view" class="hidden transition-all duration-200">
+            <div id="deg-trio-container" class="grid grid-cols-3 gap-3 max-w-lg mx-auto"></div>
+            <p class="text-center text-xs text-[var(--text-faded)] mt-3 font-sans italic">
+              Clique no ✕ para alterar qualquer uma das poções escolhidas.
+            </p>
           </div>
 
           <div class="flex justify-end pt-4">
             <button
               id="deg-next-btn"
               disabled
-              class="w-full sm:w-auto px-8 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] transition-colors rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+              class="btn-primary w-full sm:w-auto !px-8 !py-3 !text-xs font-bold"
             >
-              Continuar →
+              <span>Continuar →</span>
             </button>
           </div>
         </div>
 
         <!-- DEG STEP 2: RESUMO -->
         <div id="deg-step-2" class="hidden space-y-6">
-          <div class="p-6 border border-[var(--gold)]/30 rounded-sm bg-[var(--surface)]/60 space-y-4">
+          <div class="p-6 border border-[var(--gold)]/30 rounded-md bg-[var(--surface)]/60 space-y-4">
             <h3 class="font-display tracking-widest uppercase text-base text-[var(--gold)] font-bold">
               Resumo do Kit Degustação
             </h3>
@@ -145,11 +201,11 @@ const kitPrices = await fetchKitPrices();
           </div>
 
           <div class="flex gap-3">
-            <button id="deg-prev-btn" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
-              ← Voltar
+            <button id="deg-prev-btn" class="btn-outline flex-1 !py-3 !text-xs font-bold">
+              <span>← Voltar</span>
             </button>
-            <button id="deg-add-cart-btn" class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs rounded-sm hover:bg-[var(--gold-hover)] font-bold shadow-md">
-              Adicionar ao Caldeirão
+            <button id="deg-add-cart-btn" class="btn-primary flex-1 !py-3 !text-xs font-bold">
+              <span>Adicionar ao Caldeirão</span>
             </button>
           </div>
         </div>
@@ -159,43 +215,92 @@ const kitPrices = await fetchKitPrices();
       <div id="flow-presenteavel" class="hidden space-y-8">
         <!-- PRES STEP 1: LICOR 500ML -->
         <div id="pres-step-1" class="space-y-6">
-          <p class="font-sans italic text-[var(--text-soft)] text-center text-sm md:text-base">
-            Escolha o licor (500ml) que será o centro do seu kit.
+          <p class="font-sans italic text-[var(--text-soft)] text-center text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+            Um presente completo com garrafa de 500ml, doce artesanal, taça de vidro, chaveiro exclusivo e caixa personalizada. Escolha a poção central:
           </p>
 
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {products.map((p) => (
-              <button
-                type="button"
-                class={`pres-liquor-pick p-3 border rounded-sm text-left transition-all relative ${
-                  p.estoque <= 0 ? "opacity-40 cursor-not-allowed border-[var(--border)]" : "border-[var(--gold)]/20 hover:border-[var(--gold)] bg-[var(--surface)]/40 hover:bg-[var(--gold)]/5"
-                }`}
-                data-id={p.id}
-                data-name={p.nome}
-                data-sabor={p.sabor}
-                data-cat={p.categoria}
-                disabled={p.estoque <= 0}
-              >
-                <div class="aspect-square bg-[var(--surface-elevated)] rounded-sm overflow-hidden mb-2">
-                  {p.foto_url ? (
-                    <img src={p.foto_url} alt={p.nome} class="w-full h-full object-cover" />
-                  ) : (
-                    <div class="w-full h-full flex items-center justify-center text-2xl text-[var(--gold)]/30">⚗</div>
+          <!-- FULL PRODUCTS GRID (Visible when no flavor chosen, normal size) -->
+          <div id="pres-products-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 transition-all duration-200">
+            {products.map((p) => {
+              const hasPrep = needsPrep(p);
+              const isOutOfStock = p.estoque <= 0;
+              return (
+                <button
+                  type="button"
+                  class={`pres-liquor-pick group p-3 border rounded-md text-left transition-all relative ${
+                    isOutOfStock
+                      ? "opacity-60 cursor-not-allowed border-[var(--border)] pointer-events-none select-none"
+                      : "border-[var(--gold)]/20 hover:border-[var(--gold)] bg-[var(--surface)]/40 hover:bg-[var(--gold)]/5"
+                  }`}
+                  data-id={p.id}
+                  data-name={p.nome}
+                  data-sabor={p.sabor}
+                  data-foto={p.foto_url || ""}
+                  data-cat={p.categoria}
+                  data-stock={p.estoque}
+                  disabled={isOutOfStock}
+                  tabindex={isOutOfStock ? "-1" : "0"}
+                  aria-disabled={isOutOfStock ? "true" : "false"}
+                >
+                  <div class="aspect-square bg-[var(--surface-elevated)] rounded-md overflow-hidden mb-2 relative">
+                    {p.foto_url ? (
+                      <img src={p.foto_url} alt={p.nome} class="w-full h-full object-cover" />
+                    ) : (
+                      <div class="w-full h-full flex items-center justify-center text-2xl text-[var(--gold)]/30">⚗</div>
+                    )}
+                  </div>
+
+                  {/* Top Right "Sob Encomenda" Badge */}
+                  {hasPrep && !isOutOfStock && (
+                    <div class="absolute top-2 right-2 z-20 pointer-events-none">
+                      <Badge
+                        variant="ember"
+                        size="sm"
+                        class="!text-[9px] sm:!text-[9.5px] !py-0.5 !px-1.5 shadow-md font-bold uppercase tracking-wider text-center"
+                      >
+                        Sob Encomenda
+                      </Badge>
+                    </div>
                   )}
-                </div>
-                <h3 class="font-display font-bold text-xs md:text-sm text-[var(--gold)] uppercase truncate">{p.nome}</h3>
-                <div class="font-body text-xs text-[var(--text-soft)] italic truncate">{p.sabor}</div>
-              </button>
-            ))}
+
+                  {/* Contextual Tooltip on Hover */}
+                  {hasPrep && !isOutOfStock && (
+                    <div class="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-200 z-40 px-2.5 py-1.5 bg-[var(--background)]/95 border border-[var(--gold)] text-[var(--gold-soft)] font-mono text-[10.5px] leading-tight text-center rounded-sm whitespace-nowrap shadow-2xl backdrop-blur-md">
+                      Preparado sob demanda<br />
+                      <span class="text-[9.5px] text-[var(--cream)]/85">(2 dias de maceração)</span>
+                    </div>
+                  )}
+
+                  <h3 class="font-display font-bold text-xs md:text-sm text-[var(--gold)] uppercase truncate">{p.nome}</h3>
+                  <div class="font-body text-xs text-[var(--text-soft)] italic truncate">{p.sabor}</div>
+
+                  {isOutOfStock && (
+                    <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-[0.5px] rounded-md p-1.5 pointer-events-none">
+                      <Badge variant="ember" size="sm" class="!text-[10px] !py-0.5 !px-2 shadow-2xl font-bold uppercase tracking-wider text-center scale-95 sm:scale-100">
+                        Lote Esgotado
+                      </Badge>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <!-- SINGLE SELECTED VIEW (Visible when flavor selected, slightly smaller card with X button) -->
+          <div id="pres-selected-single-view" class="hidden transition-all duration-200">
+            <div id="pres-single-container" class="max-w-[220px] sm:max-w-[240px] mx-auto"></div>
+            <p class="text-center text-xs text-[var(--text-faded)] mt-3 font-sans italic">
+              Clique no ✕ para alterar o sabor escolhido.
+            </p>
           </div>
 
           <div class="flex justify-end pt-4">
             <button
               id="pres-next-1"
               disabled
-              class="w-full sm:w-auto px-8 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] transition-colors rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+              class="btn-primary w-full sm:w-auto !px-8 !py-3 !text-xs font-bold"
             >
-              Continuar →
+              <span>Continuar →</span>
             </button>
           </div>
         </div>
@@ -209,11 +314,11 @@ const kitPrices = await fetchKitPrices();
           <div class="grid grid-cols-2 gap-4">
             <button
               type="button"
-              class="pres-acomp-pick p-5 border border-[var(--gold)]/25 rounded-sm text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
+              class="pres-acomp-pick p-5 border border-[var(--gold)]/25 rounded-md text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
               data-id="brownies"
               data-label="3 Brownies Artesanais"
             >
-              <div class="aspect-square mb-3 overflow-hidden rounded-sm bg-[var(--surface-elevated)]">
+              <div class="aspect-square mb-3 overflow-hidden rounded-md bg-[var(--surface-elevated)]">
                 <img src="/assets/kits-brownies.jpg" alt="3 Brownies" class="w-full h-full object-cover" />
               </div>
               <h3 class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
@@ -223,11 +328,11 @@ const kitPrices = await fetchKitPrices();
 
             <button
               type="button"
-              class="pres-acomp-pick p-5 border border-[var(--gold)]/25 rounded-sm text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
+              class="pres-acomp-pick p-5 border border-[var(--gold)]/25 rounded-md text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
               data-id="paes-mel"
               data-label="3 Pães de Mel Artesanais"
             >
-              <div class="aspect-square mb-3 overflow-hidden rounded-sm bg-[var(--surface-elevated)]">
+              <div class="aspect-square mb-3 overflow-hidden rounded-md bg-[var(--surface-elevated)]">
                 <img src="/assets/kits-paes-mel.jpg" alt="3 Pães de Mel" class="w-full h-full object-cover" />
               </div>
               <h3 class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
@@ -237,11 +342,11 @@ const kitPrices = await fetchKitPrices();
           </div>
 
           <div class="flex gap-3 pt-4">
-            <button id="pres-prev-2" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
-              ← Voltar
+            <button id="pres-prev-2" class="btn-outline flex-1 !py-3 !text-xs font-bold">
+              <span>← Voltar</span>
             </button>
-            <button id="pres-next-2" disabled class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
-              Continuar →
+            <button id="pres-next-2" disabled class="btn-primary flex-1 !py-3 !text-xs font-bold">
+              <span>Continuar →</span>
             </button>
           </div>
         </div>
@@ -255,11 +360,11 @@ const kitPrices = await fetchKitPrices();
           <div class="grid grid-cols-2 gap-4">
             <button
               type="button"
-              class="pres-box-pick p-5 border border-[var(--gold)]/25 rounded-sm text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
+              class="pres-box-pick p-5 border border-[var(--gold)]/25 rounded-md text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
               data-id="mdf"
               data-label="Box MDF Artesanal"
             >
-              <div class="aspect-square mb-3 overflow-hidden rounded-sm bg-[var(--surface-elevated)]">
+              <div class="aspect-square mb-3 overflow-hidden rounded-md bg-[var(--surface-elevated)]">
                 <img src="/assets/kits-mdf.jpg" alt="Box MDF" class="w-full h-full object-cover" />
               </div>
               <h3 class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
@@ -270,11 +375,11 @@ const kitPrices = await fetchKitPrices();
 
             <button
               type="button"
-              class="pres-box-pick p-5 border border-[var(--gold)]/25 rounded-sm text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
+              class="pres-box-pick p-5 border border-[var(--gold)]/25 rounded-md text-center transition-all hover:border-[var(--gold)] bg-[var(--surface)]/40"
               data-id="acrilico"
               data-label="Box Premium Luxo"
             >
-              <div class="aspect-square mb-3 overflow-hidden rounded-sm bg-[var(--surface-elevated)]">
+              <div class="aspect-square mb-3 overflow-hidden rounded-md bg-[var(--surface-elevated)]">
                 <img src="/assets/kits-caixa-premium.jpg" alt="Box Premium" class="w-full h-full object-cover" />
               </div>
               <h3 class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
@@ -285,18 +390,18 @@ const kitPrices = await fetchKitPrices();
           </div>
 
           <div class="flex gap-3 pt-4">
-            <button id="pres-prev-3" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
-              ← Voltar
+            <button id="pres-prev-3" class="btn-outline flex-1 !py-3 !text-xs font-bold">
+              <span>← Voltar</span>
             </button>
-            <button id="pres-next-3" disabled class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs font-bold hover:bg-[var(--gold-hover)] rounded-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
-              Continuar →
+            <button id="pres-next-3" disabled class="btn-primary flex-1 !py-3 !text-xs font-bold">
+              <span>Continuar →</span>
             </button>
           </div>
         </div>
 
         <!-- PRES STEP 4: RESUMO & DEDICATÓRIA -->
         <div id="pres-step-4" class="hidden space-y-6">
-          <div class="p-6 border border-[var(--gold)]/30 rounded-sm bg-[var(--surface)]/60 space-y-4">
+          <div class="p-6 border border-[var(--gold)]/30 rounded-md bg-[var(--surface)]/60 space-y-4">
             <h3 class="font-display tracking-widest uppercase text-base text-[var(--gold)] font-bold">
               Resumo do Kit Presenteável
             </h3>
@@ -310,7 +415,7 @@ const kitPrices = await fetchKitPrices();
                 id="pres-dedicatoria"
                 rows="2"
                 placeholder="Escreva uma mensagem especial para quem vai receber o presente..."
-                class="w-full bg-[var(--background)] border border-[var(--gold)]/30 px-3 py-2 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)] resize-none"
+                class="w-full bg-[var(--background)] border border-[var(--gold)]/30 px-3 py-2 text-xs rounded-md focus:border-[var(--gold)] outline-none text-[var(--cream)] resize-none"
               ></textarea>
             </div>
 
@@ -321,18 +426,18 @@ const kitPrices = await fetchKitPrices();
           </div>
 
           <div class="flex gap-3">
-            <button id="pres-prev-4" class="flex-1 py-3 border border-[var(--gold)]/30 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
-              ← Voltar
+            <button id="pres-prev-4" class="btn-outline flex-1 !py-3 !text-xs font-bold">
+              <span>← Voltar</span>
             </button>
-            <button id="pres-add-cart-btn" class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs rounded-sm hover:bg-[var(--gold-hover)] font-bold shadow-md">
-              Adicionar ao Caldeirão
+            <button id="pres-add-cart-btn" class="btn-primary flex-1 !py-3 !text-xs font-bold">
+              <span>Adicionar ao Caldeirão</span>
             </button>
           </div>
         </div>
       </div>
 
       <!-- POST-ADD CTA -->
-      <div id="post-add-cta" class="hidden mt-8 p-6 border border-[var(--gold)]/35 rounded-sm bg-[var(--gold)]/5 text-center space-y-4 gold-glow">
+      <div id="post-add-cta" class="hidden mt-8 p-6 border border-[var(--gold)]/35 rounded-md bg-[var(--gold)]/5 text-center space-y-4 gold-glow">
         <div class="text-[var(--gold)] font-display tracking-widest uppercase text-sm font-bold">
           ✦ Kit adicionado com sucesso ao seu caldeirão!
         </div>
@@ -340,20 +445,60 @@ const kitPrices = await fetchKitPrices();
           Deseja adicionar mais poções ou já deseja finalizar seu pedido?
         </p>
         <div class="grid sm:grid-cols-3 gap-3 pt-2">
-          <button id="post-add-new-btn" class="py-3 border border-[var(--gold)]/40 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold">
-            Montar outro kit
+          <button id="post-add-new-btn" class="btn-outline !py-3 !text-xs font-bold">
+            <span>Montar outro kit</span>
           </button>
-          <a href="/pocoes" class="py-3 border border-[var(--gold)]/40 text-[var(--cream)] font-display tracking-widest uppercase text-xs rounded-sm hover:border-[var(--gold)] font-bold text-center">
-            Ver as poções
+          <a href="/pocoes" class="btn-outline !py-3 !text-xs font-bold text-center">
+            <span>Ver as poções</span>
           </a>
-          <button id="post-add-open-cart-btn" class="py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest uppercase text-xs rounded-sm hover:bg-[var(--gold-hover)] font-bold shadow-md">
-            Ir para o caldeirão
+          <button id="post-add-open-cart-btn" class="btn-primary !py-3 !text-xs font-bold">
+            <span>Ir para o caldeirão</span>
           </button>
         </div>
       </div>
     </div>
   </div>
 </Layout>
+
+<style>
+  .kit-mode-card,
+  .deg-product-pick,
+  .deg-trio-card,
+  .pres-liquor-pick,
+  .pres-acomp-pick,
+  .pres-box-pick {
+    transform-style: preserve-3d;
+    will-change: transform, box-shadow;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .kit-mode-card:hover,
+    .deg-product-pick:hover:not([disabled]),
+    .deg-trio-card:hover,
+    .pres-liquor-pick:hover:not([disabled]),
+    .pres-acomp-pick:hover,
+    .pres-box-pick:hover {
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0s !important;
+    }
+  }
+
+  .kit-mode-card img,
+  .deg-product-pick img,
+  .deg-trio-card img,
+  .pres-liquor-pick img,
+  .pres-acomp-pick img,
+  .pres-box-pick img {
+    will-change: transform;
+    transition: transform 0.12s ease-out;
+  }
+
+  #deg-products-grid,
+  #deg-selected-trio-view,
+  #pres-products-grid,
+  #pres-selected-single-view {
+    transition: opacity 0.2s cubic-bezier(0.2, 0, 0.2, 1), transform 0.2s cubic-bezier(0.2, 0, 0.2, 1);
+  }
+</style>
 
 <script define:vars={{ kitPrices }}>
   function setupMonteKit() {
@@ -380,6 +525,9 @@ const kitPrices = await fetchKitPrices();
     const degStep1 = document.getElementById("deg-step-1");
     const degStep2 = document.getElementById("deg-step-2");
     const degSummaryList = document.getElementById("deg-summary-list");
+    const degProductsGrid = document.getElementById("deg-products-grid");
+    const degTrioView = document.getElementById("deg-selected-trio-view");
+    const degTrioContainer = document.getElementById("deg-trio-container");
 
     // Presenteavel state
     let presProduct = null;
@@ -389,6 +537,9 @@ const kitPrices = await fetchKitPrices();
     const presStep2 = document.getElementById("pres-step-2");
     const presStep3 = document.getElementById("pres-step-3");
     const presStep4 = document.getElementById("pres-step-4");
+    const presProductsGrid = document.getElementById("pres-products-grid");
+    const presSingleView = document.getElementById("pres-selected-single-view");
+    const presSingleContainer = document.getElementById("pres-single-container");
     const presNext1 = document.getElementById("pres-next-1");
     const presNext2 = document.getElementById("pres-next-2");
     const presNext3 = document.getElementById("pres-next-3");
@@ -404,6 +555,123 @@ const kitPrices = await fetchKitPrices();
 
     let currentMode = "";
     let currentStep = 1;
+
+    function initKitParallax() {
+      if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+      // 1. Main Mode Cards (Kit Degustação & Kit Presenteável)
+      const mainCards = document.querySelectorAll(".kit-mode-card, #pick-degustacao-btn, #pick-presenteavel-btn");
+      mainCards.forEach((card) => {
+        if (card.dataset.parallaxInit === "true") return;
+        card.dataset.parallaxInit = "true";
+
+        const img = card.querySelector("img");
+        let rafId = 0;
+
+        function onMouseMove(e) {
+          cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(() => {
+            const rect = card.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+            const normX = (e.clientX - rect.left) / rect.width - 0.5;
+            const normY = (e.clientY - rect.top) / rect.height - 0.5;
+
+            const rotX = (-normY * 5).toFixed(2);
+            const rotY = (normX * 5).toFixed(2);
+
+            card.style.borderColor = "#B28C46";
+            card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px)`;
+            card.style.boxShadow = `${(-normX * 12).toFixed(1)}px ${(-normY * 12 + 10).toFixed(1)}px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(178, 140, 70, 0.35)`;
+
+            if (img) {
+              img.style.transform = `translate3d(${(-normX * 6).toFixed(1)}px, ${(-normY * 6).toFixed(1)}px, 0px) scale(1.05)`;
+            }
+          });
+        }
+
+        function onMouseEnter() {
+          card.style.borderColor = "#B28C46";
+          card.style.boxShadow = "0 0 16px rgba(178, 140, 70, 0.35)";
+          card.style.transition = "transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0s";
+          if (img) img.style.transition = "transform 0.12s ease-out";
+        }
+
+        function onMouseLeave() {
+          cancelAnimationFrame(rafId);
+          card.style.transition = "transform 0.5s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.5s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.4s ease";
+          card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)";
+          card.style.boxShadow = "";
+          card.style.borderColor = "";
+
+          if (img) {
+            img.style.transition = "transform 0.5s cubic-bezier(0.2, 0, 0.2, 1)";
+            img.style.transform = "translate3d(0, 0, 0) scale(1)";
+          }
+        }
+
+        card.addEventListener("mousemove", onMouseMove);
+        card.addEventListener("mouseenter", onMouseEnter);
+        card.addEventListener("mouseleave", onMouseLeave);
+      });
+
+      // 2. Mini product/item cards in wizard steps
+      const miniCards = document.querySelectorAll(".deg-product-pick, .deg-trio-card, .pres-liquor-pick, .pres-single-card, .pres-acomp-pick, .pres-box-pick");
+      miniCards.forEach((card) => {
+        if (card.dataset.parallaxInit === "true") return;
+        if (card.hasAttribute("disabled") || card.disabled) return;
+        card.dataset.parallaxInit = "true";
+
+        const img = card.querySelector("img");
+        let rafId = 0;
+
+        function onMouseMove(e) {
+          if (card.disabled) return;
+          cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(() => {
+            const rect = card.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+            const normX = (e.clientX - rect.left) / rect.width - 0.5;
+            const normY = (e.clientY - rect.top) / rect.height - 0.5;
+
+            const rotX = (-normY * 3.5).toFixed(2);
+            const rotY = (normX * 3.5).toFixed(2);
+
+            card.style.borderColor = "#B28C46";
+            card.style.transform = `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-2px)`;
+            card.style.boxShadow = `${(-normX * 8).toFixed(1)}px ${(-normY * 8 + 6).toFixed(1)}px 16px -3px rgba(0, 0, 0, 0.5), 0 0 10px rgba(178, 140, 70, 0.25)`;
+
+            if (img) {
+              img.style.transform = `translate3d(${(-normX * 4).toFixed(1)}px, ${(-normY * 4).toFixed(1)}px, 0px) scale(1.04)`;
+            }
+          });
+        }
+
+        function onMouseEnter() {
+          if (card.disabled) return;
+          card.style.borderColor = "#B28C46";
+          card.style.boxShadow = "0 0 10px rgba(178, 140, 70, 0.25)";
+          card.style.transition = "transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0s";
+          if (img) img.style.transition = "transform 0.12s ease-out";
+        }
+
+        function onMouseLeave() {
+          cancelAnimationFrame(rafId);
+          card.style.transition = "transform 0.4s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.4s ease";
+          card.style.transform = "perspective(600px) rotateX(0deg) rotateY(0deg) translateY(0)";
+          card.style.boxShadow = "";
+          card.style.borderColor = "";
+
+          if (img) {
+            img.style.transition = "transform 0.4s cubic-bezier(0.2, 0, 0.2, 1)";
+            img.style.transform = "translate3d(0, 0, 0) scale(1)";
+          }
+        }
+
+        card.addEventListener("mousemove", onMouseMove);
+        card.addEventListener("mouseenter", onMouseEnter);
+        card.addEventListener("mouseleave", onMouseLeave);
+      });
+    }
 
     function renderStepper(total, current, labels) {
       if (!stepper) return;
@@ -443,6 +711,7 @@ const kitPrices = await fetchKitPrices();
         viewModeSelect?.classList.remove("hidden");
         viewWizard?.classList.add("hidden");
         history.replaceState(null, "", "/monte-seu-kit");
+        initKitParallax();
         return;
       }
 
@@ -461,6 +730,7 @@ const kitPrices = await fetchKitPrices();
         flowPresenteavel?.classList.remove("hidden");
         showPresStep(1);
       }
+      initKitParallax();
     }
 
     pickDegBtn?.addEventListener("click", () => setMode("degustacao"));
@@ -468,37 +738,140 @@ const kitPrices = await fetchKitPrices();
     switchModeBtn?.addEventListener("click", () => setMode(""));
 
     // DEGUSTAÇÃO LOGIC
-    function updateDegChips() {
-      if (degChips) {
-        degChips.innerHTML = "";
-        degSelected.forEach((item, idx) => {
-          const chip = document.createElement("span");
-          chip.className = "inline-flex items-center gap-2 px-3 py-1 bg-[var(--gold)]/15 border border-[var(--gold)]/40 rounded-sm text-xs text-[var(--gold)] font-medium";
-          chip.innerHTML = `${item.name} <button type="button" class="hover:text-red-400 font-bold ml-1" data-idx="${idx}">✕</button>`;
-          chip.querySelector("button")?.addEventListener("click", () => {
-            degSelected.splice(idx, 1);
-            updateDegChips();
-          });
-          degChips.appendChild(chip);
+    function renderTrioView() {
+      if (!degTrioContainer) return;
+      degTrioContainer.innerHTML = "";
+      degSelected.forEach((item, idx) => {
+        const card = document.createElement("div");
+        card.className = "deg-trio-card relative p-2.5 sm:p-3 border border-[var(--gold)]/50 rounded-md bg-[var(--surface-elevated)]/80 text-left transition-all gold-glow-hover flex flex-col justify-between";
+        card.innerHTML = `
+          <button
+            type="button"
+            class="deg-remove-trio-btn absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/85 border border-[var(--gold)]/60 text-[var(--gold)] hover:border-red-400 hover:text-red-400 hover:bg-red-950/50 text-xs font-bold flex items-center justify-center transition-all shadow-md z-30"
+            data-idx="${idx}"
+            title="Remover ${item.name}"
+            aria-label="Remover ${item.name}"
+          >✕</button>
+          <div>
+            <div class="aspect-square bg-[var(--surface)] rounded-md overflow-hidden mb-2 border border-[var(--gold)]/10">
+              ${item.foto ? `<img src="${item.foto}" alt="${item.name}" class="w-full h-full object-cover" />` : `<div class="w-full h-full flex items-center justify-center text-xl text-[var(--gold)]/30">⚗</div>`}
+            </div>
+            <div class="text-[9px] font-mono uppercase tracking-wider text-[var(--gold)]/80 mb-0.5">Poção 0${idx + 1}</div>
+            <h3 class="font-display font-bold text-xs text-[var(--gold)] uppercase truncate">${item.name}</h3>
+            <div class="font-body text-[11px] text-[var(--text-soft)] italic truncate">${item.sabor}</div>
+          </div>
+        `;
+
+        card.querySelector(".deg-remove-trio-btn")?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          degSelected.splice(idx, 1);
+          updateDegChips();
         });
-      }
+
+        degTrioContainer.appendChild(card);
+      });
+      initKitParallax();
+    }
+
+    function updateDegChips() {
+      const count = degSelected.length;
 
       if (degCounter) {
-        degCounter.textContent = `Você escolheu ${degSelected.length} de 3`;
+        if (count === 3) {
+          degCounter.textContent = "✦ 3 Sabores Escolhidos ✦";
+        } else {
+          degCounter.textContent = `Você escolheu ${count} de 3`;
+        }
       }
 
       if (degNextBtn) {
-        degNextBtn.disabled = degSelected.length !== 3;
+        degNextBtn.disabled = count !== 3;
+      }
+
+      // Update chips when < 3
+      if (degChips) {
+        degChips.innerHTML = "";
+        if (count < 3) {
+          degChips.classList.remove("hidden");
+          degSelected.forEach((item, idx) => {
+            const chip = document.createElement("span");
+            chip.className = "inline-flex items-center gap-2 px-3 py-1 bg-[var(--gold)]/15 border border-[var(--gold)]/40 rounded-sm text-xs text-[var(--gold)] font-medium";
+            chip.innerHTML = `${item.name} <button type="button" class="hover:text-red-400 font-bold ml-1" data-idx="${idx}">✕</button>`;
+            chip.querySelector("button")?.addEventListener("click", () => {
+              degSelected.splice(idx, 1);
+              updateDegChips();
+            });
+            degChips.appendChild(chip);
+          });
+        } else {
+          degChips.classList.add("hidden");
+        }
+      }
+
+      // Smooth Switch between full grid (< 3) and trio view (=== 3)
+      if (count === 3) {
+        if (degProductsGrid && !degProductsGrid.classList.contains("hidden")) {
+          degProductsGrid.style.opacity = "0";
+          degProductsGrid.style.transform = "scale(0.96)";
+          setTimeout(() => {
+            degProductsGrid.classList.add("hidden");
+            renderTrioView();
+            if (degTrioView) {
+              degTrioView.classList.remove("hidden");
+              degTrioView.style.opacity = "0";
+              degTrioView.style.transform = "scale(0.96)";
+              requestAnimationFrame(() => {
+                degTrioView.style.opacity = "1";
+                degTrioView.style.transform = "scale(1)";
+              });
+            }
+          }, 180);
+        } else if (degTrioView && degTrioView.classList.contains("hidden")) {
+          renderTrioView();
+          degTrioView.classList.remove("hidden");
+          degTrioView.style.opacity = "1";
+          degTrioView.style.transform = "scale(1)";
+          if (degProductsGrid) degProductsGrid.classList.add("hidden");
+        } else {
+          renderTrioView();
+        }
+      } else {
+        if (degTrioView && !degTrioView.classList.contains("hidden")) {
+          degTrioView.style.opacity = "0";
+          degTrioView.style.transform = "scale(0.96)";
+          setTimeout(() => {
+            degTrioView.classList.add("hidden");
+            if (degProductsGrid) {
+              degProductsGrid.classList.remove("hidden");
+              degProductsGrid.style.opacity = "0";
+              degProductsGrid.style.transform = "scale(0.96)";
+              requestAnimationFrame(() => {
+                degProductsGrid.style.opacity = "1";
+                degProductsGrid.style.transform = "scale(1)";
+              });
+            }
+            initKitParallax();
+          }, 180);
+        } else {
+          if (degTrioView) degTrioView.classList.add("hidden");
+          if (degProductsGrid) {
+            degProductsGrid.classList.remove("hidden");
+            degProductsGrid.style.opacity = "1";
+            degProductsGrid.style.transform = "scale(1)";
+          }
+        }
       }
     }
 
     document.querySelectorAll(".deg-product-pick").forEach((btn) => {
       btn.addEventListener("click", () => {
+        if (btn.hasAttribute("disabled") || btn.disabled || btn.getAttribute("data-stock") === "0") return;
         if (degSelected.length < 3) {
           const id = btn.getAttribute("data-id");
           const name = btn.getAttribute("data-name");
           const sabor = btn.getAttribute("data-sabor");
-          degSelected.push({ id, name, sabor });
+          const foto = btn.getAttribute("data-foto") || "";
+          degSelected.push({ id, name, sabor, foto });
           updateDegChips();
         }
       });
@@ -510,6 +883,7 @@ const kitPrices = await fetchKitPrices();
       if (step === 1) {
         degStep1?.classList.remove("hidden");
         degStep2?.classList.add("hidden");
+        updateDegChips();
       } else {
         degStep1?.classList.add("hidden");
         degStep2?.classList.remove("hidden");
@@ -522,6 +896,7 @@ const kitPrices = await fetchKitPrices();
           `).join("");
         }
       }
+      initKitParallax();
     }
 
     degNextBtn?.addEventListener("click", () => showDegStep(2));
@@ -544,6 +919,99 @@ const kitPrices = await fetchKitPrices();
     });
 
     // PRESENTEÁVEL LOGIC
+    function renderSinglePresView() {
+      if (!presSingleContainer || !presProduct) return;
+      presSingleContainer.innerHTML = `
+        <div class="pres-single-card relative p-2.5 sm:p-3 border border-[var(--gold)]/50 rounded-md bg-[var(--surface-elevated)]/80 text-left transition-all gold-glow-hover flex flex-col justify-between">
+          <button
+            type="button"
+            class="pres-remove-single-btn absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/85 border border-[var(--gold)]/60 text-[var(--gold)] hover:border-red-400 hover:text-red-400 hover:bg-red-950/50 text-xs font-bold flex items-center justify-center transition-all shadow-md z-30"
+            title="Remover ${presProduct.name}"
+            aria-label="Remover ${presProduct.name}"
+          >✕</button>
+          <div>
+            <div class="aspect-square bg-[var(--surface)] rounded-md overflow-hidden mb-2 border border-[var(--gold)]/10">
+              ${presProduct.foto ? `<img src="${presProduct.foto}" alt="${presProduct.name}" class="w-full h-full object-cover" />` : `<div class="w-full h-full flex items-center justify-center text-xl text-[var(--gold)]/30">⚗</div>`}
+            </div>
+            <div class="text-[9px] font-mono uppercase tracking-wider text-[var(--gold)]/80 mb-0.5">Poção Selecionada</div>
+            <h3 class="font-display font-bold text-xs sm:text-sm text-[var(--gold)] uppercase truncate">${presProduct.name}</h3>
+            <div class="font-body text-[11px] sm:text-xs text-[var(--text-soft)] italic truncate">${presProduct.sabor}</div>
+          </div>
+        </div>
+      `;
+
+      presSingleContainer.querySelector(".pres-remove-single-btn")?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deselectPresProduct();
+      });
+
+      initKitParallax();
+    }
+
+    function selectPresProduct(product) {
+      presProduct = product;
+      if (presNext1) presNext1.disabled = false;
+
+      if (presProductsGrid && !presProductsGrid.classList.contains("hidden")) {
+        presProductsGrid.style.opacity = "0";
+        presProductsGrid.style.transform = "scale(0.96)";
+        setTimeout(() => {
+          presProductsGrid.classList.add("hidden");
+          renderSinglePresView();
+          if (presSingleView) {
+            presSingleView.classList.remove("hidden");
+            presSingleView.style.opacity = "0";
+            presSingleView.style.transform = "scale(0.96)";
+            requestAnimationFrame(() => {
+              presSingleView.style.opacity = "1";
+              presSingleView.style.transform = "scale(1)";
+            });
+          }
+        }, 180);
+      } else if (presSingleView && presSingleView.classList.contains("hidden")) {
+        renderSinglePresView();
+        presSingleView.classList.remove("hidden");
+        presSingleView.style.opacity = "1";
+        presSingleView.style.transform = "scale(1)";
+        if (presProductsGrid) presProductsGrid.classList.add("hidden");
+      } else {
+        renderSinglePresView();
+      }
+    }
+
+    function deselectPresProduct() {
+      presProduct = null;
+      if (presNext1) presNext1.disabled = true;
+
+      // Unhighlight all grid buttons
+      document.querySelectorAll(".pres-liquor-pick").forEach(b => b.classList.remove("border-[var(--gold)]", "bg-[var(--gold)]/15"));
+
+      if (presSingleView && !presSingleView.classList.contains("hidden")) {
+        presSingleView.style.opacity = "0";
+        presSingleView.style.transform = "scale(0.96)";
+        setTimeout(() => {
+          presSingleView.classList.add("hidden");
+          if (presProductsGrid) {
+            presProductsGrid.classList.remove("hidden");
+            presProductsGrid.style.opacity = "0";
+            presProductsGrid.style.transform = "scale(0.96)";
+            requestAnimationFrame(() => {
+              presProductsGrid.style.opacity = "1";
+              presProductsGrid.style.transform = "scale(1)";
+            });
+          }
+          initKitParallax();
+        }, 180);
+      } else {
+        if (presSingleView) presSingleView.classList.add("hidden");
+        if (presProductsGrid) {
+          presProductsGrid.classList.remove("hidden");
+          presProductsGrid.style.opacity = "1";
+          presProductsGrid.style.transform = "scale(1)";
+        }
+      }
+    }
+
     function showPresStep(step) {
       currentStep = step;
       renderStepper(4, step, ["Licor", "Acomp.", "Caixa", "Resumo"]);
@@ -551,6 +1019,27 @@ const kitPrices = await fetchKitPrices();
       presStep2?.classList.toggle("hidden", step !== 2);
       presStep3?.classList.toggle("hidden", step !== 3);
       presStep4?.classList.toggle("hidden", step !== 4);
+
+      if (step === 1) {
+        if (presProduct) {
+          if (presProductsGrid) presProductsGrid.classList.add("hidden");
+          if (presSingleView) {
+            presSingleView.classList.remove("hidden");
+            presSingleView.style.opacity = "1";
+            presSingleView.style.transform = "scale(1)";
+          }
+          renderSinglePresView();
+          if (presNext1) presNext1.disabled = false;
+        } else {
+          if (presSingleView) presSingleView.classList.add("hidden");
+          if (presProductsGrid) {
+            presProductsGrid.classList.remove("hidden");
+            presProductsGrid.style.opacity = "1";
+            presProductsGrid.style.transform = "scale(1)";
+          }
+          if (presNext1) presNext1.disabled = true;
+        }
+      }
 
       if (step === 3 && presProduct) {
         const cat = presProduct.cat;
@@ -574,19 +1063,18 @@ const kitPrices = await fetchKitPrices();
           presTotalPrice.textContent = `R$ ${finalPrice},00`;
         }
       }
+      initKitParallax();
     }
 
     document.querySelectorAll(".pres-liquor-pick").forEach((btn) => {
       btn.addEventListener("click", () => {
-        document.querySelectorAll(".pres-liquor-pick").forEach(b => b.classList.remove("border-[var(--gold)]", "bg-[var(--gold)]/15"));
-        btn.classList.add("border-[var(--gold)]", "bg-[var(--gold)]/15");
-        presProduct = {
-          id: btn.getAttribute("data-id"),
-          name: btn.getAttribute("data-name"),
-          sabor: btn.getAttribute("data-sabor"),
-          cat: btn.getAttribute("data-cat")
-        };
-        if (presNext1) presNext1.disabled = false;
+        if (btn.hasAttribute("disabled") || btn.disabled || btn.getAttribute("data-stock") === "0") return;
+        const id = btn.getAttribute("data-id");
+        const name = btn.getAttribute("data-name");
+        const sabor = btn.getAttribute("data-sabor");
+        const foto = btn.getAttribute("data-foto") || "";
+        const cat = btn.getAttribute("data-cat");
+        selectPresProduct({ id, name, sabor, foto, cat });
       });
     });
 
@@ -648,15 +1136,20 @@ const kitPrices = await fetchKitPrices();
     // POST-ADD BUTTONS
     document.getElementById("post-add-new-btn")?.addEventListener("click", () => {
       degSelected = [];
+      updateDegChips();
       presProduct = null;
       presAcomp = null;
       presBox = null;
+      deselectPresProduct();
       setMode("");
     });
 
     document.getElementById("post-add-open-cart-btn")?.addEventListener("click", () => {
       window.dispatchEvent(new CustomEvent("open-cart"));
     });
+
+    // Initial Parallax Setup
+    initKitParallax();
 
     // Check initial search param
     const params = new URLSearchParams(window.location.search);

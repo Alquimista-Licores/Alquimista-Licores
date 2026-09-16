@@ -4,18 +4,16 @@ interface Ritual {
   id: string;
   numeral: string;
   title: string;
-  subtitle: string;
-  desc: string;
+  shortDesc: string;
   image: string;
   alt: string;
   glyph: string;
-  element: string;
-  idealTemp: string;
-  technique: string;
-  ambientNotes: string;
+  badgeTag: string;
+  mainText: string;
   highlightLabel: string;
-  highlightText: string;
-  suggestedPotions: { name: string; sabor: string; id: string; badge: string }[];
+  highlightText?: string;
+  highlightItems?: string[];
+  suggestedPotions: { name: string; id: string }[];
 }
 
 const RITUALS: Ritual[] = [
@@ -23,84 +21,76 @@ const RITUALS: Ritual[] = [
     id: "puro-gelado",
     numeral: "I",
     title: "PURO & GELADO",
-    subtitle: "O Digestivo Solo & Essência Botânica",
-    desc: "Preserve a essência pura, a textura aveludada e o buquê botânico solo.",
+    shortDesc: "A forma mais pura de revelar aromas, textura e sabor.",
     image: "/assets/rituals/ritual-puro-gelado.jpg",
     alt: "Ritual Puro e Gelado — Licor servido em cálice de cristal resfriado",
     glyph: "🜄",
-    element: "Água",
-    idealTemp: "10°C a 15°C em taça pequena",
-    technique: "Servir em pequenos cálices ou taças de cristal levemente resfriadas. A temperatura controlada intensifica a cremosidade do leite e preserva os óleos essenciais das frutas nativas sem necessidade de diluição.",
-    ambientNotes: "Degustar solo após a refeição como um digestivo aromático nobre.",
-    highlightLabel: "Harmonização de Temperatura",
-    highlightText: "Poções com especiarias ganham sedosidade a 10–15°C; poções de frutas nativas (Butiá, Jabuticaba) revelam frescor cítrico e acidez vibrante quando bem geladas.",
+    badgeTag: "Servir gelado · Taça pequena",
+    mainText: "Deguste sem misturas, em pequenos goles. O frio realça a textura e preserva os aromas, deixando cada poção se revelar por inteiro.",
+    highlightLabel: "DICA DO RITUAL",
+    highlightText: "Poções frutadas ficam especialmente refrescantes quando bem geladas; as mais cremosas e especiadas podem ser servidas apenas levemente frias.",
     suggestedPotions: [
-      { name: "Poção da Prosperidade", sabor: "Ouro Especial", id: "af94b5a9-33d4-4a6b-abb1-0e59a49d3ec7", badge: "12.5°GL · Cacau & Especiarias" },
-      { name: "Poção Néctar Místico", sabor: "Butiá", id: "6fe04098-9cd1-4cb7-a903-1e3ae1147671", badge: "16°GL · Acidez Tropical" },
-      { name: "Poção Silvestre", sabor: "Jabuticaba", id: "37758861-8dc5-4a9d-8995-b341c91ba200", badge: "15°GL · Frutado Aveludado" }
+      { name: "Poção da Prosperidade", id: "af94b5a9-33d4-4a6b-abb1-0e59a49d3ec7" },
+      { name: "Poção Néctar Místico", id: "6fe04098-9cd1-4cb7-a903-1e3ae1147671" },
+      { name: "Poção Silvestre", id: "37758861-8dc5-4a9d-8995-b341c91ba200" }
     ]
   },
   {
-    id: "sobre-gelo",
+    id: "com-gelo",
     numeral: "II",
-    title: "SOBRE GELO",
-    subtitle: "Oxigenação Lenta & Abertura Cítrica",
-    desc: "Deixe notas tropicais e botânicos ocultos se revelarem à medida que a poção respira.",
+    title: "COM GELO",
+    shortDesc: "O gelo suaviza a intensidade e revela novas camadas da poção.",
     image: "/assets/rituals/ritual-sobre-gelo.jpg",
-    alt: "Ritual Sobre Gelo — Licor servido sobre esfera de gelo em copo Old Fashioned",
+    alt: "Ritual Com Gelo — Licor servido sobre gelo em copo baixo",
     glyph: "🜃",
-    element: "Terra",
-    idealTemp: "Copo baixo com esfera translúcida (On The Rocks)",
-    technique: "Uma única pedra grande de gelo translúcido no copo baixo. A fusão lenta oxigena a bebida, suaviza a graduação alcoólica e desprende notas cítricas e amadeiradas sem aguar a textura.",
-    ambientNotes: "Ideal para tardes quentes, recepções intimistas ou como refresco sofisticado.",
-    highlightLabel: "Abertura Aromática",
-    highlightText: "O abacaxi desprende nuances de cravo-da-índia, o maracujá equilibra acidez e doçura viva, e as folhas de figueira liberam notas verdes e florais de bosque.",
+    badgeTag: "Servir com gelo · Copo baixo",
+    mainText: "Adicione algumas pedras de gelo e deixe a poção evoluir lentamente no copo. A temperatura suaviza o álcool e destaca o frescor das notas frutadas.",
+    highlightLabel: "DICA DO RITUAL",
+    highlightText: "Use pouco gelo para refrescar sem diluir demais os aromas e sabores.",
     suggestedPotions: [
-      { name: "Poção Tropical", sabor: "Abacaxi", id: "9e6a58a9-8d88-4613-9ce7-2dfb8afca29e", badge: "16.5°GL · Cravo & Cítrico" },
-      { name: "Poção da Serenidade", sabor: "Maracujá", id: "b679b884-73a2-48cc-81af-2bc99abecee1", badge: "15°GL · Refrescante" },
-      { name: "Poção da Conexão", sabor: "Figo", id: "f57e85ca-3e25-4885-a9b8-8febeac0421a", badge: "21°GL · Notas Herbáceas" }
+      { name: "Poção Tropical", id: "9e6a58a9-8d88-4613-9ce7-2dfb8afca29e" },
+      { name: "Poção da Serenidade", id: "b679b884-73a2-48cc-81af-2bc99abecee1" },
+      { name: "Poção da Conexão", id: "f57e85ca-3e25-4885-a9b8-8febeac0421a" }
     ]
   },
   {
-    id: "a-mesa",
+    id: "com-sobremesas",
     numeral: "III",
-    title: "À MESA & HARMONIZAÇÃO",
-    subtitle: "O Banquete Alquímico: Queijos Nobres & Sobremesas",
-    desc: "O fecho nobre para banquetes: queijos finos, doces intensos e café expresso.",
+    title: "COM SOBREMESAS",
+    shortDesc: "Doçura, cremosidade e contraste para encerrar a experiência.",
     image: "/assets/rituals/ritual-a-mesa.jpg",
-    alt: "Ritual À Mesa — Licor harmonizado com queijos finos, chocolate e sobremesas",
+    alt: "Ritual Com Sobremesas — Licor harmonizado com chocolate, café e sobremesas",
     glyph: "🜁",
-    element: "Ar",
-    idealTemp: "Servido em temperatura de sobremesa ou como calda",
-    technique: "Criar pontes de contraste e afinidade gastronômica: queijos de cabra e ricota fresca cortam a doçura frutada; sobremesas de chocolate e café ganham profundidade caramelizada.",
-    ambientNotes: "Transforme sobremesas em rituais usando a poção como calda sobre sorvetes artesanais, cheesecakes ou panquecas.",
-    highlightLabel: "Exemplos de Harmonização",
-    highlightText: "Doce de Leite com pudim e brigadeiro gourmet; Chocolate 50% com tortas e cappuccino; Banana & Baunilha com tortas de maçã e queijos suaves.",
+    badgeTag: "Sirva junto à sobremesa · Ou use como complemento",
+    mainText: "O licor pode acompanhar a sobremesa ou entrar como calda, acrescentando uma nova camada de sabor.",
+    highlightLabel: "DICA DO RITUAL",
+    highlightText: "Sobremesas como brownies, sorvetes e tiramisu realçam o sabor dos licores cremosos, já frutas e doces mais leves, harmonizam com poções frutadas.",
     suggestedPotions: [
-      { name: "Poção do Doce Deleite", sabor: "Doce de Leite", id: "03b9242c-50a5-4c7d-bb5e-0211b266b421", badge: "12.5°GL · Caramelo & Baunilha" },
-      { name: "Poção do Desejo", sabor: "Chocolate Cremoso", id: "d5941952-c8de-4cfa-a2d5-9ca89b0cf19a", badge: "11.5°GL · Cacau 50%" },
-      { name: "Poção da Alegria", sabor: "Banana", id: "b0d77291-b5ed-4548-8837-887f674c1b4c", badge: "22.5°GL · Canela & Mascavo" }
+      { name: "Poção do Doce Deleite", id: "03b9242c-50a5-4c7d-bb5e-0211b266b421" },
+      { name: "Poção do Desejo", id: "d5941952-c8de-4cfa-a2d5-9ca89b0cf19a" },
+      { name: "Poção da Alegria", id: "b0d77291-b5ed-4548-8837-887f674c1b4c" }
     ]
   },
   {
-    id: "em-alquimia",
+    id: "em-coqueteis",
     numeral: "IV",
-    title: "EM ALQUIMIA & MIXOLOGIA",
-    subtitle: "Coquetelaria Autoral & Releituras Clássicas",
-    desc: "Transforme a poção em coquetéis autorais refinados com botânicos e especiarias.",
+    title: "EM COQUETÉIS",
+    shortDesc: "Transforme cada poção em novas combinações e experiências.",
     image: "/assets/rituals/ritual-em-alquimia.jpg",
-    alt: "Ritual Em Alquimia — Coquetelaria autoral com infusão de botânicos e especiarias",
+    alt: "Ritual Em Coquetéis — Coquetelaria autoral e releituras clássicas com poções",
     glyph: "🜂",
-    element: "Fogo",
-    idealTemp: "Batido na coqueteleira com gelo ou servido em taça Coupe",
-    technique: "Substitua bases tradicionais por poções alquímicas para aportar corpo aveludado e camadas complexas de sabor em coquetéis clássicos e contemporâneos.",
-    ambientNotes: "Proporciona textura acetinada sem necessidade de xaropes industriais.",
-    highlightLabel: "Receitas de Coquetelaria",
-    highlightText: "Espresso Martini Alquímico (Poção de Café & Laranja + Expresso); Canela Sour (Poção de Canela + Limão Siciliano + Anis); Velvet Batida (Poção de Maracujá Cremoso batida com gelo).",
+    badgeTag: "Combine · Bata · Misture",
+    mainText: "Use as poções como protagonistas de coquetéis clássicos ou autorais. Frutas, café, especiarias e destilados criam combinações que ampliam o perfil de cada licor.",
+    highlightLabel: "INSPIRAÇÕES",
+    highlightItems: [
+      "Poção da Inspiração — Espresso Martini ou drinks de café",
+      "Poção do Aconchego — Canela Sour ou vinho quente",
+      "Poção do Doce Sossego — batidas e coquetéis tropicais"
+    ],
     suggestedPotions: [
-      { name: "Poção da Inspiração", sabor: "Café & Laranja", id: "c1245fd9-cb5b-43e8-bf20-1495ff5c1aee", badge: "16°GL · Espresso Martini" },
-      { name: "Poção do Aconchego", sabor: "Canela", id: "631512a9-16dc-4e4f-8f07-98278a207c0a", badge: "18°GL · Canela Sour" },
-      { name: "Poção do Doce Sossego", sabor: "Maracujá Cremoso", id: "4a8abdb5-e5d4-4ab6-9fd8-4db419c17ed9", badge: "12.5°GL · Velvet Tropical" }
+      { name: "Poção da Inspiração", id: "c1245fd9-cb5b-43e8-bf20-1495ff5c1aee" },
+      { name: "Poção do Aconchego", id: "631512a9-16dc-4e4f-8f07-98278a207c0a" },
+      { name: "Poção do Doce Sossego", id: "4a8abdb5-e5d4-4ab6-9fd8-4db419c17ed9" }
     ]
   }
 ];
@@ -110,22 +100,18 @@ const RITUALS: Ritual[] = [
   <div class="max-w-7xl mx-auto px-6 lg:px-10">
     
     <!-- 1. SECTION HEADER (REVEAL ENTRANCE) -->
-    <div class="text-center mb-16 md:mb-24 rituals-header reveal-item">
+    <div class="text-center mb-16 md:mb-20 rituals-header reveal-item">
       <div class="inline-flex items-center justify-center gap-3 mb-3">
         <span class="w-8 md:w-12 h-px bg-[var(--gold)]/40"></span>
-        <span class="font-sans font-medium text-[11px] md:text-xs tracking-[0.3em] uppercase text-[var(--gold)]">
+        <span class="font-mono font-medium text-[11px] md:text-xs tracking-[0.3em] uppercase text-[var(--gold)]">
           Grimório de Servir
         </span>
         <span class="w-8 md:w-12 h-px bg-[var(--gold)]/40"></span>
       </div>
 
-      <h2 class="text-3xl md:text-5xl lg:text-6xl font-medium text-[var(--cream)] tracking-wide mb-4 font-decorative">
+      <h2 class="text-3xl md:text-5xl lg:text-6xl font-medium text-[var(--cream)] tracking-wide font-display">
         RITUAIS DE DEGUSTAÇÃO
       </h2>
-
-      <p class="font-sans italic text-base md:text-xl text-[var(--text-soft)] max-w-xl mx-auto">
-        Cada poção revela uma experiência diferente.
-      </p>
     </div>
 
     <!-- 2. ASYMMETRIC SPLIT COMPOSITION (IMAGE LEFT / LIST RIGHT) -->
@@ -142,7 +128,7 @@ const RITUALS: Ritual[] = [
           <span class="corner-bracket corner-br" aria-hidden="true"></span>
 
           <!-- Image Visual Canvas -->
-          <div class="ritual-image-deck aspect-[3/4] sm:aspect-[4/3] lg:aspect-[3/4] rounded-sm overflow-hidden relative">
+          <div class="ritual-image-deck aspect-[3/4] sm:aspect-[4/3] lg:aspect-[3/4] rounded-md overflow-hidden relative">
             
             <!-- Vignette & Glow Overlay -->
             <div class="absolute inset-0 z-10 pointer-events-none ritual-inner-vignette"></div>
@@ -162,9 +148,9 @@ const RITUALS: Ritual[] = [
             ))}
 
             <!-- Discreet Alchemical Watermark & Seal -->
-            <div class="absolute bottom-4 left-4 z-20 pointer-events-none flex items-center gap-2.5 px-3 py-1.5 rounded-sm bg-black/40 backdrop-blur-md border border-[var(--gold)]/20">
+            <div class="absolute bottom-4 left-4 z-20 pointer-events-none flex items-center gap-2.5 px-3 py-1.5 rounded-md bg-black/40 backdrop-blur-md border border-[var(--gold)]/20">
               <span id="activeGlyph" class="text-[var(--gold-bright)] text-sm font-serif transition-all duration-500">🜄</span>
-              <span id="activeBadgeText" class="font-sans text-[10px] tracking-[0.2em] uppercase text-[var(--gold-light)] font-light transition-all duration-500">
+              <span id="activeBadgeText" class="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--gold-light)] font-light transition-all duration-500">
                 Ritual I · Puro & Gelado
               </span>
             </div>
@@ -174,11 +160,11 @@ const RITUALS: Ritual[] = [
       </div>
 
       <!-- RIGHT: VERTICAL INTERACTIVE RITUALS LIST -->
-      <div class="lg:col-span-6 xl:col-span-6 space-y-4 md:space-y-6">
+      <div class="lg:col-span-6 xl:col-span-6 space-y-4 md:space-y-5">
         
         {RITUALS.map((ritual, index) => (
           <div
-            class={`ritual-card group cursor-pointer transition-all duration-500 relative p-5 md:p-6 rounded-sm border border-transparent reveal-item ${
+            class={`ritual-card group cursor-pointer transition-all duration-500 relative p-5 md:p-6 rounded-md border border-transparent reveal-item ${
               index === 0 ? "is-active" : ""
             }`}
             data-index={index}
@@ -190,76 +176,84 @@ const RITUALS: Ritual[] = [
             <!-- Background Subtle Aura on Active -->
             <div class="ritual-active-highlight" aria-hidden="true"></div>
 
-            <!-- Top Row: Roman Numeral + Title + Glyph -->
-            <div class="flex items-baseline justify-between gap-4 mb-1">
-              <div class="flex items-baseline gap-3 md:gap-4 flex-wrap">
-                <span class="ritual-numeral font-decorative text-lg md:text-xl font-bold transition-all duration-400">
+            <!-- Top Row: Roman Numeral + Dash + Title + Glyph -->
+            <div class="flex items-center justify-between gap-3 mb-1.5">
+              <div class="flex items-center gap-2 md:gap-3 flex-nowrap min-w-0">
+                <span class="ritual-numeral font-decorative text-lg md:text-xl font-bold shrink-0 transition-colors duration-300">
                   {ritual.numeral}
                 </span>
-                <h3 class="ritual-title font-decorative text-lg md:text-2xl font-semibold tracking-wide transition-colors duration-400">
+                <span class="text-[var(--gold)]/50 font-light text-sm select-none shrink-0">—</span>
+                <h3 class="ritual-title font-display text-base sm:text-lg md:text-xl font-semibold tracking-wide transition-colors duration-300">
                   {ritual.title}
                 </h3>
               </div>
-              <span class="ritual-glyph font-serif text-sm opacity-50 transition-opacity duration-300">
+              <span class="ritual-glyph font-serif text-sm opacity-50 shrink-0 transition-opacity duration-300">
                 {ritual.glyph}
               </span>
             </div>
 
-            <!-- Subtitle / Context -->
-            <div class="text-[11px] md:text-xs font-sans uppercase tracking-[0.18em] text-[var(--gold)]/70 mb-2">
-              {ritual.subtitle}
-            </div>
-
             <!-- Thin Expanding Gold Underline -->
-            <div class="ritual-ornament-line" aria-hidden="true"></div>
+            <div class="ritual-ornament-line mb-2" aria-hidden="true"></div>
 
-            <!-- Short Main Description -->
-            <p class="ritual-quote font-sans italic text-sm md:text-base text-[var(--cream)]/90 leading-relaxed mt-3 transition-all duration-400">
-              “{ritual.desc}”
+            <!-- Short Main Description (Visible in Collapsed & Active) -->
+            <p class="ritual-quote font-serif italic text-sm md:text-base text-[var(--cream)]/90 leading-relaxed mt-1 transition-all duration-400">
+              “{ritual.shortDesc}”
             </p>
 
-            <!-- Expanded Details & Suggested Potions (Visible on Active) -->
-            <div class="ritual-expanded-content transition-all duration-500">
-              <!-- Serving Technique & Temp Badge -->
-              <div class="flex flex-wrap items-center gap-2 mt-3 mb-2.5">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-sm bg-[var(--gold)]/10 border border-[var(--gold)]/25 text-[11px] font-sans text-[var(--gold-light)] font-medium">
-                  <span class="text-[var(--gold)]">✦</span> {ritual.idealTemp}
-                </span>
-              </div>
+            <!-- Expanded Details & Suggested Potions (Smooth Grid Accordion) -->
+            <div class="ritual-expanded-wrapper">
+              <div class="ritual-expanded-inner">
+                <!-- Practical Line / Badge -->
+                <div class="flex flex-wrap items-center gap-2 mt-3.5 mb-3">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-[var(--gold)]/10 border border-[var(--gold)]/25 text-[11px] font-mono text-[var(--gold-light)] font-medium">
+                    <span class="text-[var(--gold)]">✦</span> {ritual.badgeTag}
+                  </span>
+                </div>
 
-              <!-- Technique narrative -->
-              <p class="text-xs md:text-sm text-[var(--text-soft)] font-light leading-relaxed mb-3">
-                {ritual.technique}
-              </p>
+                <!-- Main Paragraph -->
+                <p class="text-xs md:text-sm text-[var(--cream)]/85 font-body font-light leading-relaxed mb-3">
+                  {ritual.mainText}
+                </p>
 
-              <!-- Concrete Highlight / Recipe -->
-              <div class="p-3 rounded-sm bg-black/25 border-l-2 border-[var(--gold)]/60 text-xs font-sans mb-4">
-                <span class="text-[var(--gold-bright)] font-semibold uppercase tracking-wider text-[10px] block mb-0.5">
-                  {ritual.highlightLabel}
-                </span>
-                <span class="text-[var(--cream)]/90 font-light leading-relaxed">
-                  {ritual.highlightText}
-                </span>
-              </div>
+                <!-- Auxiliary Block (Dica / Inspirações) -->
+                <div class="p-3 rounded-sm bg-black/30 border-l-2 border-[var(--gold)]/70 text-xs font-body mb-4">
+                  <span class="text-[var(--gold-bright)] font-mono font-semibold uppercase tracking-wider text-[10px] block mb-1">
+                    {ritual.highlightLabel}
+                  </span>
+                  {ritual.highlightItems ? (
+                    <div class="space-y-1 text-[var(--text-soft)] font-light leading-relaxed">
+                      {ritual.highlightItems.map((item) => (
+                        <div class="flex items-start gap-1.5">
+                          <span class="text-[var(--gold)] text-[10px] mt-0.5">•</span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p class="text-[var(--text-soft)] font-light leading-relaxed">
+                      {ritual.highlightText}
+                    </p>
+                  )}
+                </div>
 
-              <!-- Suggested Potions Strip with Modal Trigger Buttons -->
-              <div class="ritual-potions-strip pt-3 border-t border-[var(--gold)]/15 flex flex-wrap items-center gap-2">
-                <span class="text-[10px] uppercase font-sans tracking-[0.2em] text-[var(--gold)]/80 font-medium w-full sm:w-auto">
-                  Poções do Ritual:
-                </span>
-                <div class="flex flex-wrap gap-1.5">
-                  {ritual.suggestedPotions.map((potion) => (
-                    <button
-                      type="button"
-                      class="potion-suggestion-link text-xs font-sans px-2.5 py-1 rounded-sm bg-[var(--surface-elevated)]/40 hover:bg-[var(--gold)]/20 border border-[var(--gold)]/25 hover:border-[var(--gold)] text-[var(--cream)] hover:text-[var(--gold-bright)] transition-all flex items-center gap-1.5 group/link"
-                      data-potion-id={potion.id}
-                      title={`Ver detalhes de ${potion.name}`}
-                    >
-                      <span class="font-medium">{potion.name}</span>
-                      <span class="text-[10px] text-[var(--text-faded)] group-hover/link:text-[var(--gold-light)]">({potion.sabor})</span>
-                      <span class="text-[var(--gold)] text-[10px] transform group-hover/link:translate-x-0.5 transition-transform">→</span>
-                    </button>
-                  ))}
+                <!-- Suggested Potions Strip with Modal Trigger Buttons -->
+                <div class="ritual-potions-strip pt-3 pb-1 border-t border-[var(--gold)]/15">
+                  <span class="text-[9.5px] md:text-[10px] uppercase font-mono tracking-[0.18em] text-[var(--gold)]/75 font-medium block mb-2">
+                    Poções do Ritual:
+                  </span>
+                  <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 md:gap-2">
+                    {ritual.suggestedPotions.map((potion) => (
+                      <button
+                        type="button"
+                        class="potion-suggestion-link text-[10.5px] lg:text-[11px] px-2 lg:px-2.5 py-1 rounded-sm bg-[var(--surface-elevated)]/50 hover:bg-[var(--gold)]/20 border border-[var(--gold)]/25 hover:border-[var(--gold)] text-[var(--cream)] hover:text-[var(--gold-bright)] transition-all flex items-center justify-center gap-1 group/link font-sans shrink-0 whitespace-nowrap"
+                        data-potion-id={potion.id}
+                        title={`Ver detalhes de ${potion.name}`}
+                      >
+                        <span class="font-medium font-display">{potion.name}</span>
+                        <span class="text-[var(--gold)] text-[9.5px] transform group-hover/link:translate-x-0.5 transition-transform">→</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -294,7 +288,7 @@ const RITUALS: Ritual[] = [
     height: 14px;
     border-color: var(--gold);
     opacity: 0.45;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: opacity 0.4s ease;
     pointer-events: none;
     z-index: 25;
   }
@@ -305,10 +299,9 @@ const RITUALS: Ritual[] = [
 
   .ritual-frame-container:hover .corner-bracket {
     opacity: 0.85;
-    transform: scale(1.05);
   }
 
-  /* 2. Image Stack & Cinematic Crossfade */
+  /* 2. Image Stack & Static Crossfade (Pure Opacity Fade In/Out) */
   .ritual-image-deck {
     border: 1px solid rgba(200, 169, 126, 0.22);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(200, 169, 126, 0.08);
@@ -321,18 +314,13 @@ const RITUALS: Ritual[] = [
 
   .ritual-deck-img {
     opacity: 0;
-    transform: scale(1.02);
-    filter: blur(3px);
-    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1;
+    pointer-events: none;
   }
 
   .ritual-deck-img.is-active {
     opacity: 1;
-    transform: scale(1);
-    filter: blur(0);
     z-index: 2;
   }
 
@@ -345,6 +333,7 @@ const RITUALS: Ritual[] = [
     outline: none;
     position: relative;
     user-select: none;
+    transition: border-color 0.45s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   .ritual-card:focus-visible {
@@ -360,23 +349,24 @@ const RITUALS: Ritual[] = [
     background: linear-gradient(90deg, rgba(200, 169, 126, 0.06) 0%, transparent 100%);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
     border-radius: 0 4px 4px 0;
   }
 
   /* Inactive typography defaults */
   .ritual-numeral {
     color: rgba(200, 169, 126, 0.55);
-    transform: translateX(0);
   }
 
   .ritual-title {
     color: var(--text-soft);
+    transition: color 0.35s ease;
   }
 
   .ritual-glyph {
     color: var(--gold);
     opacity: 0.35;
+    transition: opacity 0.4s ease, color 0.4s ease;
   }
 
   .ritual-ornament-line {
@@ -384,21 +374,26 @@ const RITUALS: Ritual[] = [
     height: 1px;
     background: linear-gradient(90deg, var(--gold) 0%, rgba(200, 169, 126, 0) 100%);
     box-shadow: 0 0 6px rgba(200, 169, 126, 0.4);
-    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   .ritual-quote {
     color: var(--text-faded);
+    transition: color 0.4s ease;
   }
 
-  .ritual-expanded-content {
-    max-height: 0;
+  /* Ultra-smooth CSS Grid Transition for Expansion & Collapse */
+  .ritual-expanded-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
     opacity: 0;
+    transition: grid-template-rows 0.55s cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .ritual-expanded-inner {
     overflow: hidden;
-    transform: translateY(6px);
-    transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.4s ease,
-                transform 0.4s ease;
+    min-height: 0;
   }
 
   /* Hover state */
@@ -420,13 +415,11 @@ const RITUALS: Ritual[] = [
 
   .ritual-card.is-active .ritual-numeral {
     color: var(--gold-bright);
-    transform: translateX(3px);
   }
 
   .ritual-card.is-active .ritual-title {
-    background: linear-gradient(135deg, #FFFFFF 15%, var(--gold-light) 60%, var(--gold) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #FFFFFF;
+    text-shadow: 0 0 14px rgba(200, 169, 126, 0.45);
   }
 
   .ritual-card.is-active .ritual-glyph {
@@ -443,10 +436,9 @@ const RITUALS: Ritual[] = [
     color: var(--cream);
   }
 
-  .ritual-card.is-active .ritual-expanded-content {
-    max-height: 480px;
+  .ritual-card.is-active .ritual-expanded-wrapper {
+    grid-template-rows: 1fr;
     opacity: 1;
-    transform: translateY(0);
   }
 
   /* 4. Reveal Animation */
@@ -471,12 +463,9 @@ const RITUALS: Ritual[] = [
     }
     .ritual-deck-img {
       transition: opacity 0.2s ease !important;
-      transform: none !important;
-      filter: none !important;
     }
-    .ritual-expanded-content {
-      transition: opacity 0.2s ease !important;
-      transform: none !important;
+    .ritual-expanded-wrapper {
+      transition: none !important;
     }
   }
 </style>
@@ -488,15 +477,14 @@ const RITUALS: Ritual[] = [
 
     const cards = section.querySelectorAll<HTMLElement>(".ritual-card");
     const images = section.querySelectorAll<HTMLImageElement>(".ritual-deck-img");
-    const frame = document.getElementById("ritualFrame");
     const activeGlyph = document.getElementById("activeGlyph");
     const activeBadgeText = document.getElementById("activeBadgeText");
 
     const badges = [
       { glyph: "🜄", text: "Ritual I · Puro & Gelado" },
-      { glyph: "🜃", text: "Ritual II · Sobre Gelo" },
-      { glyph: "🜁", text: "Ritual III · À Mesa" },
-      { glyph: "🜂", text: "Ritual IV · Em Alquimia" }
+      { glyph: "🜃", text: "Ritual II · Com Gelo" },
+      { glyph: "🜁", text: "Ritual III · Com Sobremesas" },
+      { glyph: "🜂", text: "Ritual IV · Em Coquetéis" }
     ];
 
     let currentIndex = 0;
@@ -516,7 +504,7 @@ const RITUALS: Ritual[] = [
         }
       });
 
-      // Crossfade images
+      // Pure crossfade images (fade-in / fade-out without translation/scale)
       images.forEach((img, idx) => {
         if (idx === index) {
           img.classList.add("is-active");
@@ -562,62 +550,6 @@ const RITUALS: Ritual[] = [
         }
       });
     });
-
-    // Subtle image parallax on mousemove (Max ±3px in X, ±2px in Y)
-    const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
-    const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (!isTouch && !isReducedMotion && frame) {
-      let rect: DOMRect | null = null;
-      let rafId: number | null = null;
-      let targetX = 0;
-      let targetY = 0;
-      let currentX = 0;
-      let currentY = 0;
-
-      const updateRect = () => {
-        if (frame) rect = frame.getBoundingClientRect();
-      };
-      updateRect();
-      window.addEventListener("resize", updateRect, { passive: true });
-
-      frame.addEventListener("mousemove", (e: MouseEvent) => {
-        if (!rect) updateRect();
-        if (!rect) return;
-
-        const relX = (e.clientX - rect.left) / rect.width - 0.5;
-        const relY = (e.clientY - rect.top) / rect.height - 0.5;
-
-        targetX = relX * 6; // ±3px
-        targetY = relY * 4; // ±2px
-
-        if (!rafId) {
-          rafId = requestAnimationFrame(animateParallax);
-        }
-      });
-
-      frame.addEventListener("mouseleave", () => {
-        targetX = 0;
-        targetY = 0;
-      });
-
-      function animateParallax() {
-        currentX += (targetX - currentX) * 0.1;
-        currentY += (targetY - currentY) * 0.1;
-
-        images.forEach((img) => {
-          if (img.classList.contains("is-active")) {
-            img.style.transform = `scale(1.03) translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0)`;
-          }
-        });
-
-        if (Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05) {
-          rafId = requestAnimationFrame(animateParallax);
-        } else {
-          rafId = null;
-        }
-      }
-    }
 
     // Suggested potions click -> opens product modal or navigates
     const potionButtons = section.querySelectorAll<HTMLButtonElement>(".potion-suggestion-link");

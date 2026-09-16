@@ -7,10 +7,10 @@ import { fetchProducts } from '../lib/data';
 const products = await fetchProducts();
 
 const TABS = [
-  { id: "all", label: "Todas" },
+  { id: "all", label: "Todas as Poções" },
   { id: "fino", label: "Licores Finos" },
   { id: "cremoso", label: "Licores Cremosos" },
-  { id: "especial", label: "Licores Especiais" },
+  { id: "especial", label: "Edições Especiais" },
 ];
 ---
 
@@ -24,19 +24,19 @@ const TABS = [
     <!-- SECTION TITLE (ACCESSIBLE HIERARCHY) -->
     <h2 class="sr-only">Nossas Poções Artesanais</h2>
 
-    <!-- FILTER TABS -->
-    <div class="flex flex-wrap justify-center gap-2.5 mb-12">
+    <!-- FILTER TABS (BADGE PILLS DESIGN SYSTEM) -->
+    <div class="flex flex-wrap justify-center gap-3 mb-12">
       {TABS.map((t) => (
         <button
           type="button"
-          class={`filter-tab-btn px-6 py-2.5 rounded-full text-xs font-display tracking-widest uppercase transition-all duration-300 font-bold ${
+          class={`filter-tab-btn px-4 py-2 rounded-sm text-xs font-mono tracking-wider transition-all duration-300 font-semibold cursor-pointer flex items-center justify-center ${
             t.id === "all"
-              ? "bg-[var(--gold)] text-[var(--background)] shadow-md"
-              : "border border-[var(--gold)]/30 text-[var(--cream)]/80 hover:border-[var(--gold)] hover:text-[var(--gold)]"
+              ? "bg-[var(--gold)] text-[var(--background)] shadow-lg border border-[var(--gold)]"
+              : "bg-[var(--surface)]/80 border border-[var(--gold)]/25 text-[var(--gold-soft)] hover:border-[var(--gold)] hover:bg-[var(--gold)]/10"
           }`}
           data-category={t.id}
         >
-          {t.label}
+          <span>{t.label}</span>
         </button>
       ))}
     </div>
@@ -63,11 +63,11 @@ const TABS = [
 
         // Update active tab styles
         tabs.forEach((t) => {
-          t.classList.remove("bg-[var(--gold)]", "text-[var(--background)]", "shadow-md");
-          t.classList.add("border", "border-[var(--gold)]/30", "text-[var(--cream)]/80");
+          t.classList.remove("bg-[var(--gold)]", "text-[var(--background)]", "shadow-lg", "scale-105");
+          t.classList.add("bg-[var(--surface)]/80", "border-[var(--gold)]/25", "text-[var(--gold-soft)]");
         });
-        tab.classList.add("bg-[var(--gold)]", "text-[var(--background)]", "shadow-md");
-        tab.classList.remove("border", "border-[var(--gold)]/30", "text-[var(--cream)]/80");
+        tab.classList.add("bg-[var(--gold)]", "text-[var(--background)]", "shadow-lg", "scale-105");
+        tab.classList.remove("bg-[var(--surface)]/80", "border-[var(--gold)]/25", "text-[var(--gold-soft)]");
 
         // Filter product items
         items.forEach((item) => {

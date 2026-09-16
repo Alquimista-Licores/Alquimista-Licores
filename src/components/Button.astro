@@ -1,0 +1,86 @@
+---
+interface Props {
+  variant?: 'primary' | 'outline' | 'shimmer' | 'liquid' | 'ghost' | 'icon';
+  size?: 'sm' | 'md' | 'lg' | 'icon';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  class?: string;
+  id?: string;
+  target?: string;
+  rel?: string;
+  ariaLabel?: string;
+  [key: string]: any;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  class: className = '',
+  id,
+  target,
+  rel,
+  ariaLabel,
+  ...rest
+} = Astro.props;
+
+// Determine tag
+const Tag = href ? 'a' : 'button';
+
+// Variant class mapping
+const variantClasses: Record<string, string> = {
+  primary: 'btn-primary',
+  outline: 'btn-outline',
+  shimmer: 'btn-shimmer',
+  liquid: 'btn-liquid',
+  ghost: 'btn-ghost',
+  icon: 'btn-icon-round',
+};
+
+// Size class mapping
+const sizeClasses: Record<string, string> = {
+  sm: 'btn-sm',
+  md: 'btn-md',
+  lg: 'btn-lg',
+  icon: 'btn-icon',
+};
+
+const resolvedVariantClass = variantClasses[variant] || 'btn-primary';
+const resolvedSizeClass = variant === 'icon' ? '' : (sizeClasses[size] || 'btn-md');
+const disabledClass = disabled ? 'btn-disabled opacity-40 cursor-not-allowed pointer-events-none' : '';
+
+const finalClasses = [
+  resolvedVariantClass,
+  resolvedSizeClass,
+  disabledClass,
+  className
+].filter(Boolean).join(' ');
+---
+
+{Tag === 'a' ? (
+  <a
+    href={href}
+    class={finalClasses}
+    id={id}
+    target={target}
+    rel={rel || (target === '_blank' ? 'noopener noreferrer' : undefined)}
+    aria-label={ariaLabel}
+    {...rest}
+  >
+    <slot />
+  </a>
+) : (
+  <button
+    type={type}
+    class={finalClasses}
+    id={id}
+    disabled={disabled}
+    aria-label={ariaLabel}
+    {...rest}
+  >
+    <slot />
+  </button>
+)}

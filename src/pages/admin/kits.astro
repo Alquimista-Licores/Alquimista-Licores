@@ -1,0 +1,270 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="Configuração de Kits" sectionTitle="Tabela de Preços e Embalagens" activePath="/admin/kits">
+  
+  <div class="flex items-center justify-between gap-4 mb-6">
+    <p class="text-xs text-[var(--cream)]/60 max-w-xl">
+      Configure os valores calculados no montador de kits (<code class="text-[var(--gold)] font-mono">/monte-seu-kit</code>) para Degustação (3x 50ml) e Presentes Especiais.
+    </p>
+
+    <button
+      id="btn-new-kit"
+      type="button"
+      class="px-4 py-2 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] transition-all flex items-center gap-2 cursor-pointer shrink-0 shadow-sm"
+    >
+      <span>+</span> Novo Preço de Kit
+    </button>
+  </div>
+
+  <div class="border border-[var(--gold)]/15 bg-[var(--surface)]/70 rounded-md overflow-hidden backdrop-blur-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs text-[var(--cream)]/80">
+        <thead class="bg-[var(--surface-elevated)] border-b border-[var(--gold)]/15 text-[10px] uppercase font-display tracking-[0.2em] text-[var(--gold)]">
+          <tr>
+            <th class="py-3 px-4">Tipo do Kit</th>
+            <th class="py-3 px-4">Categoria de Licor</th>
+            <th class="py-3 px-4">Embalagem</th>
+            <th class="py-3 px-4">Preço Oficial</th>
+            <th class="py-3 px-4 text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="kits-table-body" class="divide-y divide-[var(--gold)]/10 font-sans">
+          <tr>
+            <td colspan="5" class="py-8 text-center text-xs text-[var(--cream)]/50 font-mono">
+              <span class="inline-block animate-spin mr-2">⚗</span> Carregando tabela de kits...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal de Edição de Kit -->
+  <div id="kit-modal-backdrop" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-[var(--surface)] border border-[var(--gold)]/30 w-full max-w-md rounded-md shadow-[0_0_50px_rgba(0,0,0,0.9)] relative flex flex-col">
+      <div class="px-6 py-4 border-b border-[var(--gold)]/15 flex items-center justify-between shrink-0 bg-[var(--surface-elevated)]">
+        <h3 id="kit-modal-title" class="font-display text-sm text-[var(--gold)] font-bold uppercase tracking-wider">
+          Configurar Preço de Kit
+        </h3>
+        <button id="btn-close-kit-modal" class="text-[var(--cream)]/50 hover:text-[var(--gold)] text-lg cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <form id="kit-form" class="p-6 space-y-4 text-xs">
+        <input type="hidden" id="kit-id" />
+
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Tipo de Kit</label>
+          <select id="kit-type" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none">
+            <option value="degustacao">Kit Degustação (3 Poções 50ml)</option>
+            <option value="presenteavel">Kit Presenteável (1 Garrafa 750ml + Acompanhamentos)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Categoria de Licor (Opcional)</label>
+          <select id="kit-categoria" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none">
+            <option value="">Qualquer Categoria (Padrão)</option>
+            <option value="fino">Fino</option>
+            <option value="cremoso">Cremoso</option>
+            <option value="especial">Especial</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Embalagem (Opcional)</label>
+          <input type="text" id="kit-embalagem" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: Box MDF, Caixa Nobre..." />
+        </div>
+
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Preço (R$)</label>
+          <input type="number" step="0.01" id="kit-preco" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="110.00" />
+        </div>
+      </form>
+
+      <div class="px-6 py-4 border-t border-[var(--gold)]/15 flex items-center justify-end gap-3 shrink-0 bg-[var(--surface-elevated)]">
+        <button id="btn-cancel-kit-modal" class="px-4 py-2 text-xs text-[var(--cream)]/60 hover:text-[var(--cream)] cursor-pointer">
+          Cancelar
+        </button>
+        <button id="btn-save-kit" class="px-5 py-2.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] cursor-pointer">
+          Salvar Preço
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from "../../integrations/supabase/client";
+
+    let kitsList: any[] = [];
+    const tableBody = document.getElementById("kits-table-body");
+    const modalBackdrop = document.getElementById("kit-modal-backdrop");
+    const modalTitle = document.getElementById("kit-modal-title");
+    const btnNewKit = document.getElementById("btn-new-kit");
+    const btnCloseModal = document.getElementById("btn-close-kit-modal");
+    const btnCancelModal = document.getElementById("btn-cancel-kit-modal");
+    const btnSaveKit = document.getElementById("btn-save-kit");
+
+    function fmtBRL(val: number) {
+      return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val || 0);
+    }
+
+    async function fetchKits() {
+      try {
+        const { data, error } = await supabase.from("kit_prices").select("*").order("kit_type").order("preco");
+        if (error || !data || data.length === 0) {
+          kitsList = [
+            { id: "kp-1", kit_type: "degustacao", licor_categoria: null, embalagem: "Caixa Degustação (3x 50ml)", preco: 110.0 },
+            { id: "kp-2", kit_type: "presenteavel", licor_categoria: "fino", embalagem: "Box MDF Artesanal", preco: 165.0 },
+            { id: "kp-3", kit_type: "presenteavel", licor_categoria: "cremoso", embalagem: "Box MDF Artesanal", preco: 175.0 },
+            { id: "kp-4", kit_type: "presenteavel", licor_categoria: "especial", embalagem: "Box Premium Alquimia", preco: 195.0 }
+          ];
+        } else {
+          kitsList = data;
+        }
+      } catch (err) {
+        console.error("Erro ao buscar kit prices:", err);
+      }
+      renderKitsTable();
+    }
+
+    function renderKitsTable() {
+      if (!tableBody) return;
+
+      if (kitsList.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-8 text-center text-xs text-[var(--cream)]/40 font-mono">
+              Nenhum preço de kit cadastrado.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tableBody.innerHTML = kitsList.map((k) => `
+        <tr class="hover:bg-[var(--surface-elevated)]/50 transition-colors">
+          <td class="py-3.5 px-4 font-mono font-bold text-[var(--gold)] uppercase text-xs">
+            ${k.kit_type === 'degustacao' ? '🎁 Kit Degustação' : '✨ Kit Presenteável'}
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="text-xs uppercase font-mono text-[var(--cream)]/70">
+              ${k.licor_categoria || 'Todas as categorias'}
+            </span>
+          </td>
+          <td class="py-3.5 px-4 text-[var(--cream)]/90">
+            ${k.embalagem || 'Padrão'}
+          </td>
+          <td class="py-3.5 px-4 font-mono text-[var(--cream)] font-bold">
+            ${fmtBRL(k.preco)}
+          </td>
+          <td class="py-3.5 px-4 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <button 
+                data-id="${k.id}" 
+                class="btn-edit-kit px-3 py-1 border border-[var(--gold)]/30 text-[var(--gold)] hover:bg-[var(--gold)] hover:text-black rounded text-[10px] uppercase font-display tracking-widest cursor-pointer transition-all"
+              >
+                Editar
+              </button>
+              <button 
+                data-id="${k.id}" 
+                class="btn-del-kit px-2 py-1 text-red-400 hover:bg-red-500/10 rounded text-[10px] cursor-pointer transition-colors"
+                title="Excluir"
+              >
+                🗑
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      document.querySelectorAll(".btn-edit-kit").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          const id = (e.currentTarget as HTMLElement).getAttribute("data-id");
+          const item = kitsList.find((x) => String(x.id) === String(id));
+          if (item) openModal(item);
+        });
+      });
+
+      document.querySelectorAll(".btn-del-kit").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          if (!confirm("Deseja realmente remover este preço de kit?")) return;
+          const id = (e.currentTarget as HTMLElement).getAttribute("data-id");
+          if (!id) return;
+
+          try {
+            await supabase.from("kit_prices").delete().eq("id", id);
+          } catch (err) {
+            console.warn("Delete error:", err);
+          }
+          kitsList = kitsList.filter((x) => String(x.id) !== String(id));
+          renderKitsTable();
+        });
+      });
+    }
+
+    function openModal(item: any = null) {
+      if (modalTitle) {
+        modalTitle.textContent = item ? "Editar Preço de Kit" : "Novo Preço de Kit";
+      }
+      (document.getElementById("kit-id") as HTMLInputElement).value = item?.id || "";
+      (document.getElementById("kit-type") as HTMLSelectElement).value = item?.kit_type || "degustacao";
+      (document.getElementById("kit-categoria") as HTMLSelectElement).value = item?.licor_categoria || "";
+      (document.getElementById("kit-embalagem") as HTMLInputElement).value = item?.embalagem || "";
+      (document.getElementById("kit-preco") as HTMLInputElement).value = item?.preco ? String(item.preco) : "";
+
+      modalBackdrop?.classList.remove("hidden");
+      modalBackdrop?.classList.add("flex");
+    }
+
+    function closeModal() {
+      modalBackdrop?.classList.add("hidden");
+      modalBackdrop?.classList.remove("flex");
+    }
+
+    btnNewKit?.addEventListener("click", () => openModal(null));
+    btnCloseModal?.addEventListener("click", closeModal);
+    btnCancelModal?.addEventListener("click", closeModal);
+
+    btnSaveKit?.addEventListener("click", async () => {
+      const id = (document.getElementById("kit-id") as HTMLInputElement).value;
+      const kit_type = (document.getElementById("kit-type") as HTMLSelectElement).value;
+      const licor_categoria = (document.getElementById("kit-categoria") as HTMLSelectElement).value || null;
+      const embalagem = (document.getElementById("kit-embalagem") as HTMLInputElement).value.trim() || null;
+      const preco = Number((document.getElementById("kit-preco") as HTMLInputElement).value);
+
+      if (isNaN(preco)) {
+        alert("Preencha um valor válido.");
+        return;
+      }
+
+      const payload = { kit_type, licor_categoria, embalagem, preco };
+
+      try {
+        if (id) {
+          await supabase.from("kit_prices").update(payload).eq("id", id);
+          const idx = kitsList.findIndex((x) => String(x.id) === String(id));
+          if (idx >= 0) kitsList[idx] = { ...kitsList[idx], ...payload };
+        } else {
+          const newId = "kp-" + Date.now();
+          await supabase.from("kit_prices").insert({ ...payload, id: newId });
+          kitsList.push({ ...payload, id: newId });
+        }
+      } catch (err) {
+        console.warn("Falha ao salvar no Supabase:", err);
+      }
+
+      closeModal();
+      renderKitsTable();
+    });
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fetchKits);
+    } else {
+      fetchKits();
+    }
+  </script>
+</AdminLayout>

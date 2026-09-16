@@ -2,8 +2,8 @@
 // ProductModal component for Astro
 ---
 
-<div id="product-modal-container" class="fixed inset-0 z-[100] hidden items-stretch md:items-center justify-center bg-[var(--background)]/85 backdrop-blur-md md:p-4">
-  <div id="product-modal-card" class="bg-[var(--surface)] md:border md:border-[var(--gold)]/30 w-full md:w-[min(1100px,95vw)] md:max-w-[1100px] h-[100dvh] md:h-[85vh] md:rounded-sm flex flex-col md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] overflow-hidden shadow-2xl relative">
+<div id="product-modal-container" class="fixed inset-0 z-[100] hidden items-stretch md:items-center justify-center bg-[var(--background)]/85 backdrop-blur-md md:p-4 opacity-0 transition-opacity duration-300 overflow-x-hidden">
+  <div id="product-modal-card" class="bg-[var(--surface)] md:border md:border-[var(--gold)]/30 w-full md:w-[min(1050px,92vw)] md:max-w-[1050px] h-[100dvh] md:h-[72vh] md:max-h-[640px] rounded-xl md:rounded-xl flex flex-col md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] overflow-hidden shadow-2xl relative gold-glow will-change-transform max-w-full overflow-x-hidden">
     
     <!-- LEFT: IMAGE GALLERY -->
     <div class="relative shrink-0 aspect-square md:aspect-auto md:h-full bg-gradient-to-b from-[var(--surface-elevated)] to-[var(--background)] overflow-hidden">
@@ -14,116 +14,333 @@
         class="w-full h-full object-cover object-center transition-all duration-500"
       />
       <div id="modal-smoke" class="smoke-layer hidden"></div>
-      <div id="modal-category-badge" class="absolute top-3 left-3 px-3 py-1 bg-[var(--gold)] text-[var(--background)] text-xs font-serif-soft font-bold tracking-widest uppercase z-10 rounded-sm">
-        Fino
+      <div id="modal-category-badge" class="badge-pill-gold absolute top-4 left-4 z-10 font-bold uppercase shadow-xl backdrop-blur-md">
+        Licor Fino
       </div>
       <button
         id="modal-close-mobile"
-        class="md:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-[var(--background)]/80 text-[var(--cream)] hover:text-[var(--gold)] z-20"
+        class="md:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-[var(--background)]/80 text-[var(--cream)] hover:text-[var(--gold)] z-20 cursor-pointer"
+        aria-label="Fechar modal"
       >
         ✕
       </button>
     </div>
 
     <!-- RIGHT: PRODUCT INFO -->
-    <div class="flex-1 min-w-0 min-h-0 flex flex-col text-[var(--cream)]">
-      <div class="flex-1 min-h-0 overflow-y-auto px-6 pt-6 pb-4 md:px-8 md:pt-8">
-        <button id="modal-close-desktop" class="hidden md:block float-right text-[var(--text-soft)] hover:text-[var(--gold)] text-xl transition-colors">
+    <div class="flex-1 min-w-0 min-h-0 flex flex-col text-[var(--cream)] overflow-x-hidden relative z-10">
+      <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-6 pt-5 pb-4 md:px-8 md:pt-6">
+        <button id="modal-close-desktop" class="hidden md:flex float-right w-8 h-8 rounded-full items-center justify-center text-[var(--text-soft)] hover:text-[var(--gold)] border border-[var(--gold)]/20 hover:border-[var(--gold)]/50 hover:bg-[var(--gold)]/10 text-sm transition-colors cursor-pointer" aria-label="Fechar modal">
           ✕
         </button>
-        <h2 id="modal-product-name" class="text-2xl md:text-3xl lg:text-4xl text-[var(--gold)] font-medium"></h2>
-        <p id="modal-product-sabor" class="font-sans italic text-sm md:text-base text-[var(--text-soft)] mt-1"></p>
+        <h2 id="modal-product-name" class="font-display text-2xl md:text-3xl lg:text-4xl text-[var(--gold)] font-medium"></h2>
+        <p id="modal-product-sabor" class="font-serif italic text-lg md:text-xl lg:text-2xl text-[var(--gold-soft)] mt-1 font-medium tracking-wide"></p>
 
         <!-- ALCHEMY SEPARATOR -->
-        <div class="flex items-center gap-3 my-4 text-[var(--gold)]/40">
+        <div class="flex items-center gap-3 my-3 text-[var(--gold)]/40">
           <span class="h-px flex-1 bg-[var(--gold)]/30"></span>
           <span class="text-xl leading-none font-serif">☥</span>
           <span class="h-px flex-1 bg-[var(--gold)]/30"></span>
         </div>
 
         <div class="flex items-baseline gap-4 mb-2">
-          <div id="modal-product-price" class="font-display text-3xl md:text-4xl text-[var(--gold)] font-bold"></div>
-          <div id="modal-product-vol" class="text-xs md:text-sm text-[var(--text-soft)]">Volume: 500ml</div>
+          <div id="modal-product-price" class="font-display text-2xl md:text-3xl text-[var(--gold)] font-bold"></div>
+          <div id="modal-product-vol" class="font-mono text-xs md:text-sm text-[var(--text-soft)]">Volume: 500ml</div>
         </div>
 
-        <div id="modal-product-notas" class="font-serif-soft text-base md:text-lg italic text-[var(--cream)]/90 mb-3"></div>
-        <p id="modal-product-desc" class="text-sm md:text-base text-[var(--text-soft)] leading-relaxed"></p>
+        <!-- ALCHEMY GUARANTEE & STATUS BADGES -->
+        <div class="badges-flex flex-wrap gap-2 my-3">
+          <span class="badge-pill-gold has-tooltip" data-tooltip="Garante pureza botânica sem conservantes ou corantes artificiais">
+            <span>🜚</span> 100% Orgânico
+          </span>
+          <span class="badge-pill-dark has-tooltip" data-tooltip="Envelhecido durante 40 luas para atingir sua forma final">
+            <span>⚗</span> Maceração 40 Dias
+          </span>
+          <span id="modal-badge-prep-wrap" class="hidden badge-pill-ember has-tooltip" data-tooltip="Preparado sob demanda (2 dias de maceração)">
+            <span style="color: var(--amber-warm);">✦</span> Sob Encomenda
+          </span>
+        </div>
 
-        <div id="modal-prep-alert" class="hidden mt-4 p-3 border border-[var(--amber-warm)]/50 bg-[var(--amber-warm)]/10 text-xs md:text-sm text-[var(--cream)]/90 rounded-sm">
-          ⚠️ Esta poção é preparada sob demanda e precisa de 2 dias de maceração após o pedido.
+        <div id="modal-product-notas" class="font-serif text-base md:text-lg italic text-[var(--cream)]/90 mb-2"></div>
+        <p id="modal-product-desc" class="font-body text-sm md:text-base text-[var(--text-soft)] leading-relaxed"></p>
+
+        <div id="modal-prep-alert" class="hidden mt-3 p-3 border border-[var(--amber-warm)]/50 bg-[var(--amber-warm)]/10 text-xs md:text-sm text-[var(--cream)]/90 rounded-md font-sans">
+          ⚠️ Esta poção precisa de 2 dias de maceração após o pedido.
         </div>
 
         <!-- TECH STATS -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 text-xs text-[var(--text-soft)] border-t border-[var(--gold)]/15 pt-4">
-          <div class="p-2 border border-[var(--gold)]/15 rounded-sm bg-[var(--surface-elevated)]/40">
-            <div class="text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Graduação</div>
-            <div id="modal-stat-grad" class="text-[var(--cream)] text-sm font-medium mt-0.5">--</div>
+        <div class="grid grid-cols-3 gap-2.5 sm:gap-3 mt-5 text-xs text-[var(--text-soft)] border-t border-[var(--gold)]/15 pt-4">
+          <!-- 1. Graduação -->
+          <div class="modal-stat-box p-2.5 border border-[var(--gold)]/15 rounded-md bg-[var(--surface-elevated)]/40 group cursor-default">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Graduação</span>
+              <span class="text-[var(--gold)]/60 text-[10px] font-mono leading-none group-hover:text-[var(--gold)] transition-colors select-none font-bold">(?)</span>
+            </div>
+            <div id="modal-stat-grad" class="font-mono text-[var(--cream)] text-sm font-semibold mt-1">--</div>
+            <!-- Tooltip -->
+            <div class="modal-stat-tooltip">
+              Mede a intensidade do álcool no licor. Define o equilíbrio entre calor e sabor.
+            </div>
           </div>
-          <div class="p-2 border border-[var(--gold)]/15 rounded-sm bg-[var(--surface-elevated)]/40">
-            <div class="text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Brix (Açúcar)</div>
-            <div id="modal-stat-brix" class="text-[var(--cream)] text-sm font-medium mt-0.5">--</div>
+
+          <!-- 2. Brix (Açúcar) -->
+          <div class="modal-stat-box p-2.5 border border-[var(--gold)]/15 rounded-md bg-[var(--surface-elevated)]/40 group cursor-default">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Brix</span>
+              <span class="text-[var(--gold)]/60 text-[10px] font-mono leading-none group-hover:text-[var(--gold)] transition-colors select-none font-bold">(?)</span>
+            </div>
+            <div id="modal-stat-brix" class="font-mono text-[var(--cream)] text-sm font-semibold mt-1">--</div>
+            <!-- Tooltip -->
+            <div class="modal-stat-tooltip">
+              Indica o teor de açúcar da bebida: quanto maior o número, mais doce e encorpado é o licor.
+            </div>
           </div>
-          <div class="p-2 border border-[var(--gold)]/15 rounded-sm bg-[var(--surface-elevated)]/40">
-            <div class="text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Classificação</div>
-            <div id="modal-stat-class" class="text-[var(--cream)] text-sm font-medium mt-0.5">--</div>
-          </div>
-          <div class="p-2 border border-[var(--gold)]/15 rounded-sm bg-[var(--surface-elevated)]/40">
-            <div class="text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Ingredientes</div>
-            <div id="modal-stat-ingr" class="text-[var(--gold)] text-xs underline cursor-pointer mt-0.5" title="Ver ingredientes">Ver lista</div>
+
+          <!-- 3. Ingredientes -->
+          <div id="modal-stat-box-ingr" class="modal-stat-box p-2.5 border border-[var(--gold)]/15 rounded-md bg-[var(--surface-elevated)]/40 group cursor-pointer">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[var(--text-faded)] text-[10px] uppercase tracking-wider font-semibold">Ingredientes</span>
+              <span class="text-[var(--gold)]/60 text-[10px] font-mono leading-none group-hover:text-[var(--gold)] transition-colors select-none font-bold">(?)</span>
+            </div>
+            <div id="modal-stat-ingr" class="font-mono text-[var(--gold)] text-xs underline mt-1 font-semibold hover:text-[var(--gold-soft)] transition-colors">Ver lista</div>
+            <!-- Tooltip -->
+            <div id="modal-stat-ingr-tooltip" class="modal-stat-tooltip">
+              --
+            </div>
           </div>
         </div>
 
-        <!-- INGREDIENTS EXPANDABLE -->
-        <div id="modal-ingr-box" class="hidden mt-3 p-3 border border-[var(--gold)]/30 bg-[var(--surface-elevated)] text-xs text-[var(--cream)]/90 leading-relaxed rounded-sm"></div>
-
         <!-- SUGGESTIONS -->
         <div id="modal-sugestoes-wrap" class="mt-4 hidden">
-          <div class="text-xs uppercase tracking-wider text-[var(--gold)]/80 font-bold mb-1">Sugestão de consumo:</div>
-          <div id="modal-sugestoes-text" class="p-3 border-l-2 border-[var(--gold)]/50 bg-[var(--surface-elevated)]/30 text-xs md:text-sm text-[var(--cream)]/90 italic leading-relaxed"></div>
+          <div class="font-mono text-xs uppercase tracking-wider text-[var(--gold)]/80 font-bold mb-1.5">Sugestão de consumo:</div>
+          <div id="modal-sugestoes-text" class="p-3.5 border-l-2 border-[var(--gold)]/50 bg-[var(--surface-elevated)]/30 text-sm md:text-base text-[var(--cream)] font-serif italic leading-relaxed"></div>
         </div>
       </div>
 
       <!-- FOOTER / ACTIONS -->
-      <div class="shrink-0 border-t border-[var(--gold)]/15 bg-[var(--surface)] px-6 py-4">
+      <div class="shrink-0 border-t border-[var(--gold)]/15 bg-[var(--surface)] px-6 py-3.5">
         <div id="modal-in-stock-actions" class="space-y-2">
-          <div class="flex gap-3">
-            <div class="inline-flex items-center border border-[var(--gold)]/30 rounded-sm bg-[var(--background)]">
-              <button id="modal-qty-minus" class="px-3 py-2 text-base text-[var(--gold)] hover:bg-[var(--gold)]/10">−</button>
-              <span id="modal-qty-val" class="px-3 text-sm font-bold min-w-[2rem] text-center">1</span>
-              <button id="modal-qty-plus" class="px-3 py-2 text-base text-[var(--gold)] hover:bg-[var(--gold)]/10">+</button>
+          <div class="flex gap-3 items-center">
+            <div class="inline-flex items-center gap-1 border border-[var(--gold)]/30 rounded-full p-1 bg-[var(--background)]">
+              <button id="modal-qty-minus" class="w-8 h-8 rounded-full flex items-center justify-center text-base text-[var(--gold)] hover:bg-[var(--gold)]/10 transition-colors cursor-pointer" aria-label="Diminuir quantidade">−</button>
+              <span id="modal-qty-val" class="px-2 text-sm font-bold min-w-[2rem] text-center select-none">1</span>
+              <button id="modal-qty-plus" class="w-8 h-8 rounded-full flex items-center justify-center text-base text-[var(--gold)] hover:bg-[var(--gold)]/10 transition-colors cursor-pointer" aria-label="Aumentar quantidade">+</button>
             </div>
             <button
               id="modal-add-btn"
-              class="flex-1 py-3 bg-[var(--gold)] text-[var(--background)] font-display font-bold tracking-widest uppercase text-xs hover:bg-[var(--gold-hover)] transition-colors rounded-sm shadow-md"
+              class="btn-primary flex-1 !w-full cursor-pointer py-2.5"
             >
-              Adicionar ao Caldeirão
+              <span>Adicionar ao Caldeirão</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
             </button>
           </div>
           <p id="modal-stock-notice" class="text-[11px] text-[var(--text-soft)] text-center"></p>
         </div>
 
-        <div id="modal-out-of-stock-actions" class="hidden space-y-3">
-          <button disabled class="w-full py-3 bg-[var(--text-faded)]/20 text-[var(--text-faded)] font-display tracking-widest uppercase text-xs cursor-not-allowed rounded-sm">
-            Sem estoque no momento
-          </button>
-          <a
-            id="modal-wa-btn"
-            href=""
-            target="_blank"
-            rel="noopener noreferrer"
-            class="block text-center w-full py-3 border border-[var(--gold)]/40 text-[var(--gold)] font-display font-bold tracking-widest uppercase text-xs hover:bg-[var(--gold)] hover:text-[var(--background)] transition-colors rounded-sm"
-          >
-            Falar com o Alquimista no WhatsApp
-          </a>
+        <div id="modal-out-of-stock-actions" class="hidden">
+          <!-- State 1: Default Buttons -->
+          <div id="modal-alert-initial-view" class="space-y-2.5">
+            <button disabled class="btn-primary btn-disabled w-full">
+              <span>Sem estoque no momento</span>
+            </button>
+            <button
+              type="button"
+              id="modal-wa-btn"
+              class="btn-outline w-full text-center cursor-pointer py-2.5"
+            >
+              <span>Avise-me quando voltar</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            </button>
+          </div>
+
+          <!-- State 2: Contact Registration Form -->
+          <div id="modal-alert-form-view" class="hidden space-y-2.5 border border-[var(--gold)]/25 bg-[var(--surface-elevated)]/70 p-3.5 rounded-md">
+            <div class="flex items-center justify-between border-b border-[var(--gold)]/15 pb-1.5">
+              <span class="font-display text-xs tracking-wider uppercase text-[var(--gold)] font-bold flex items-center gap-1.5">
+                <span>🔔</span> Alerta de Reposição
+              </span>
+              <button type="button" id="modal-alert-cancel-btn" class="text-xs text-[var(--text-faded)] hover:text-[var(--gold)] p-1 cursor-pointer transition-colors">
+                ✕ Voltar
+              </button>
+            </div>
+            
+            <p class="text-[11px] text-[var(--text-soft)] font-sans leading-tight">
+              Informe seu WhatsApp para ser avisado no momento em que a poção sair do caldeirão:
+            </p>
+
+            <div class="space-y-1.5">
+              <input
+                id="modal-alert-phone"
+                type="tel"
+                placeholder="WhatsApp com DDD *"
+                class="w-full bg-[var(--background)] border border-[var(--gold)]/30 px-3 py-1.5 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
+                required
+              />
+              <input
+                id="modal-alert-name"
+                type="text"
+                placeholder="Seu nome (opcional)"
+                class="w-full bg-[var(--background)] border border-[var(--gold)]/30 px-3 py-1.5 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
+              />
+            </div>
+
+            <div id="modal-alert-error" class="hidden text-[11px] text-red-400 bg-red-950/40 px-2 py-1 rounded border border-red-900/40"></div>
+
+            <button
+              type="button"
+              id="modal-alert-submit-btn"
+              class="btn-primary w-full py-2 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span id="modal-alert-submit-text">Cadastrar Alerta</span>
+              <svg id="modal-alert-spinner" class="hidden animate-spin h-3.5 w-3.5 text-black" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            </button>
+          </div>
+
+          <!-- State 3: Success Confirmation -->
+          <div id="modal-alert-success-view" class="hidden space-y-2 border border-[var(--gold)]/40 bg-[var(--gold)]/10 p-3.5 rounded-md text-center">
+            <div class="text-xl text-[var(--gold)] leading-none">✦</div>
+            <div class="font-display text-xs text-[var(--gold)] font-bold uppercase tracking-wider">
+              Alerta Alquímico Registrado!
+            </div>
+            <p class="text-xs text-[var(--cream)]/90 font-sans leading-relaxed">
+              Avisaremos você no WhatsApp assim que a poção for reposta no estoque.
+            </p>
+            <div class="pt-1">
+              <a
+                id="modal-alert-direct-wa"
+                href=""
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[11px] text-[var(--gold-soft)] underline hover:text-[var(--gold)] font-mono block transition-colors"
+              >
+                Falar agora com o Alquimista no WhatsApp →
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+<style>
+  .modal-stat-box {
+    position: relative;
+    transition: border-color 0.25s ease, background-color 0.25s ease;
+  }
+  .modal-stat-box:hover {
+    border-color: rgba(200, 169, 126, 0.4);
+    background-color: rgba(24, 20, 17, 0.7);
+    z-index: 40;
+  }
+  .modal-stat-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    width: 220px;
+    max-width: calc(100vw - 3rem);
+    padding: 0.6rem 0.75rem;
+    background: #0f0d0b;
+    border: 1px solid rgba(200, 169, 126, 0.45);
+    color: var(--cream);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    line-height: 1.4;
+    border-radius: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.85), 0 0 15px rgba(178, 140, 70, 0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 100;
+  }
+  .modal-stat-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #0f0d0b transparent transparent transparent;
+  }
+
+  /* Stat 1 (Graduação): aligned to the left of its box so it stays within right column */
+  .modal-stat-box:nth-child(1) .modal-stat-tooltip {
+    left: 0;
+    transform: translateY(4px);
+  }
+  .modal-stat-box:nth-child(1) .modal-stat-tooltip::after {
+    left: 20px;
+    transform: none;
+  }
+  .modal-stat-box:nth-child(1):hover .modal-stat-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stat 2 (Brix): centered / aligned */
+  .modal-stat-box:nth-child(2) .modal-stat-tooltip {
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+  }
+  .modal-stat-box:nth-child(2) .modal-stat-tooltip::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .modal-stat-box:nth-child(2):hover .modal-stat-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Stat 3 (Ingredientes): anchored right so it stays inside right column without overflowing */
+  .modal-stat-box:nth-child(3) .modal-stat-tooltip {
+    right: 0;
+    left: auto;
+    width: 250px;
+    max-width: calc(100vw - 3rem);
+    transform: translateY(4px);
+  }
+  .modal-stat-box:nth-child(3) .modal-stat-tooltip::after {
+    right: 20px;
+    left: auto;
+    transform: none;
+  }
+  .modal-stat-box:nth-child(3):hover .modal-stat-tooltip,
+  .modal-stat-box:nth-child(3).is-tooltip-open .modal-stat-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Badges flex tooltip left alignment on first badge */
+  .badges-flex .has-tooltip:first-child::after {
+    left: 0;
+    transform: translateY(6px);
+  }
+  .badges-flex .has-tooltip:first-child:hover::after {
+    transform: translateY(0);
+  }
+
+  /* Mobile adjustment for stat tooltips */
+  @media (max-width: 639px) {
+    .modal-stat-box:nth-child(2) .modal-stat-tooltip {
+      left: auto;
+      right: 0;
+      transform: translateY(4px);
+    }
+    .modal-stat-box:nth-child(2) .modal-stat-tooltip::after {
+      left: auto;
+      right: 20px;
+      transform: none;
+    }
+    .modal-stat-box:nth-child(2):hover .modal-stat-tooltip {
+      transform: translateY(0);
+    }
+  }
+</style>
+
 <script>
+  import { createStockAlert } from '../lib/data';
+
   function setupProductModal() {
     const container = document.getElementById("product-modal-container");
+    const modalCard = document.getElementById("product-modal-card");
     const closeMobile = document.getElementById("modal-close-mobile");
     const closeDesktop = document.getElementById("modal-close-desktop");
     const img = document.getElementById("modal-product-img") as HTMLImageElement;
@@ -134,11 +351,12 @@
     const notas = document.getElementById("modal-product-notas");
     const desc = document.getElementById("modal-product-desc");
     const prepAlert = document.getElementById("modal-prep-alert");
+    const badgePrepWrap = document.getElementById("modal-badge-prep-wrap");
     const statGrad = document.getElementById("modal-stat-grad");
     const statBrix = document.getElementById("modal-stat-brix");
-    const statClass = document.getElementById("modal-stat-class");
     const statIngr = document.getElementById("modal-stat-ingr");
-    const ingrBox = document.getElementById("modal-ingr-box");
+    const statIngrBox = document.getElementById("modal-stat-box-ingr");
+    const statIngrTooltip = document.getElementById("modal-stat-ingr-tooltip");
     const sugestoesWrap = document.getElementById("modal-sugestoes-wrap");
     const sugestoesText = document.getElementById("modal-sugestoes-text");
     const inStockActions = document.getElementById("modal-in-stock-actions");
@@ -148,35 +366,165 @@
     const qtyPlus = document.getElementById("modal-qty-plus");
     const addBtn = document.getElementById("modal-add-btn");
     const stockNotice = document.getElementById("modal-stock-notice");
-    const waBtn = document.getElementById("modal-wa-btn") as HTMLAnchorElement;
+    const waBtn = document.getElementById("modal-wa-btn") as HTMLElement;
+
+    // Out-of-stock Alert Form Elements
+    const alertInitialView = document.getElementById("modal-alert-initial-view");
+    const alertFormView = document.getElementById("modal-alert-form-view");
+    const alertSuccessView = document.getElementById("modal-alert-success-view");
+    const alertPhone = document.getElementById("modal-alert-phone") as HTMLInputElement;
+    const alertName = document.getElementById("modal-alert-name") as HTMLInputElement;
+    const alertError = document.getElementById("modal-alert-error");
+    const alertCancelBtn = document.getElementById("modal-alert-cancel-btn");
+    const alertSubmitBtn = document.getElementById("modal-alert-submit-btn") as HTMLButtonElement;
+    const alertSubmitText = document.getElementById("modal-alert-submit-text");
+    const alertSpinner = document.getElementById("modal-alert-spinner");
+    const alertDirectWa = document.getElementById("modal-alert-direct-wa") as HTMLAnchorElement;
+
+    if (!container || !modalCard) return;
 
     let currentProduct: any = null;
     let currentQty = 1;
+    let originCardElement: HTMLElement | null = null;
+    let isClosing = false;
+
+    function formatPhone(val: string) {
+      const digits = val.replace(/\D/g, "").slice(0, 11);
+      if (digits.length <= 2) return digits.length ? `(${digits}` : "";
+      if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+      if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+      return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+    }
+
+    alertPhone?.addEventListener("input", (e) => {
+      const input = e.target as HTMLInputElement;
+      input.value = formatPhone(input.value);
+      if (alertError) alertError.classList.add("hidden");
+    });
+
+    waBtn?.addEventListener("click", () => {
+      alertInitialView?.classList.add("hidden");
+      alertFormView?.classList.remove("hidden");
+      alertSuccessView?.classList.add("hidden");
+      if (alertError) alertError.classList.add("hidden");
+      setTimeout(() => alertPhone?.focus(), 50);
+    });
+
+    alertCancelBtn?.addEventListener("click", () => {
+      alertFormView?.classList.add("hidden");
+      alertInitialView?.classList.remove("hidden");
+      if (alertError) alertError.classList.add("hidden");
+    });
+
+    alertSubmitBtn?.addEventListener("click", async () => {
+      if (!currentProduct) return;
+      const phoneDigits = (alertPhone?.value || "").replace(/\D/g, "");
+      if (phoneDigits.length < 10) {
+        if (alertError) {
+          alertError.textContent = "Por favor, digite seu WhatsApp com DDD.";
+          alertError.classList.remove("hidden");
+        }
+        alertPhone?.focus();
+        return;
+      }
+
+      if (alertError) alertError.classList.add("hidden");
+      if (alertSubmitBtn) alertSubmitBtn.disabled = true;
+      if (alertSpinner) alertSpinner.classList.remove("hidden");
+      if (alertSubmitText) alertSubmitText.textContent = "Registrando...";
+
+      await createStockAlert({
+        product_id: currentProduct.id,
+        product_name: currentProduct.nome,
+        customer_contact: alertPhone.value.trim(),
+        customer_name: alertName?.value.trim() || undefined,
+        contact_channel: "whatsapp"
+      });
+
+      if (alertSubmitBtn) alertSubmitBtn.disabled = false;
+      if (alertSpinner) alertSpinner.classList.add("hidden");
+      if (alertSubmitText) alertSubmitText.textContent = "Cadastrar Alerta";
+
+      if (alertDirectWa) {
+        const msg = encodeURIComponent(`Olá! Gostaria de encomendar ${currentProduct.nome}. Como posso fazer?`);
+        alertDirectWa.href = `https://api.whatsapp.com/send?phone=5548991737692&text=${msg}`;
+      }
+
+      alertFormView?.classList.add("hidden");
+      alertSuccessView?.classList.remove("hidden");
+    });
 
     function closeModal() {
-      container?.classList.add("hidden");
-      container?.classList.remove("flex");
-      document.body.style.overflow = "";
-      if (ingrBox) ingrBox.classList.add("hidden");
+      if (isClosing || container!.classList.contains("hidden")) return;
+      isClosing = true;
+
+      // Animate closing back toward the origin card if available
+      if (originCardElement && document.body.contains(originCardElement)) {
+        const originRect = originCardElement.getBoundingClientRect();
+        const targetRect = modalCard!.getBoundingClientRect();
+
+        const deltaX = (originRect.left + originRect.width / 2) - (targetRect.left + targetRect.width / 2);
+        const deltaY = (originRect.top + originRect.height / 2) - (targetRect.top + targetRect.height / 2);
+        const scaleX = Math.max(0.2, originRect.width / targetRect.width);
+        const scaleY = Math.max(0.2, originRect.height / targetRect.height);
+
+        container!.style.transition = "opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
+        container!.style.opacity = "0";
+
+        modalCard!.style.transition = "transform 0.38s cubic-bezier(0.16, 1, 0.3, 1)";
+        modalCard!.style.transform = `translate3d(${deltaX.toFixed(1)}px, ${deltaY.toFixed(1)}px, 0px) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
+      } else {
+        container!.style.transition = "opacity 0.3s ease-out";
+        container!.style.opacity = "0";
+        modalCard!.style.transition = "transform 0.3s ease-out";
+        modalCard!.style.transform = "scale(0.95)";
+      }
+
+      setTimeout(() => {
+        container!.classList.add("hidden");
+        container!.classList.remove("flex");
+        modalCard!.style.transform = "";
+        modalCard!.style.transition = "";
+        container!.style.transition = "";
+        document.body.style.overflow = "";
+        statIngrBox?.classList.remove("is-tooltip-open");
+        isClosing = false;
+        originCardElement = null;
+      }, 360);
     }
 
     closeMobile?.addEventListener("click", closeModal);
     closeDesktop?.addEventListener("click", closeModal);
-    container?.addEventListener("click", (e) => {
+    container.addEventListener("click", (e) => {
       if (e.target === container) closeModal();
     });
 
-    statIngr?.addEventListener("click", () => {
-      if (ingrBox) {
-        ingrBox.classList.toggle("hidden");
+    // Escape key listener for accessible closing
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !container.classList.contains("hidden")) {
+        closeModal();
       }
     });
 
-    function openModalWithProduct(p: any) {
+    statIngrBox?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      statIngrBox.classList.toggle("is-tooltip-open");
+    });
+
+    // Close tooltip if clicking elsewhere in modal
+    modalCard.addEventListener("click", (e) => {
+      if (!statIngrBox?.contains(e.target as Node)) {
+        statIngrBox?.classList.remove("is-tooltip-open");
+      }
+    });
+
+    function openModalWithProduct(p: any, originElement?: HTMLElement | null) {
       currentProduct = p;
       currentQty = 1;
-      if (qtyVal) qtyVal.textContent = "1";
+      originCardElement = originElement || null;
+      isClosing = false;
 
+      if (qtyVal) qtyVal.textContent = "1";
       if (img) img.src = p.foto_url || "/assets/logo-alquimista.png";
       if (catBadge) catBadge.textContent = p.categoria === 'fino' ? 'Licor Fino' : p.categoria === 'cremoso' ? 'Licor Cremoso' : 'Licor Especial';
       if (name) name.textContent = p.nome;
@@ -190,17 +538,19 @@
         if (needsPrep) prepAlert.classList.remove("hidden");
         else prepAlert.classList.add("hidden");
       }
+      if (badgePrepWrap) {
+        if (needsPrep) badgePrepWrap.classList.remove("hidden");
+        else badgePrepWrap.classList.add("hidden");
+      }
 
       if (statGrad) statGrad.textContent = `${p.graduacao_gl || 24}°GL`;
       if (statBrix) statBrix.textContent = `${p.brix || 28}°Bx`;
-      
-      const brix = Number(p.brix || 28);
-      const klass = brix <= 9 ? "Seco" : brix <= 30 ? "Fino / Doce" : brix <= 45 ? "Creme" : "Escarchado";
-      if (statClass) statClass.textContent = klass;
 
-      if (ingrBox) {
-        ingrBox.textContent = p.ingredientes || "Ingredientes selecionados artesanalmente com álcool de cereais e frutas/especiarias naturais.";
-        ingrBox.classList.add("hidden");
+      if (statIngrTooltip) {
+        statIngrTooltip.textContent = p.ingredientes || "Ingredientes selecionados artesanalmente com álcool de cereais e frutas/especiarias naturais.";
+      }
+      if (statIngrBox) {
+        statIngrBox.classList.remove("is-tooltip-open");
       }
 
       if (sugestoesWrap && sugestoesText) {
@@ -216,10 +566,12 @@
       if (isOut) {
         inStockActions?.classList.add("hidden");
         outOfStockActions?.classList.remove("hidden");
-        if (waBtn) {
-          const msg = encodeURIComponent(`Olá! Tenho interesse em ${p.nome}. Está disponível?`);
-          waBtn.href = `https://api.whatsapp.com/send?phone=5548991737692&text=${msg}`;
-        }
+        alertInitialView?.classList.remove("hidden");
+        alertFormView?.classList.add("hidden");
+        alertSuccessView?.classList.add("hidden");
+        if (alertError) alertError.classList.add("hidden");
+        if (alertPhone) alertPhone.value = "";
+        if (alertName) alertName.value = "";
       } else {
         inStockActions?.classList.remove("hidden");
         outOfStockActions?.classList.add("hidden");
@@ -228,9 +580,42 @@
         }
       }
 
-      container?.classList.remove("hidden");
-      container?.classList.add("flex");
+      // 1. Unhide container in invisible state to compute geometric FLIP delta
+      container.style.transition = "none";
+      container.style.opacity = "0";
+      container.classList.remove("hidden");
+      container.classList.add("flex");
       document.body.style.overflow = "hidden";
+
+      // 2. Compute FLIP morphing parameters from origin card rect
+      if (originCardElement) {
+        const originRect = originCardElement.getBoundingClientRect();
+        const targetRect = modalCard!.getBoundingClientRect();
+
+        const deltaX = (originRect.left + originRect.width / 2) - (targetRect.left + targetRect.width / 2);
+        const deltaY = (originRect.top + originRect.height / 2) - (targetRect.top + targetRect.height / 2);
+        const scaleX = Math.max(0.2, originRect.width / targetRect.width);
+        const scaleY = Math.max(0.2, originRect.height / targetRect.height);
+
+        modalCard!.style.transformOrigin = "center center";
+        modalCard!.style.transition = "none";
+        modalCard!.style.transform = `translate3d(${deltaX.toFixed(1)}px, ${deltaY.toFixed(1)}px, 0px) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
+      } else {
+        modalCard!.style.transformOrigin = "center center";
+        modalCard!.style.transition = "none";
+        modalCard!.style.transform = "scale(0.92)";
+      }
+
+      // 3. Trigger smooth spring FLIP expansion in next animation frames
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          container.style.transition = "opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.42s cubic-bezier(0.16, 1, 0.3, 1)";
+          container.style.opacity = "1";
+
+          modalCard!.style.transition = "transform 0.48s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.48s cubic-bezier(0.16, 1, 0.3, 1)";
+          modalCard!.style.transform = "translate3d(0px, 0px, 0px) scale(1, 1)";
+        });
+      });
     }
 
     qtyMinus?.addEventListener("click", () => {
@@ -265,7 +650,7 @@
       closeModal();
     });
 
-    // Delegate click on any card to open modal
+    // Delegate click on any card to open modal with expanding card effect
     document.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
       if (target.closest(".quick-add-btn")) {
@@ -276,7 +661,7 @@
       if (card && card.dataset.product) {
         try {
           const productData = JSON.parse(card.dataset.product);
-          openModalWithProduct(productData);
+          openModalWithProduct(productData, card);
         } catch (err) {}
       }
     });
@@ -284,13 +669,14 @@
     // Custom event to open product modal by data or ID
     window.addEventListener("open-product-modal", (e: any) => {
       const p = e.detail?.product;
+      const targetCard = e.detail?.originElement || (e.detail?.productId ? document.querySelector(`.product-card[data-product*="${e.detail.productId}"]`) : null);
       if (p) {
-        openModalWithProduct(p);
+        openModalWithProduct(p, targetCard as HTMLElement);
       } else if (e.detail?.productId) {
         const card = document.querySelector(`.product-card[data-product*="${e.detail.productId}"]`) as HTMLElement;
         if (card && card.dataset.product) {
           try {
-            openModalWithProduct(JSON.parse(card.dataset.product));
+            openModalWithProduct(JSON.parse(card.dataset.product), card);
           } catch (err) {}
         }
       }
@@ -327,3 +713,4 @@
   setupProductModal();
   document.addEventListener("astro:page-load", setupProductModal);
 </script>
+

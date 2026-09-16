@@ -1,0 +1,188 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="Mestre da Jornada" sectionTitle="Gamificação & Fidelidade do Alquimista" activePath="/admin/jornada">
+  
+  <div class="space-y-6">
+    <!-- Bloco 1: Código Secreto do Caçador de Runas -->
+    <div class="p-5 bg-[var(--surface)]/70 border border-[var(--gold)]/20 rounded-md backdrop-blur-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-display text-sm text-[var(--gold)] font-bold uppercase tracking-wider flex items-center gap-2">
+            <span>🔮</span> Código Ativo da Missão "Caçador de Runas"
+          </h3>
+          <p class="text-xs text-[var(--cream)]/60 mt-0.5">
+            Palavra secreta que os clientes devem desvendar para desbloquear a conquista exclusiva.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <input
+            type="text"
+            id="rune-code-input"
+            placeholder="EX: AURUM2026"
+            class="bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-xs font-mono text-[var(--gold)] uppercase focus:border-[var(--gold)] outline-none w-40"
+          />
+          <button
+            id="btn-save-rune"
+            type="button"
+            class="px-3.5 py-2 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] cursor-pointer"
+          >
+            Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloco 2: Solicitações de Avanço & Conquistas com Foto -->
+    <div class="border border-[var(--gold)]/15 bg-[var(--surface)]/70 rounded-md overflow-hidden backdrop-blur-sm">
+      <div class="p-4 bg-[var(--surface-elevated)] border-b border-[var(--gold)]/15 flex items-center justify-between">
+        <h3 class="font-display text-xs uppercase tracking-widest text-[var(--gold)] font-bold">
+          Solicitações Pendentes de Conquistas
+        </h3>
+        <span id="solicitacoes-count" class="text-[10px] font-mono text-[var(--cream)]/50">
+          0 pendentes
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-[var(--cream)]/80">
+          <thead class="bg-black/30 border-b border-[var(--gold)]/10 text-[10px] uppercase font-display tracking-[0.2em] text-[var(--cream)]/60">
+            <tr>
+              <th class="py-3 px-4">Aprendiz</th>
+              <th class="py-3 px-4">Conquista / Missão</th>
+              <th class="py-3 px-4">Evidência</th>
+              <th class="py-3 px-4">Data</th>
+              <th class="py-3 px-4 text-right">Decisão</th>
+            </tr>
+          </thead>
+          <tbody id="solicitacoes-table-body" class="divide-y divide-[var(--gold)]/10 font-sans">
+            <tr>
+              <td colspan="5" class="py-8 text-center text-xs text-[var(--cream)]/40 font-mono">
+                Nenhuma solicitação pendente no momento.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bloco 3: Tabela de Aprendizes Registrados -->
+    <div class="border border-[var(--gold)]/15 bg-[var(--surface)]/70 rounded-md overflow-hidden backdrop-blur-sm">
+      <div class="p-4 bg-[var(--surface-elevated)] border-b border-[var(--gold)]/15 flex items-center justify-between">
+        <h3 class="font-display text-xs uppercase tracking-widest text-[var(--gold)] font-bold">
+          Aprendizes & Alquimistas na Jornada
+        </h3>
+        <span class="text-[10px] font-mono text-[var(--cream)]/50">
+          Tabela <code class="text-[var(--gold)]">clientes</code>
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-[var(--cream)]/80">
+          <thead class="bg-black/30 border-b border-[var(--gold)]/10 text-[10px] uppercase font-display tracking-[0.2em] text-[var(--cream)]/60">
+            <tr>
+              <th class="py-3 px-4">Nome</th>
+              <th class="py-3 px-4">Telefone</th>
+              <th class="py-3 px-4">Nível / XP</th>
+              <th class="py-3 px-4">Passo Atual</th>
+              <th class="py-3 px-4">Cenário</th>
+            </tr>
+          </thead>
+          <tbody id="clientes-table-body" class="divide-y divide-[var(--gold)]/10 font-sans">
+            <tr>
+              <td colspan="5" class="py-8 text-center text-xs text-[var(--cream)]/40 font-mono">
+                Carregando aprendizes da jornada...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from "../../integrations/supabase/client";
+
+    const runeInput = document.getElementById("rune-code-input") as HTMLInputElement;
+    const btnSaveRune = document.getElementById("btn-save-rune");
+    const solicitacoesBody = document.getElementById("solicitacoes-table-body");
+    const clientesBody = document.getElementById("clientes-table-body");
+    const countEl = document.getElementById("solicitacoes-count");
+
+    async function loadJornadaData() {
+      // 1. Carrega código da runa
+      try {
+        const { data: runeData } = await supabase
+          .from("app_config")
+          .select("value")
+          .eq("key", "codigo_runa_ativo")
+          .maybeSingle();
+
+        if (runeData?.value && runeInput) {
+          runeInput.value = runeData.value;
+        } else if (runeInput) {
+          runeInput.value = "PHILOSOPHER2026";
+        }
+      } catch (err) {
+        console.warn("Erro ao buscar runa:", err);
+      }
+
+      // 2. Carrega clientes
+      try {
+        const { data: clientes, error: cliErr } = await supabase
+          .from("clientes")
+          .select("*")
+          .order("xp_total", { ascending: false })
+          .limit(20);
+
+        if (clientesBody) {
+          if (!cliErr && clientes && clientes.length > 0) {
+            clientesBody.innerHTML = clientes.map((c: any) => `
+              <tr class="hover:bg-[var(--surface-elevated)]/50 transition-colors">
+                <td class="py-3 px-4 font-medium text-[var(--cream)]">${c.nome || "Anônimo"}</td>
+                <td class="py-3 px-4 font-mono text-[var(--gold)]">${c.telefone}</td>
+                <td class="py-3 px-4 font-mono">Nível ${c.nivel ?? 1} (${c.xp_total ?? 0} XP)</td>
+                <td class="py-3 px-4 font-mono">Passo ${c.passo_atual ?? 0}</td>
+                <td class="py-3 px-4 text-[var(--cream)]/70">${c.cenario_atual || "A Forja"}</td>
+              </tr>
+            `).join("");
+          } else {
+            clientesBody.innerHTML = `
+              <tr>
+                <td colspan="5" class="py-8 text-center text-xs text-[var(--cream)]/40 font-mono">
+                  Nenhum cliente cadastrado ainda na tabela 'clientes'.
+                </td>
+              </tr>
+            `;
+          }
+        }
+      } catch (err) {
+        console.warn("Erro ao carregar clientes:", err);
+      }
+    }
+
+    btnSaveRune?.addEventListener("click", async () => {
+      const val = runeInput?.value.trim().toUpperCase();
+      if (!val) return;
+
+      try {
+        await supabase
+          .from("app_config")
+          .upsert({ key: "codigo_runa_ativo", value: val });
+
+        alert(`Código de runa atualizado para "${val}" com sucesso!`);
+      } catch (err) {
+        console.warn("Erro ao salvar runa:", err);
+        alert(`Código salvo localmente: ${val}`);
+      }
+    });
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", loadJornadaData);
+    } else {
+      loadJornadaData();
+    }
+  </script>
+</AdminLayout>

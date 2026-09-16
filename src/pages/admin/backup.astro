@@ -1,0 +1,168 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="Backup & Segurança" sectionTitle="Exportação e Restauração de Dados" activePath="/admin/backup">
+  
+  <div class="max-w-2xl space-y-6">
+    <!-- Bloco de Exportação -->
+    <div class="p-6 bg-[var(--surface)]/70 border border-[var(--gold)]/20 rounded-md backdrop-blur-sm space-y-3">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl text-[var(--gold)]">📥</span>
+        <div>
+          <h3 class="font-display text-sm text-[var(--gold)] uppercase font-bold tracking-wider">
+            Exportar Dados do Sistema
+          </h3>
+          <p class="text-xs text-[var(--cream)]/60">
+            Gera um arquivo JSON consolidado contendo todo o catálogo de poções, fichas técnicas, preços de kits, depoimentos e configurações de vitrine.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button
+          id="btn-export-backup"
+          type="button"
+          class="px-5 py-2.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] transition-all cursor-pointer shadow-sm flex items-center gap-2"
+        >
+          <span>💾</span> Baixar Arquivo de Backup (.json)
+        </button>
+      </div>
+    </div>
+
+    <!-- Bloco de Restauração -->
+    <div class="p-6 bg-[var(--surface)]/70 border border-[var(--gold)]/20 rounded-md backdrop-blur-sm space-y-3">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl text-amber-400">📤</span>
+        <div>
+          <h3 class="font-display text-sm text-amber-300 uppercase font-bold tracking-wider">
+            Restaurar Dados a Partir de Arquivo
+          </h3>
+          <p class="text-xs text-[var(--cream)]/60">
+            Envie um arquivo JSON de backup previamente exportado para atualizar ou recuperar registros nas tabelas do Supabase.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-[var(--gold)]/10 space-y-3">
+        <input 
+          type="file" 
+          id="backup-file-input" 
+          accept=".json"
+          class="block w-full text-xs text-[var(--cream)]/60 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border file:border-[var(--gold)]/30 file:text-xs file:font-display file:uppercase file:bg-[var(--surface-elevated)] file:text-[var(--gold)] hover:file:bg-[var(--gold)] hover:file:text-black cursor-pointer"
+        />
+
+        <div class="flex justify-end">
+          <button
+            id="btn-import-backup"
+            type="button"
+            disabled
+            class="px-5 py-2.5 bg-amber-600/30 text-amber-200 border border-amber-500/30 font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-amber-600 hover:text-white transition-all cursor-pointer disabled:opacity-40 disabled:pointer-events-none"
+          >
+            Importar & Restaurar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from "../../integrations/supabase/client";
+    import { POCOES_OFICIAIS, DEPOIMENTOS_OFICIAIS } from "../../lib/data";
+
+    const btnExport = document.getElementById("btn-export-backup");
+    const fileInput = document.getElementById("backup-file-input") as HTMLInputElement;
+    const btnImport = document.getElementById("btn-import-backup") as HTMLButtonElement;
+
+    btnExport?.addEventListener("click", async () => {
+      try {
+        if (btnExport) btnExport.textContent = "Gerando backup...";
+
+        const [p, k, t, f] = await Promise.all([
+          supabase.from("products").select("*"),
+          supabase.from("kit_prices").select("*"),
+          supabase.from("testimonials").select("*"),
+          supabase.from("featured_config").select("*"),
+        ]);
+
+        const backupData = {
+          version: 2,
+          project: "bktegbisdaqdhpqtxqxy",
+          exported_at: new Date().toISOString(),
+          products: p.data && p.data.length > 0 ? p.data : POCOES_OFICIAIS,
+          kit_prices: k.data || [],
+          testimonials: t.data && t.data.length > 0 ? t.data : DEPOIMENTOS_OFICIAIS,
+          featured_config: f.data || [],
+        };
+
+        const str = JSON.stringify(backupData, null, 2);
+        const blob = new Blob([str], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `alquimista_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        alert("Backup exportado com sucesso!");
+      } catch (err: any) {
+        console.error("Erro no backup:", err);
+        alert("Erro ao exportar: " + err?.message);
+      } finally {
+        if (btnExport) btnExport.textContent = "💾 Baixar Arquivo de Backup (.json)";
+      }
+    });
+
+    fileInput?.addEventListener("change", () => {
+      if (fileInput.files && fileInput.files.length > 0) {
+        if (btnImport) btnImport.disabled = false;
+      } else {
+        if (btnImport) btnImport.disabled = true;
+      }
+    });
+
+    btnImport?.addEventListener("click", async () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+
+      if (!confirm("Atenção: A restauração pode sobrescrever poções e configurações existentes. Deseja continuar?")) {
+        return;
+      }
+
+      btnImport.disabled = true;
+      btnImport.textContent = "Restaurando...";
+
+      try {
+        const text = await file.text();
+        const json = JSON.parse(text);
+
+        if (json.products && Array.isArray(json.products)) {
+          for (const prod of json.products) {
+            await supabase.from("products").upsert(prod);
+          }
+        }
+
+        if (json.testimonials && Array.isArray(json.testimonials)) {
+          for (const test of json.testimonials) {
+            await supabase.from("testimonials").upsert(test);
+          }
+        }
+
+        if (json.kit_prices && Array.isArray(json.kit_prices)) {
+          for (const kit of json.kit_prices) {
+            await supabase.from("kit_prices").upsert(kit);
+          }
+        }
+
+        alert("Restauração concluída com sucesso!");
+      } catch (err: any) {
+        console.error("Erro na importação:", err);
+        alert("Falha na importação: " + err?.message);
+      } finally {
+        btnImport.disabled = false;
+        btnImport.textContent = "Importar & Restaurar";
+      }
+    });
+  </script>
+</AdminLayout>

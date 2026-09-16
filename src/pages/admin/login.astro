@@ -1,0 +1,195 @@
+---
+import "../../styles/global.css";
+import CustomCursor from "../../components/CustomCursor.astro";
+---
+
+<!doctype html>
+<html lang="pt-BR" class="dark admin-page">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entrada do Alquimista · Acesso Restrito</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-[var(--background)] text-[var(--cream)] min-h-screen flex items-center justify-center p-4 relative overflow-hidden font-sans">
+    
+    <!-- Partículas atmosféricas de fundo -->
+    <div class="absolute inset-0 pointer-events-none opacity-30">
+      <div class="absolute top-1/4 left-1/3 w-96 h-96 bg-[var(--gold)]/5 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-1/3 right-1/4 w-80 h-80 bg-amber-900/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="w-full max-w-md relative z-10 animate-in fade-in zoom-in-95 duration-500">
+      
+      <!-- Card Centralizado Dark Luxury -->
+      <div class="bg-[var(--surface)]/90 border border-[var(--gold)]/25 p-8 sm:p-10 rounded-md backdrop-blur-md shadow-[0_0_35px_rgba(0,0,0,0.8)] relative">
+        
+        <!-- Cantoneiras alquímicas -->
+        <span class="absolute top-2 left-2 text-xs text-[var(--gold)]/30 pointer-events-none select-none">⌜</span>
+        <span class="absolute top-2 right-2 text-xs text-[var(--gold)]/30 pointer-events-none select-none">⌝</span>
+        <span class="absolute bottom-2 left-2 text-xs text-[var(--gold)]/30 pointer-events-none select-none">⌞</span>
+        <span class="absolute bottom-2 right-2 text-xs text-[var(--gold)]/30 pointer-events-none select-none">⌟</span>
+
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--surface-elevated)] border border-[var(--gold)]/40 p-1 mb-3 shadow-[0_0_25px_rgba(200,169,126,0.2)] overflow-hidden group">
+            <img 
+              src="/assets/alquimista-mestre.png" 
+              alt="Alquimista Mestre" 
+              class="w-full h-full object-cover rounded-full transition-transform duration-300 group-hover:scale-105" 
+            />
+          </div>
+          <h1 class="font-display text-xl sm:text-2xl text-[var(--gold)] tracking-widest uppercase font-bold">
+            Entrada do Alquimista
+          </h1>
+          <p class="text-xs text-[var(--cream)]/50 mt-1 uppercase tracking-[0.2em] font-mono">
+            Autenticação do Painel Mestre
+          </p>
+        </div>
+
+        <!-- Banner de Erro -->
+        <div id="login-error-banner" class="hidden mb-5 p-3 rounded-sm bg-red-950/40 border border-red-500/30 text-red-300 text-xs text-center font-mono">
+          Credenciais inválidas
+        </div>
+
+        <form id="login-form" class="space-y-5">
+          <div>
+            <label for="email" class="block text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 font-semibold mb-1.5">
+              E-mail do Administrador
+            </label>
+            <div class="relative">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                autocomplete="email"
+                placeholder="seu.email@exemplo.com"
+                class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3.5 py-2.5 text-xs text-[var(--cream)] focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)]/30 outline-none transition-all placeholder:text-[var(--cream)]/20 font-sans"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="password" class="block text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 font-semibold">
+                Senha de Acesso
+              </label>
+            </div>
+            <div class="relative">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                autocomplete="current-password"
+                placeholder="••••••••••••"
+                class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3.5 py-2.5 text-xs text-[var(--cream)] focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)]/30 outline-none transition-all placeholder:text-[var(--cream)]/20 font-sans"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            id="login-submit-btn"
+            class="w-full py-3 bg-[var(--gold)] text-[var(--background)] font-display tracking-[0.2em] text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] hover:shadow-[0_0_15px_rgba(200,169,126,0.3)] transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 mt-6"
+          >
+            <span id="login-btn-text">Entrar no Grimório</span>
+            <span id="login-spinner" class="hidden text-sm animate-spin">⚗</span>
+          </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-[var(--gold)]/10 text-center">
+          <a
+            href="/"
+            class="text-[11px] text-[var(--cream)]/40 hover:text-[var(--gold)] transition-colors uppercase tracking-wider font-mono flex items-center justify-center gap-1"
+          >
+            <span>←</span> Voltar para a loja pública
+          </a>
+        </div>
+
+      </div>
+
+      <div class="text-center mt-4 text-[10px] text-[var(--cream)]/30 font-mono">
+        Supabase: {import.meta.env.PUBLIC_SUPABASE_URL || "https://bktegbisdaqdhpqtxqxy.supabase.co"}
+      </div>
+
+    </div>
+
+    <script>
+      import { supabase } from "../../integrations/supabase/client";
+
+      // Se já estiver logado, redireciona para /admin
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) {
+          const params = new URLSearchParams(window.location.search);
+          window.location.href = params.get("redirect") || "/admin";
+        }
+      });
+
+      const form = document.getElementById("login-form") as HTMLFormElement;
+      const errorBanner = document.getElementById("login-error-banner");
+      const submitBtn = document.getElementById("login-submit-btn") as HTMLButtonElement;
+      const btnText = document.getElementById("login-btn-text");
+      const spinner = document.getElementById("login-spinner");
+
+      form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (errorBanner) errorBanner.classList.add("hidden");
+
+        const email = (document.getElementById("email") as HTMLInputElement).value.trim();
+        const password = (document.getElementById("password") as HTMLInputElement).value;
+
+        if (!email || !password) return;
+
+        // Feedback de carregamento
+        if (submitBtn) submitBtn.disabled = true;
+        if (btnText) btnText.textContent = "Verificando...";
+        if (spinner) spinner.classList.remove("hidden");
+
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+
+          if (error) {
+            throw error;
+          }
+
+          if (data?.session) {
+            if (btnText) btnText.textContent = "Autorizado!";
+            const params = new URLSearchParams(window.location.search);
+            window.location.href = params.get("redirect") || "/admin";
+          }
+        } catch (err: any) {
+          console.error("Erro no login:", err);
+          if (errorBanner) {
+            let msg = "Falha ao entrar no painel.";
+            if (err?.message?.includes("Invalid login credentials")) {
+              msg = "E-mail ou senha incorretos.";
+            } else if (err?.message?.includes("Email not confirmed")) {
+              msg = "E-mail ainda não confirmado no Supabase.";
+            } else if (err?.message) {
+              msg = err.message;
+            }
+            errorBanner.textContent = msg;
+            errorBanner.classList.remove("hidden");
+          }
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+          if (btnText) btnText.textContent = "Entrar no Grimório";
+          if (spinner) spinner.classList.add("hidden");
+        }
+      });
+    </script>
+
+    <CustomCursor />
+  </body>
+</html>

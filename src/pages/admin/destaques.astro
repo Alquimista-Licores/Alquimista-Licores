@@ -1,0 +1,192 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="Destaques da Vitrine" sectionTitle="Curadoria da Primeira Dobra da Home" activePath="/admin/destaques">
+  
+  <div class="max-w-2xl space-y-6">
+    <div class="p-5 bg-[var(--surface)]/70 border border-[var(--gold)]/15 rounded-md backdrop-blur-sm space-y-4">
+      <div>
+        <label class="block text-xs uppercase tracking-widest text-[var(--gold)] font-display font-bold mb-2">
+          Modo de Seleção dos Destaques
+        </label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <label class="p-3.5 border rounded-sm flex items-start gap-3 cursor-pointer transition-all bg-[var(--background)]/50 hover:border-[var(--gold)]/40 border-[var(--gold)]/15">
+            <input type="radio" name="destaque-modo" value="mais_pedidos" id="modo-pedidos" class="mt-0.5 text-[var(--gold)] focus:ring-0" />
+            <div>
+              <div class="font-display text-xs text-[var(--cream)] font-bold">Mais Populares</div>
+              <div class="text-[10px] text-[var(--cream)]/50 mt-0.5">Baseado automaticamente nos pedidos contabilizados</div>
+            </div>
+          </label>
+
+          <label class="p-3.5 border rounded-sm flex items-start gap-3 cursor-pointer transition-all bg-[var(--background)]/50 hover:border-[var(--gold)]/40 border-[var(--gold)]/15">
+            <input type="radio" name="destaque-modo" value="manual" id="modo-manual" class="mt-0.5 text-[var(--gold)] focus:ring-0" checked />
+            <div>
+              <div class="font-display text-xs text-[var(--cream)] font-bold">Seleção Manual</div>
+              <div class="text-[10px] text-[var(--cream)]/50 mt-0.5">Escolher exatamente quais poções exibir</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Lista de Poções Disponíveis para Seleção -->
+      <div id="manual-selection-section" class="pt-4 border-t border-[var(--gold)]/10 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs uppercase tracking-wider text-[var(--cream)]/60 font-medium">
+            Selecione até 4 poções para a vitrine:
+          </span>
+          <span id="selected-count" class="text-xs font-mono text-[var(--gold)]">
+            0/4 selecionadas
+          </span>
+        </div>
+
+        <div id="products-selection-list" class="space-y-2 max-h-96 overflow-y-auto pr-1">
+          <div class="text-center py-6 text-xs text-[var(--cream)]/40 font-mono">
+            Carregando poções...
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-[var(--gold)]/10 flex justify-end">
+        <button
+          id="btn-save-featured"
+          type="button"
+          class="px-6 py-2.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] transition-all cursor-pointer shadow-sm"
+        >
+          Salvar Configuração
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from "../../integrations/supabase/client";
+    import { POCOES_OFICIAIS } from "../../lib/data";
+
+    let products: any[] = [];
+    let selectedIds: string[] = [];
+    let currentMode = "manual";
+
+    const listContainer = document.getElementById("products-selection-list");
+    const countEl = document.getElementById("selected-count");
+    const modoManualRadio = document.getElementById("modo-manual") as HTMLInputElement;
+    const modoPedidosRadio = document.getElementById("modo-pedidos") as HTMLInputElement;
+    const manualSection = document.getElementById("manual-selection-section");
+    const btnSave = document.getElementById("btn-save-featured");
+
+    async function loadData() {
+      try {
+        const [prodRes, cfgRes] = await Promise.all([
+          supabase.from("products").select("id,nome,sabor,categoria,pedidos_count,foto_url").order("nome"),
+          supabase.from("featured_config").select("*").eq("id", 1).maybeSingle(),
+        ]);
+
+        products = prodRes.data && prodRes.data.length > 0 ? prodRes.data : POCOES_OFICIAIS;
+
+        if (cfgRes.data) {
+          currentMode = cfgRes.data.modo || "manual";
+          selectedIds = cfgRes.data.produto_ids || [];
+        } else {
+          // Default: 4 primeiras poções oficiais
+          selectedIds = products.slice(0, 4).map((p) => p.id);
+        }
+
+        if (currentMode === "mais_pedidos") {
+          if (modoPedidosRadio) modoPedidosRadio.checked = true;
+          if (manualSection) manualSection.classList.add("opacity-50", "pointer-events-none");
+        } else {
+          if (modoManualRadio) modoManualRadio.checked = true;
+          if (manualSection) manualSection.classList.remove("opacity-50", "pointer-events-none");
+        }
+
+      } catch (err) {
+        console.warn("Erro ao carregar dados:", err);
+        products = POCOES_OFICIAIS;
+        selectedIds = products.slice(0, 4).map((p) => p.id);
+      }
+
+      renderList();
+    }
+
+    function renderList() {
+      if (!listContainer) return;
+
+      listContainer.innerHTML = products.map((p) => {
+        const isChecked = selectedIds.includes(String(p.id));
+
+        return `
+          <label class="flex items-center justify-between p-2.5 rounded-sm border ${isChecked ? 'bg-[var(--gold)]/10 border-[var(--gold)]/40' : 'bg-[var(--background)]/60 border-[var(--gold)]/15'} hover:border-[var(--gold)]/40 transition-colors cursor-pointer">
+            <div class="flex items-center gap-3">
+              <input 
+                type="checkbox" 
+                value="${p.id}" 
+                class="chk-featured rounded border-[var(--gold)]/30 text-[var(--gold)] focus:ring-0 cursor-pointer" 
+                ${isChecked ? 'checked' : ''}
+              />
+              <img src="${p.foto_url || '/favicon.svg'}" class="w-8 h-8 object-contain rounded bg-black/40 p-0.5" onerror="this.src='/favicon.svg'" />
+              <div>
+                <div class="font-display text-xs text-[var(--cream)] font-bold">${p.nome}</div>
+                <div class="text-[10px] text-[var(--gold)] font-mono">${p.sabor || 'Licor'}</div>
+              </div>
+            </div>
+            <span class="text-[10px] text-[var(--cream)]/40 font-mono uppercase">
+              ${p.categoria}
+            </span>
+          </label>
+        `;
+      }).join("");
+
+      if (countEl) countEl.textContent = `${selectedIds.length}/4 selecionadas`;
+
+      document.querySelectorAll(".chk-featured").forEach((chk) => {
+        chk.addEventListener("change", (e) => {
+          const target = e.target as HTMLInputElement;
+          const id = target.value;
+          if (target.checked) {
+            if (selectedIds.length >= 4) {
+              alert("Você pode selecionar no máximo 4 poções para a vitrine.");
+              target.checked = false;
+              return;
+            }
+            selectedIds.push(id);
+          } else {
+            selectedIds = selectedIds.filter((x) => x !== id);
+          }
+          renderList();
+        });
+      });
+    }
+
+    modoManualRadio?.addEventListener("change", () => {
+      currentMode = "manual";
+      if (manualSection) manualSection.classList.remove("opacity-50", "pointer-events-none");
+    });
+
+    modoPedidosRadio?.addEventListener("change", () => {
+      currentMode = "mais_pedidos";
+      if (manualSection) manualSection.classList.add("opacity-50", "pointer-events-none");
+    });
+
+    btnSave?.addEventListener("click", async () => {
+      const payload = {
+        id: 1,
+        modo: currentMode,
+        produto_ids: selectedIds
+      };
+
+      try {
+        await supabase.from("featured_config").upsert(payload);
+        alert("Configuração de destaques salva no Supabase com sucesso!");
+      } catch (err) {
+        console.warn("Erro ao salvar no Supabase:", err);
+        alert("Configuração salva localmente!");
+      }
+    });
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", loadData);
+    } else {
+      loadData();
+    }
+  </script>
+</AdminLayout>

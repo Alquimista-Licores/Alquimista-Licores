@@ -1,0 +1,227 @@
+---
+import AdminNav from "../components/admin/AdminNav.astro";
+import CustomCursor from "../components/CustomCursor.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  sectionTitle?: string;
+  activePath?: string;
+}
+
+const { title, sectionTitle, activePath } = Astro.props;
+const currentPath = activePath || Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="pt-BR" class="dark admin-page scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} · Painel Alquimista</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Google Fonts Preconnect & Swap -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-[var(--background)] text-[var(--cream)] min-h-screen font-sans antialiased selection:bg-[var(--gold)]/30 selection:text-[var(--gold)]">
+    
+    <!-- Tela de Carregamento de Autenticação -->
+    <div id="admin-auth-loading" class="fixed inset-0 z-[100] bg-[var(--background)] flex flex-col items-center justify-center text-center p-4 transition-opacity duration-300">
+      <div class="relative flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 mb-4 animate-pulse">
+        <div class="absolute inset-0 border border-[var(--gold)]/30 rounded-full animate-ping opacity-30 pointer-events-none"></div>
+        <img 
+          src="/assets/alquimista-mestre.png" 
+          alt="Carregando Alquimista..." 
+          class="w-full h-full object-cover rounded-full border border-[var(--gold)]/40 p-1 shadow-[0_0_30px_rgba(200,169,126,0.3)] relative z-10" 
+        />
+      </div>
+      <div class="font-display text-xs tracking-[0.25em] text-[var(--gold)] uppercase font-semibold mb-1">
+        Acessando Grimório...
+      </div>
+      <div class="text-[10px] text-[var(--cream)]/40 font-mono tracking-wider">
+        Verificando credenciais do Supabase
+      </div>
+    </div>
+
+    <!-- Tela de Acesso Negado (caso não seja admin) -->
+    <div id="admin-auth-denied" class="fixed inset-0 z-[100] bg-[var(--background)] hidden flex-col items-center justify-center text-center p-6">
+      <div class="w-14 h-14 rounded-full bg-red-950/40 border border-red-500/30 flex items-center justify-center text-2xl text-red-400 mb-4 shadow-[0_0_20px_rgba(239,68,68,0.15)]">
+        🛡
+      </div>
+      <h2 class="font-display text-xl text-[var(--gold)] mb-2 uppercase tracking-widest font-bold">
+        Acesso Restrito ao Alquimista
+      </h2>
+      <p class="text-xs text-[var(--cream)]/70 max-w-md mb-6 leading-relaxed">
+        Você está autenticado, porém sua conta não possui o papel administrativo registrado na tabela <code class="text-[var(--gold)] font-mono">user_roles</code>.
+      </p>
+      <div class="flex gap-3">
+        <a href="/" class="px-4 py-2 border border-[var(--gold)]/30 text-[var(--cream)] text-xs uppercase tracking-widest font-display rounded-sm hover:border-[var(--gold)] transition-colors">
+          Voltar à Loja
+        </a>
+        <button id="admin-denied-logout-btn" type="button" class="px-4 py-2 bg-[var(--gold)] text-[var(--background)] text-xs uppercase tracking-widest font-display rounded-sm font-semibold hover:bg-[var(--gold-hover)] transition-colors cursor-pointer">
+          Trocar de Conta
+        </button>
+      </div>
+    </div>
+
+    <!-- Container Principal do Painel -->
+    <div id="admin-root" class="opacity-0 transition-opacity duration-300 min-h-screen flex flex-col">
+      <!-- Barra Superior Nobre -->
+      <header class="border-b border-[var(--gold)]/15 bg-[var(--surface)]/90 backdrop-blur-md sticky top-0 z-30 px-4 lg:px-8 py-3.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <a href="/admin" class="flex items-center gap-2 text-[var(--gold)] font-display text-sm tracking-widest uppercase font-bold">
+              <span>⚗</span>
+              <span class="hidden sm:inline">Painel do Alquimista</span>
+            </a>
+            <span class="text-[var(--gold)]/30 text-xs font-mono">/</span>
+            <span class="text-xs text-[var(--cream)]/60 font-sans tracking-wide truncate max-w-[200px] sm:max-w-none">
+              {sectionTitle || title}
+            </span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div id="admin-user-badge" class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-sm bg-white/5 border border-[var(--gold)]/15 text-[10px] text-[var(--cream)]/70 font-mono">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span id="admin-user-email">admin@alquimista</span>
+            </div>
+            <slot name="actions" />
+          </div>
+        </div>
+      </header>
+
+      <!-- Layout em Duas Colunas (Sidebar + Conteúdo) -->
+      <div class="max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 lg:py-8 flex-1 flex flex-col lg:flex-row gap-8">
+        <AdminNav currentPath={currentPath} />
+
+        <main class="flex-1 min-w-0">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h1 class="font-display text-2xl lg:text-3xl text-[var(--gold)] tracking-wide font-bold">
+                {title}
+              </h1>
+              {sectionTitle && (
+                <p class="text-xs text-[var(--cream)]/50 mt-1 uppercase tracking-widest font-mono">
+                  {sectionTitle}
+                </p>
+              )}
+            </div>
+            <div class="flex items-center gap-2">
+              <slot name="header-actions" />
+            </div>
+          </div>
+
+          <slot />
+        </main>
+      </div>
+
+      <!-- Rodapé discreto do painel -->
+      <footer class="border-t border-[var(--gold)]/10 py-4 px-4 text-center text-[10px] text-[var(--cream)]/40 font-mono">
+        Alquimista Licores Artesanais · Central de Controle Supabase ({import.meta.env.PUBLIC_SUPABASE_URL || "https://bktegbisdaqdhpqtxqxy.supabase.co"})
+      </footer>
+    </div>
+
+    <!-- Script de Autenticação e Proteção Client-Side -->
+    <script>
+      import { supabase, SUPABASE_CONFIG } from "../integrations/supabase/client";
+
+      async function initAdminAuth() {
+        const loadingEl = document.getElementById("admin-auth-loading");
+        const deniedEl = document.getElementById("admin-auth-denied");
+        const rootEl = document.getElementById("admin-root");
+        const userEmailEl = document.getElementById("admin-user-email");
+        const logoutBtn = document.getElementById("admin-logout-btn");
+        const deniedLogoutBtn = document.getElementById("admin-denied-logout-btn");
+
+        async function handleSignOut() {
+          try {
+            await supabase.auth.signOut();
+          } catch (e) {
+            console.error(e);
+          }
+          window.location.href = "/admin/login";
+        }
+
+        if (logoutBtn) logoutBtn.addEventListener("click", handleSignOut);
+        if (deniedLogoutBtn) deniedLogoutBtn.addEventListener("click", handleSignOut);
+
+        // Se a chave anônima ainda não estiver configurada no .env e estivermos em dev, permitir visualização com aviso amigável
+        const isPlaceholderKey = !SUPABASE_CONFIG.anonKey || SUPABASE_CONFIG.anonKey === "sb_placeholder_anon_key";
+
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+
+          if (!session) {
+            // Se a chave for de placeholder (em setup local), permite navegação com fallback
+            if (isPlaceholderKey) {
+              console.warn("Chave do Supabase pendente no .env. Modo de pré-visualização ativo.");
+              if (userEmailEl) userEmailEl.textContent = "modo_desenvolvimento (chave pendente)";
+              if (loadingEl) loadingEl.style.display = "none";
+              if (rootEl) rootEl.style.opacity = "1";
+              return;
+            }
+
+            // Redireciona para login
+            window.location.href = "/admin/login?redirect=" + encodeURIComponent(window.location.pathname);
+            return;
+          }
+
+          // Atualiza o email na barra superior
+          if (userEmailEl && session.user?.email) {
+            userEmailEl.textContent = session.user.email;
+          }
+
+          // Checa se tem a role 'admin'
+          const { data: roleData, error: roleError } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", session.user.id)
+            .eq("role", "admin")
+            .maybeSingle();
+
+          if (roleError) {
+            console.warn("Erro ao checar user_roles:", roleError.message);
+          }
+
+          // Se tiver a role ou se a tabela não tiver políticas restritas, liberar
+          if (!roleData && !isPlaceholderKey) {
+            if (loadingEl) loadingEl.style.display = "none";
+            if (deniedEl) deniedEl.classList.remove("hidden");
+            if (deniedEl) deniedEl.classList.add("flex");
+            return;
+          }
+
+          // Autorizado!
+          if (loadingEl) {
+            loadingEl.style.opacity = "0";
+            setTimeout(() => { loadingEl.style.display = "none"; }, 300);
+          }
+          if (rootEl) {
+            rootEl.style.opacity = "1";
+          }
+
+        } catch (err) {
+          console.error("Erro na verificação de autenticação:", err);
+          if (loadingEl) loadingEl.style.display = "none";
+          if (rootEl) rootEl.style.opacity = "1";
+        }
+      }
+
+      // Executa imediatamente
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initAdminAuth);
+      } else {
+        initAdminAuth();
+      }
+    </script>
+
+    <CustomCursor />
+  </body>
+</html>
