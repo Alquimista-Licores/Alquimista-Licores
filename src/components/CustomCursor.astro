@@ -221,13 +221,13 @@ const {
         return ageGate;
       }
 
-      // 4. Any active open admin or generic modal
-      const potentialModals = document.querySelectorAll<HTMLElement>(
-        "[id^='modal-']:not(#modal-close-desktop):not(#modal-close-mobile):not(#modal-qty-minus):not(#modal-qty-plus):not(#modal-wa-btn), [id$='-modal'], .modal, dialog[open], [role='dialog']"
+      // 4. Admin Modals & Generic Dialogs
+      const adminModals = document.querySelectorAll<HTMLElement>(
+        "#modal-produto, #modal-pedido, #modal-kit, #modal-depoimento, .modal-overlay, .admin-modal, dialog[open], [role='dialog']"
       );
 
-      for (let i = 0; i < potentialModals.length; i++) {
-        const el = potentialModals[i];
+      for (let i = 0; i < adminModals.length; i++) {
+        const el = adminModals[i];
         if (el.classList.contains("hidden")) continue;
         const style = window.getComputedStyle(el);
         if (style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0") {

@@ -337,7 +337,7 @@ npm run build
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
 ### [16/09/2026] — Refinamento de Englobamento & Atração Magnética do Cursor (`CustomCursor`)
-- **Atração Magnética ("Imã") Fluida:** Refatorado o script em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro) com raio de imã de 70px que atrai o contorno dourado suavemente para o centro de qualquer elemento clicável (`a[href]`, `button`, `input`, `select`, `textarea`, cards e controles de UI).
+- **Atração Magnética & Englobamento Restaurados:** Corrigida a função `getActiveOverlayOrModal()` em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro). O seletor genérico anterior `[id^='modal-']` capturava falsos positivos de elementos internos do modal (como `#modal-title`, `#modal-img`, `#modal-description`) que não possuíam a classe `.hidden` individualmente, fazendo com que a checagem considerasse um modal ativo em tempo integral. A consulta foi restrita exclusivamente aos containers de modal reais (`#modal-produto`, `#modal-pedido`, `#modal-kit`, `#modal-depoimento`, `#cart-drawer-overlay`, `#product-modal-container`, `#age-gate`), restaurando 100% o englobamento e a atração magnética ("imã") de 70px para todos os botões, links e formulários do site.
 - **Englobamento Moldado:** Elementos redondos (ícones WhatsApp/Instagram, botão do caldeirão, botões `✕` e `+`/`-`) são englobados como um anel circular perfeito. Botões retangulares, inputs, links e cards são englobados exatamente no contorno dos seus limites com raio de curvatura correspondente.
 
 ### [16/09/2026] — Estilização dos Campos Preenchíveis & Isolamento de Modais no Cursor
