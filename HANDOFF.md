@@ -336,6 +336,10 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [16/09/2026] — Refinamento de Englobamento & Atração Magnética do Cursor (`CustomCursor`)
+- **Atração Magnética ("Imã") Fluida:** Refatorado o script em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro) com raio de imã de 70px que atrai o contorno dourado suavemente para o centro de qualquer elemento clicável (`a[href]`, `button`, `input`, `select`, `textarea`, cards e controles de UI).
+- **Englobamento Moldado:** Elementos redondos (ícones WhatsApp/Instagram, botão do caldeirão, botões `✕` e `+`/`-`) são englobados como um anel circular perfeito. Botões retangulares, inputs, links e cards são englobados exatamente no contorno dos seus limites com raio de curvatura correspondente.
+
 ### [16/09/2026] — Estilização dos Campos Preenchíveis & Isolamento de Modais no Cursor
 - **Campos Preenchíveis em Cinza Chumbo Profundo:** Adicionadas regras globais em [`global.css`](file:///d:/projetos%20antigravity/site_alquimista/src/styles/global.css) aplicando a cor `#1a1c23` (cinza chumbo profundo com borda dourada suave) para todos os `input`, `select` e `textarea`, garantindo excelente contraste com a página sem ser 100% preto.
 - **Isolamento do Cursor nos Modais:** Refatorada a função `getActiveOverlayOrModal()` em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro) para verificar rigorosamente apenas overlays e modais abertos e visíveis (sem falsos positivos em elementos ocultos como `#cart-drawer-panel`). O englobamento magnético de botões e links voltou a funcionar em 100% da aplicação quando nenhum modal está aberto.
