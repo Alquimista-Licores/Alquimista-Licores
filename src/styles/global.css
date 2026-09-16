@@ -196,6 +196,46 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Deep lead gray fillable fields (Cinza chumbo profundo) */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea {
+    background-color: #1a1c23 !important;
+    color: var(--cream) !important;
+    border: 1px solid rgba(200, 169, 126, 0.25) !important;
+    border-radius: 0.25rem !important;
+  }
+
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="number"]:focus,
+  input[type="search"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="date"]:focus,
+  input[type="time"]:focus,
+  select:focus,
+  textarea:focus {
+    background-color: #222530 !important;
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 10px rgba(200, 169, 126, 0.2) !important;
+    outline: none !important;
+  }
+
+  select option {
+    background-color: #1a1c23 !important;
+    color: var(--cream) !important;
+  }
+
   /* Design System 2.0 Type Hierarchy Specs */
   h1 { 
     font-family: var(--font-serif); 
@@ -740,4 +780,15 @@
 
 #lovable-badge {
   display: none !important;
+}
+
+/* Strictly hide native cursor everywhere on fine pointer devices */
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body,
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
+  }
 }

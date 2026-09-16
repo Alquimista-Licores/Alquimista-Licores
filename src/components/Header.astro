@@ -6,7 +6,6 @@ const currentPath = Astro.url.pathname;
 const NAV = [
   { href: "/", label: "Início" },
   { href: "/pocoes", label: "As Poções" },
-  { href: "/kits", label: "Kits & Presentes" },
   { href: "/monte-seu-kit", label: "Monte seu Kit" },
   { href: "/sobre", label: "Sobre" },
   { href: "/sobre#jornada", label: "Jornada" },
@@ -18,8 +17,8 @@ const NAV = [
   class="fixed top-0 inset-x-0 z-40 transition-all duration-500 bg-transparent border-b border-transparent select-none"
 >
   <!-- Interactive Hover Spotlight Layers (Cursor follower) -->
-  <div class="header-spotlight-bg pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300" aria-hidden="true"></div>
-  <div class="header-spotlight-border pointer-events-none absolute bottom-0 inset-x-0 h-px opacity-0 transition-opacity duration-300" aria-hidden="true"></div>
+  <div class="header-spotlight-bg pointer-events-none absolute inset-0 opacity-0" aria-hidden="true"></div>
+  <div class="header-spotlight-border pointer-events-none absolute bottom-0 inset-x-0 h-px opacity-0" aria-hidden="true"></div>
 
   <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 h-14 lg:h-16 flex items-center justify-between gap-6">
     <!-- LOGO -->
@@ -117,25 +116,32 @@ const NAV = [
     box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.75);
   }
 
-  /* Interactive Hover: Spotlight background centered at cursor */
-  #site-header:hover .header-spotlight-bg {
-    opacity: 1;
+  /* Interactive Hover: Spotlight background centered at cursor with smooth fade-in & fade-out */
+  .header-spotlight-bg {
+    opacity: 0;
     background: radial-gradient(
-      450px circle at var(--mouse-x) var(--mouse-y),
+      450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
       rgba(200, 169, 126, 0.14),
       transparent 80%
     );
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Interactive Hover: Bottom border lights up near cursor */
-  #site-header:hover .header-spotlight-border {
-    opacity: 1;
+  /* Interactive Hover: Bottom border lights up near cursor with smooth fade-in & fade-out */
+  .header-spotlight-border {
+    opacity: 0;
     background: radial-gradient(
-      320px circle at var(--mouse-x) 50%,
+      320px circle at var(--mouse-x, 50%) 50%,
       rgba(212, 178, 58, 0.95) 0%,
       rgba(200, 169, 126, 0.5) 45%,
       transparent 80%
     );
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  #site-header:hover .header-spotlight-bg,
+  #site-header:hover .header-spotlight-border {
+    opacity: 1;
   }
 
   .header-nav-link {

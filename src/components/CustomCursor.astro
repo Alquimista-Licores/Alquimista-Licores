@@ -51,29 +51,18 @@ const {
   <div
     id="reactbits-cursor-circle"
     class="fixed top-0 left-0 pointer-events-none will-change-transform transition-[width,height,border-radius,background-color,border-color,box-shadow,opacity] duration-200 ease-out"
-    style={`width: ${circleSize}px; height: ${circleSize}px; border-radius: 9999px; border: ${borderWidth}px solid var(--cursor-color); box-shadow: 0 0 12px rgba(178, 140, 70, 0.22); transform: translate3d(-50%, -50%, 0); mix-blend-mode: normal; opacity: 1; background-color: transparent;`}
+    style={`width: ${circleSize}px; height: ${circleSize}px; border-radius: 9999px; border: ${borderWidth}px solid var(--cursor-color); box-shadow: 0 0 12px rgba(178, 140, 70, 0.22); transform: translate3d(-50%, -50%, 0); mix-blend-mode: normal; background-color: transparent;`}
   ></div>
 </div>
 
-<style>
+<style is:global>
   /* Strictly hide native cursor everywhere on fine pointer devices */
   @media (hover: hover) and (pointer: fine) {
-    *,
-    *::before,
-    *::after,
     html,
-    body,
-    a,
-    button,
-    [role="button"],
-    [role="link"],
-    summary,
-    label,
-    select,
-    input,
-    textarea,
-    .cursor-pointer,
-    .cursor-default {
+    html body,
+    html body *,
+    html body *::before,
+    html body *::after {
       cursor: none !important;
     }
   }
@@ -88,26 +77,26 @@ const {
   #reactbits-cursor-circle.cursor-soft {
     opacity: 0.5 !important;
     background-color: transparent !important;
-    box-shadow: 0 0 8px rgba(178, 140, 70, 0.2);
-  }
-
-  /* Product Card hover state: Outer circle instantly becomes 0% opacity (completely invisible) */
-  #reactbits-cursor-circle.cursor-hidden {
-    opacity: 0 !important;
-    visibility: hidden !important;
+    box-shadow: 0 0 8px rgba(178, 140, 70, 0.2) !important;
   }
 
   /* Morph enclosing state: Pure transparent background, 1px contour with soft glow */
   #reactbits-cursor-circle.cursor-enclosing {
     background-color: transparent !important;
-    border-color: var(--cursor-color);
-    box-shadow: 0 0 18px rgba(178, 140, 70, 0.45);
-    opacity: 1 !important;
+    border-color: var(--cursor-color) !important;
+    box-shadow: 0 0 18px rgba(178, 140, 70, 0.45) !important;
+  }
+
+  /* Card / Mini card hover state: Outer circle continues englobing in background, but instantly becomes 0% opacity (completely invisible) */
+  #reactbits-cursor-circle.cursor-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0s, visibility 0s !important;
   }
 
   /* Active / Click press state */
   #reactbits-cursor-circle.cursor-active {
-    box-shadow: 0 0 14px rgba(178, 140, 70, 0.6);
+    box-shadow: 0 0 14px rgba(178, 140, 70, 0.6) !important;
   }
 </style>
 
@@ -135,7 +124,6 @@ const {
     let isVisible = false;
     let hoveredEncloseEl: HTMLElement | null = null;
     let isDirectlyHovered = false;
-    let isCardHover = false;
     let isSoftHover = false;
     let isActive = false;
     let animId: number | null = null;
@@ -182,13 +170,13 @@ const {
       }
     }
 
-    // Selectors for round circular targets (WhatsApp button, Instagram button, Cauldron icon, close buttons, and +/- qty buttons)
+    // Selectors for round circular targets (WhatsApp FAB, Instagram icon, Cauldron icon, close buttons, and +/- qty buttons)
     const roundCircularSelector = `
       #modal-qty-minus, #modal-qty-plus, #modal-close-desktop, #modal-close-mobile, button[aria-label*="Fechar"], button[aria-label*="fechar"],
       .cart-item-minus, .cart-item-plus, .cart-item-remove, .cart-qty-btn,
       #cart-toggle-btn, button[aria-label*="Caldeirão"]:not(.quick-add-btn):not(.product-card *), button[title*="Caldeirão"]:not(.quick-add-btn):not(.product-card *),
-      a[aria-label*="WhatsApp"], a[href*="wa.me"], a[href*="whatsapp.com"], .whatsapp-fab,
-      a[aria-label*="Instagram"], a[href*="instagram.com"]
+      .whatsapp-fab, .btn-icon-round, .deg-remove-trio-btn, .pres-remove-single-btn,
+      footer a[aria-label*="WhatsApp"], footer a[aria-label*="Instagram"]
     `;
 
     // Selectors for Header & Footer text navigation links and logos (Soft 50% opacity, no enclose)
@@ -202,39 +190,66 @@ const {
       .ritual-card
     `;
 
-    // Selectors for Enclosing targets (Buttons, Video CTA, Potion badges, Product cards, Social icons, Inputs)
+    // Selectors for Cards (Product cards, Kit cards, Wizard mini cards, Trio cards, Single pick cards) -> Enclosed with transparent fill & 3D tilt
+    const cardsSelector = `
+      .product-card,
+      .kit-mode-card,
+      #pick-degustacao-btn,
+      #pick-presenteavel-btn,
+      .deg-product-pick,
+      .deg-trio-card,
+      .pres-liquor-pick,
+      .pres-single-card,
+      .pres-acomp-pick,
+      .pres-box-pick
+    `;
+
+    // Priority inner action targets inside cards
+    const cardInnerActionsSelector = `
+      .deg-remove-trio-btn,
+      .pres-remove-single-btn,
+      .quick-add-btn,
+      .potion-suggestion-link,
+      #modal-wa-btn
+    `;
+
+    // Selectors for Enclosing targets (Buttons, Video CTA, Potion badges, Social icons, Inputs)
     const enclosingSelector = `
       .glass-cta-button,
       #glassCtaBtn,
       .potion-suggestion-link,
-      button:not(#cart-toggle-btn):not(.ritual-card):not(.quick-add-btn):not(.product-card *),
-      a.btn-primary, a.btn-ghost, a.btn-shimmer, a.btn-outline,
-      .product-card,
+      button:not(#cart-toggle-btn):not(.ritual-card):not(.deg-product-pick):not(.pres-liquor-pick):not(.pres-acomp-pick):not(.pres-box-pick):not(#pick-degustacao-btn):not(#pick-presenteavel-btn),
+      a.btn-primary, a.btn-ghost, a.btn-shimmer, a.btn-outline, a.btn-liquid, #modal-wa-btn,
       .filter-tab-btn,
       input:not([type="hidden"]), select, textarea,
       [data-cursor-enclose], ${roundCircularSelector}
     `;
 
-    // Helper to detect if an overlay/modal (Cart Drawer, Product Modal, Dialog) is currently active/open
+    // Helper to detect if an overlay/modal (Cart Drawer, Product Modal, Admin Modals, Dialogs) is currently active/open
     function getActiveOverlayOrModal(): HTMLElement | null {
-      // 1. Cart Drawer
-      const cartOverlay = document.getElementById("cart-drawer-overlay");
-      if (cartOverlay && !cartOverlay.classList.contains("hidden") && window.getComputedStyle(cartOverlay).display !== "none") {
-        const panel = document.getElementById("cart-drawer-panel");
-        return panel || cartOverlay;
-      }
+      const modalSelectors = [
+        "#cart-drawer-overlay:not(.hidden)",
+        "#cart-drawer-panel",
+        "#product-modal-container:not(.hidden)",
+        "#age-gate:not(.hidden)",
+        "[id^='modal-']:not(.hidden)",
+        "[id$='-modal']:not(.hidden)",
+        ".modal:not(.hidden):not([style*='display: none'])",
+        ".modal.is-active",
+        "dialog[open]",
+        "[role='dialog']:not(.hidden)",
+        ".fixed.inset-0.z-50:not(.hidden)",
+        ".fixed.inset-0.z-\\[100\\]:not(.hidden)"
+      ];
 
-      // 2. Product Modal
-      const productModal = document.getElementById("product-modal-container");
-      if (productModal && !productModal.classList.contains("hidden") && window.getComputedStyle(productModal).display !== "none") {
-        const card = document.getElementById("product-modal-card");
-        return card || productModal;
-      }
-
-      // 3. Generic active modal / dialog / overlay
-      const activeDialog = document.querySelector<HTMLElement>("dialog[open], [role='dialog']:not(.hidden), .modal.is-active, #age-gate:not(.hidden)");
-      if (activeDialog && window.getComputedStyle(activeDialog).display !== "none" && window.getComputedStyle(activeDialog).visibility !== "hidden") {
-        return activeDialog;
+      for (let i = 0; i < modalSelectors.length; i++) {
+        const el = document.querySelector<HTMLElement>(modalSelectors[i]);
+        if (el) {
+          const style = window.getComputedStyle(el);
+          if (style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0") {
+            return el;
+          }
+        }
       }
 
       return null;
@@ -242,6 +257,11 @@ const {
 
     // Helper to check if an element is strictly visible, rendered, and not inside a collapsed accordion
     function isTargetActuallyVisible(el: HTMLElement): boolean {
+      // Disabled or out-of-stock items are strictly ignored
+      if (el.hasAttribute('disabled') || (el as HTMLButtonElement).disabled || el.getAttribute('aria-disabled') === 'true' || el.getAttribute('data-stock') === '0') {
+        return false;
+      }
+
       // If an overlay/modal/drawer is open, ONLY elements inside that active modal are eligible
       const activeModal = getActiveOverlayOrModal();
       if (activeModal) {
@@ -272,21 +292,32 @@ const {
         return false;
       }
 
-      // Check if inside hero video CTA wrapper and not yet faded in/active
-      const ctaWrap = el.closest('#heroCtaWrap, .hero-cta-wrapper') as HTMLElement | null;
-      if (ctaWrap) {
-        const wrapStyle = window.getComputedStyle(ctaWrap);
-        if (wrapStyle.pointerEvents === 'none' || wrapStyle.opacity === '0' || parseFloat(wrapStyle.opacity || '1') < 0.2) {
-          return false;
+      // Check if element is completely underneath the sticky/fixed header (when no modal is active)
+      if (!activeModal) {
+        const header = document.querySelector('header, #site-header') as HTMLElement | null;
+        if (header && !header.contains(el)) {
+          const headerRect = header.getBoundingClientRect();
+          if (headerRect.height > 0 && rect.bottom <= headerRect.bottom + 2) {
+            return false;
+          }
         }
       }
 
       return true;
     }
 
-    // Magnetic proximity detection (100px magnetic attraction range)
+    // Helper to detect if mouse position is within the fixed/sticky header
+    function isMouseOverHeader(x: number, y: number): boolean {
+      const header = document.querySelector('header, #site-header') as HTMLElement | null;
+      if (!header) return false;
+      const rect = header.getBoundingClientRect();
+      return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    }
+
+    // Magnetic proximity detection (100px magnetic attraction range for buttons, icons, and cards)
     function findMagneticTarget(x: number, y: number, proximity = 100): HTMLElement | null {
       const activeModal = getActiveOverlayOrModal();
+      const overHeader = isMouseOverHeader(x, y);
 
       // 1. Direct hit check under point
       const elUnderPoint = document.elementFromPoint(x, y) as HTMLElement | null;
@@ -295,8 +326,17 @@ const {
         if (activeModal && !activeModal.contains(elUnderPoint)) {
           return null;
         }
-        // If it's over a product card, direct hit is handled by cardTarget in onMouseMove (0 opacity)
-        if (elUnderPoint.closest('.product-card')) {
+        // If cursor is over the header, STRICTLY reject any element outside the header
+        if (overHeader && !elUnderPoint.closest('header, #site-header')) {
+          return null;
+        }
+        // If it's an inner action inside a card, direct hit is returned
+        const innerAction = elUnderPoint.closest(cardInnerActionsSelector) as HTMLElement | null;
+        if (innerAction && isTargetActuallyVisible(innerAction)) {
+          return innerAction;
+        }
+        // If directly on a card (not inner action), return null because direct hover handles transparency!
+        if (elUnderPoint.closest(cardsSelector)) {
           return null;
         }
         // If it's a soft target (header/footer text links or ritual card background), don't magnetic pull
@@ -307,8 +347,8 @@ const {
         if (directHit && isTargetActuallyVisible(directHit)) return directHit;
       }
 
-      // 2. Proximity check within 100px (includes .product-card from outside)
-      const candidates = document.querySelectorAll<HTMLElement>(enclosingSelector);
+      // 2. Proximity check within 100px (buttons, inputs, icons, and cards when approaching from outside)
+      const candidates = document.querySelectorAll<HTMLElement>(`${enclosingSelector}, ${cardsSelector}`);
       let closest: HTMLElement | null = null;
       let minDistance = Infinity;
 
@@ -318,11 +358,17 @@ const {
         if (activeModal && !activeModal.contains(el)) {
           continue;
         }
+
+        // If cursor is over the header, skip all elements outside the header
+        if (overHeader && !el.closest('header, #site-header')) {
+          continue;
+        }
+
         if (el.closest(softLinksSelector) && !el.matches(roundCircularSelector) && !el.classList.contains('potion-suggestion-link')) {
           continue;
         }
 
-        // Must be strictly visible
+        // Must be strictly visible and not disabled
         if (!isTargetActuallyVisible(el)) continue;
 
         const rect = el.getBoundingClientRect();
@@ -360,6 +406,16 @@ const {
 
       const target = e.target as HTMLElement | null;
       const activeModal = getActiveOverlayOrModal();
+      const overHeader = isMouseOverHeader(mouseX, mouseY);
+
+      // If mouse is over the header, immediately release any previously enclosed body element
+      if (overHeader && hoveredEncloseEl && !hoveredEncloseEl.closest('header, #site-header')) {
+        hoveredEncloseEl = null;
+        circle.classList.remove("cursor-enclosing");
+        circle.style.width = `${baseCircleSize}px`;
+        circle.style.height = `${baseCircleSize}px`;
+        circle.style.borderRadius = "9999px";
+      }
 
       // If a modal or cart drawer is open and mouse is outside it (e.g. on backdrop overlay), do not enclose anything
       if (activeModal) {
@@ -372,7 +428,6 @@ const {
             circle.style.borderRadius = "9999px";
           }
           isDirectlyHovered = false;
-          isCardHover = false;
           isSoftHover = false;
           circle.classList.remove("cursor-hidden", "cursor-soft");
           circle.style.visibility = "visible";
@@ -382,43 +437,58 @@ const {
       }
 
       if (target) {
-        // PRIORITY 1: Hover over a Product Card -> Outer circle becomes instantly 0% opacity (completely hidden)
-        const cardTarget = target.closest('.product-card') as HTMLElement | null;
-        if (cardTarget) {
-          isCardHover = true;
-          hoveredEncloseEl = null;
-          isDirectlyHovered = false;
+        // PRIORITY 1: Direct hit on Inner Action buttons inside cards (like ✕ remove button on trio cards, quick add, suggestion link)
+        const innerAction = target.closest(cardInnerActionsSelector) as HTMLElement | null;
+        if (innerAction && isTargetActuallyVisible(innerAction)) {
           isSoftHover = false;
-          circle.classList.remove("cursor-enclosing", "cursor-soft");
+          isDirectlyHovered = true;
+          circle.classList.remove("cursor-hidden", "cursor-soft");
+          circle.style.visibility = "visible";
+          circle.style.opacity = "1";
+          if (hoveredEncloseEl !== innerAction) {
+            hoveredEncloseEl = innerAction;
+            circle.classList.add("cursor-enclosing");
+          }
+          return;
+        }
+
+        // PRIORITY 2: Direct hit on ANY Card / Mini Card -> Outer circle continues englobing in background, but instantly becomes 0% opacity (transparent / invisible)
+        const cardTarget = target.closest(cardsSelector) as HTMLElement | null;
+        if (cardTarget && isTargetActuallyVisible(cardTarget) && !overHeader) {
+          isSoftHover = false;
+          isDirectlyHovered = true;
+          if (hoveredEncloseEl !== cardTarget) {
+            hoveredEncloseEl = cardTarget;
+            circle.classList.add("cursor-enclosing");
+          }
           circle.classList.add("cursor-hidden");
           circle.style.opacity = "0";
           circle.style.visibility = "hidden";
           return;
         }
 
-        // PRIORITY 2: Direct hit on Enclosing target (Modal items, Drawer items, Video CTA, Instagram, WhatsApp, Potion buttons, Buttons)
+        // PRIORITY 3: Direct hit on other Enclosing target (Modal items, Drawer items, Video CTA, Instagram, WhatsApp, Buttons)
         const directEnclose = target.closest(enclosingSelector) as HTMLElement | null;
         if (directEnclose && isTargetActuallyVisible(directEnclose)) {
-          isSoftHover = false;
-          isCardHover = false;
-          isDirectlyHovered = true;
-          circle.classList.remove("cursor-hidden", "cursor-soft");
-          circle.style.visibility = "visible";
-          circle.style.opacity = "1";
-          if (hoveredEncloseEl !== directEnclose) {
-            hoveredEncloseEl = directEnclose;
-            circle.classList.add("cursor-enclosing");
+          if (!overHeader || directEnclose.closest('header, #site-header')) {
+            isSoftHover = false;
+            isDirectlyHovered = true;
+            circle.classList.remove("cursor-hidden", "cursor-soft");
+            circle.style.visibility = "visible";
+            circle.style.opacity = "1";
+            if (hoveredEncloseEl !== directEnclose) {
+              hoveredEncloseEl = directEnclose;
+              circle.classList.add("cursor-enclosing");
+            }
+            return;
           }
-          return;
         }
 
-        // PRIORITY 3: Direct hit on Soft Hover element (Header/Footer text links or Ritual card background)
+        // PRIORITY 4: Direct hit on Soft Hover element (Header/Footer text links or Ritual card background)
         const softTarget = target.closest(softLinksSelector) as HTMLElement | null;
         if (softTarget && !activeModal) {
           isDirectlyHovered = false;
-          isCardHover = false;
           circle.classList.remove("cursor-hidden");
-          circle.style.visibility = "visible";
           if (hoveredEncloseEl) {
             hoveredEncloseEl = null;
             circle.classList.remove("cursor-enclosing");
@@ -429,16 +499,11 @@ const {
           if (!isSoftHover) {
             isSoftHover = true;
             circle.classList.add("cursor-soft");
+            circle.style.visibility = "visible";
+            circle.style.opacity = "0.5";
           }
           return;
         }
-      }
-
-      if (isCardHover) {
-        isCardHover = false;
-        circle.classList.remove("cursor-hidden");
-        circle.style.visibility = "visible";
-        circle.style.opacity = "1";
       }
 
       if (isSoftHover) {
@@ -446,12 +511,14 @@ const {
         circle.classList.remove("cursor-soft");
       }
 
-      // PRIORITY 4: 100px Magnetic Attraction check
+      // Not directly on a card -> restore visibility
+      circle.classList.remove("cursor-hidden");
+
+      // PRIORITY 5: 100px Magnetic Attraction check (for buttons/inputs/icons/cards in proximity)
       const magneticTarget = findMagneticTarget(mouseX, mouseY, magneticProximity);
 
       if (magneticTarget) {
         isDirectlyHovered = false;
-        isCardHover = false;
         circle.classList.remove("cursor-hidden");
         circle.style.visibility = "visible";
         circle.style.opacity = "1";
@@ -463,6 +530,8 @@ const {
         isDirectlyHovered = false;
         hoveredEncloseEl = null;
         circle.classList.remove("cursor-enclosing");
+        circle.style.visibility = "visible";
+        circle.style.opacity = "1";
         circle.style.width = `${baseCircleSize}px`;
         circle.style.height = `${baseCircleSize}px`;
         circle.style.borderRadius = "9999px";
@@ -484,7 +553,6 @@ const {
       root.style.opacity = "0";
       hoveredEncloseEl = null;
       isDirectlyHovered = false;
-      isCardHover = false;
       isSoftHover = false;
       circle.classList.remove("cursor-enclosing", "cursor-soft", "cursor-active", "cursor-hidden");
       circle.style.width = `${baseCircleSize}px`;
@@ -500,11 +568,30 @@ const {
     // Smooth Trailing & Morphing loop
     function loop() {
       if (isVisible) {
-        if (isCardHover) {
+        // Enforce instant opacity / visibility state
+        if (circle.classList.contains("cursor-hidden")) {
           circle.style.opacity = "0";
           circle.style.visibility = "hidden";
-        } else if (hoveredEncloseEl && document.body.contains(hoveredEncloseEl) && isTargetActuallyVisible(hoveredEncloseEl)) {
-          const isRound = hoveredEncloseEl.matches(roundCircularSelector);
+        } else if (circle.classList.contains("cursor-soft")) {
+          circle.style.opacity = "0.5";
+          circle.style.visibility = "visible";
+        } else {
+          circle.style.opacity = "1";
+          circle.style.visibility = "visible";
+        }
+
+        if (hoveredEncloseEl && document.body.contains(hoveredEncloseEl) && isTargetActuallyVisible(hoveredEncloseEl)) {
+          // If mouse moved into the header and hovered element is not in the header, release it immediately
+          if (isMouseOverHeader(mouseX, mouseY) && !hoveredEncloseEl.closest('header, #site-header')) {
+            hoveredEncloseEl = null;
+            circle.classList.remove("cursor-enclosing");
+            circle.style.width = `${baseCircleSize}px`;
+            circle.style.height = `${baseCircleSize}px`;
+            circle.style.borderRadius = "9999px";
+            return;
+          }
+
+          const isRound = hoveredEncloseEl.matches(roundCircularSelector) && !hoveredEncloseEl.matches('#modal-wa-btn, .btn-outline, .btn-primary, .btn-ghost, .btn-shimmer, .btn-liquid, a[class*="btn-"], button[class*="btn-"]');
           const layout = getUntransformedLayout(hoveredEncloseEl);
 
           if (isDirectlyHovered) {

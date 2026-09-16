@@ -1,0 +1,489 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="Gestão de Produtos & Modais" sectionTitle="Catálogo Oficial de Poções" activePath="/admin/produtos">
+  
+  <!-- Barra de Ações Superiores -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-2 flex-wrap">
+      <div class="relative">
+        <input
+          type="text"
+          id="search-product"
+          placeholder="Buscar poção pelo nome ou sabor..."
+          class="bg-[var(--surface)] border border-[var(--gold)]/20 rounded-sm px-3.5 py-2 text-xs text-[var(--cream)] placeholder:text-[var(--cream)]/30 focus:border-[var(--gold)] outline-none w-64"
+        />
+      </div>
+
+      <select
+        id="filter-category"
+        class="bg-[var(--surface)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-xs text-[var(--cream)] focus:border-[var(--gold)] outline-none cursor-pointer"
+      >
+        <option value="todos">Todas as Categorias</option>
+        <option value="fino">Licores Finos</option>
+        <option value="cremoso">Licores Cremosos</option>
+        <option value="especial">Série Especial</option>
+      </select>
+    </div>
+
+    <button
+      id="btn-new-product"
+      type="button"
+      class="px-4 py-2 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm self-start sm:self-auto"
+    >
+      <span>+</span> Nova Poção
+    </button>
+  </div>
+
+  <!-- Tabela de Produtos Dark Luxury -->
+  <div class="border border-[var(--gold)]/15 bg-[var(--surface)]/70 rounded-md overflow-hidden backdrop-blur-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs text-[var(--cream)]/80">
+        <thead class="bg-[var(--surface-elevated)] border-b border-[var(--gold)]/15 text-[10px] uppercase font-display tracking-[0.2em] text-[var(--gold)]">
+          <tr>
+            <th class="py-3 px-4">Poção</th>
+            <th class="py-3 px-4">Categoria</th>
+            <th class="py-3 px-4">Preço</th>
+            <th class="py-3 px-4">Estoque</th>
+            <th class="py-3 px-4">Técnica (°GL / Brix)</th>
+            <th class="py-3 px-4">Status</th>
+            <th class="py-3 px-4 text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="products-table-body" class="divide-y divide-[var(--gold)]/10 font-sans">
+          <tr>
+            <td colspan="7" class="py-8 text-center text-xs text-[var(--cream)]/50 font-mono">
+              <span class="inline-block animate-spin mr-2">⚗</span> Consultando catálogo no Supabase...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Alquímico de Edição / Criação de Produto -->
+  <div id="product-modal-backdrop" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-[var(--surface)] border border-[var(--gold)]/30 w-full max-w-3xl rounded-md shadow-[0_0_50px_rgba(0,0,0,0.9)] relative my-8 max-h-[90vh] flex flex-col">
+      
+      <!-- Cabeçalho do Modal -->
+      <div class="px-6 py-4 border-b border-[var(--gold)]/15 flex items-center justify-between shrink-0 bg-[var(--surface-elevated)]">
+        <div>
+          <h3 id="modal-title" class="font-display text-base text-[var(--gold)] font-bold uppercase tracking-wider">
+            Editar Poção
+          </h3>
+          <p class="text-[10px] text-[var(--cream)]/50 font-mono">
+            Configurações vitais, estoque e ficha técnica do modal
+          </p>
+        </div>
+        <button id="btn-close-modal" class="text-[var(--cream)]/50 hover:text-[var(--gold)] text-lg p-1 cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <!-- Formulário com Scroll -->
+      <form id="product-form" class="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+        <input type="hidden" id="prod-id" name="id" />
+
+        <!-- Bloco 1: Identificação & Vitrine -->
+        <div>
+          <div class="font-display text-[11px] text-[var(--gold)] uppercase tracking-widest border-b border-[var(--gold)]/10 pb-1 mb-3 flex items-center gap-1.5 font-bold">
+            <span>🏺</span> Identificação do Produto
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="sm:col-span-2">
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Nome Oficial da Poção</label>
+              <input type="text" id="prod-nome" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: Poção da Prosperidade" />
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Sabor / Essência</label>
+              <input type="text" id="prod-sabor" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: Ouro (Fino)" />
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Categoria</label>
+              <select id="prod-categoria" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none">
+                <option value="fino">Fino</option>
+                <option value="cremoso">Cremoso</option>
+                <option value="especial">Especial</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Preço Oficial (R$)</label>
+              <input type="number" step="0.01" id="prod-preco" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="125.00" />
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Volume (ml)</label>
+              <input type="number" id="prod-volume" value="750" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 2: Gestão de Estoque & Integração -->
+        <div>
+          <div class="font-display text-[11px] text-[var(--gold)] uppercase tracking-widest border-b border-[var(--gold)]/10 pb-1 mb-3 flex items-center gap-1.5 font-bold">
+            <span>📦</span> Estoque & Logística
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Quantidade em Estoque</label>
+              <input type="number" id="prod-estoque" min="0" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" />
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Tipo de Controle</label>
+              <select id="prod-stock-control-type" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none">
+                <option value="manual">Manual (Painel Web)</option>
+                <option value="gerenciapp">Automático (GerenciApp)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Ordem na Vitrine</label>
+              <input type="number" id="prod-ordem" value="1" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" />
+            </div>
+          </div>
+          <div class="mt-3 flex items-center gap-2">
+            <input type="checkbox" id="prod-ativo" class="rounded border-[var(--gold)]/30 text-[var(--gold)] focus:ring-0 cursor-pointer" />
+            <label for="prod-ativo" class="text-xs text-[var(--cream)]/80 cursor-pointer select-none">
+              Produto Ativo (visível no catálogo e vitrines do site)
+            </label>
+          </div>
+        </div>
+
+        <!-- Bloco 3: Ficha Técnica Detalhada do Modal (ProductModal) -->
+        <div>
+          <div class="font-display text-[11px] text-[var(--gold)] uppercase tracking-widest border-b border-[var(--gold)]/10 pb-1 mb-3 flex items-center gap-1.5 font-bold">
+            <span>📜</span> Ficha Técnica do Modal do Produto
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Graduação Alcoólica (°GL)</label>
+              <input type="number" step="0.1" id="prod-graduacao" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: 27.5" />
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Densidade & Doçura (Brix)</label>
+              <input type="number" step="0.1" id="prod-brix" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: 32.0" />
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Notas Aromáticas & Perfil Sensorial</label>
+              <input type="text" id="prod-notas" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: Baunilha, especiarias nobres, canela e toques florais" />
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Ingredientes Alquímicos</label>
+              <textarea id="prod-ingredientes" rows="2" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: Álcool de cereais nobre, açúcar orgânico macerado, botânicos selecionados..."></textarea>
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Sugestões de Degustação & Rituais</label>
+              <textarea id="prod-sugestoes" rows="2" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: Servir bem gelado em taça de cristal entre 10°C e 15°C..."></textarea>
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Descrição Poética & Filosofia</label>
+              <textarea id="prod-descricao" rows="3" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Manifesto ou história por trás da criação desta poção..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 4: Fotos da Poção -->
+        <div>
+          <div class="font-display text-[11px] text-[var(--gold)] uppercase tracking-widest border-b border-[var(--gold)]/10 pb-1 mb-3 flex items-center gap-1.5 font-bold">
+            <span>🖼</span> Imagem de Capa do Produto
+          </div>
+          <div>
+            <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">URL Pública da Foto</label>
+            <input type="url" id="prod-foto-url" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none font-mono text-[11px]" placeholder="https://.../card.webp" />
+          </div>
+        </div>
+      </form>
+
+      <!-- Rodapé do Modal com Ações -->
+      <div class="px-6 py-4 border-t border-[var(--gold)]/15 flex items-center justify-end gap-3 shrink-0 bg-[var(--surface-elevated)]">
+        <button id="btn-cancel-modal" type="button" class="px-4 py-2 text-xs text-[var(--cream)]/60 hover:text-[var(--cream)] transition-colors cursor-pointer">
+          Cancelar
+        </button>
+        <button id="btn-save-product" type="button" class="px-5 py-2.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] transition-all cursor-pointer">
+          Salvar no Supabase
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Script de CRUD de Produtos integrado com Supabase -->
+  <script>
+    import { supabase } from "../../integrations/supabase/client";
+    import { POCOES_OFICIAIS, type Pocao } from "../../lib/data";
+
+    let allProducts: any[] = [];
+    let currentEditingProduct: any = null;
+
+    const tableBody = document.getElementById("products-table-body");
+    const searchInput = document.getElementById("search-product") as HTMLInputElement;
+    const filterCategory = document.getElementById("filter-category") as HTMLSelectElement;
+    const modalBackdrop = document.getElementById("product-modal-backdrop");
+    const modalTitle = document.getElementById("modal-title");
+    const btnNewProduct = document.getElementById("btn-new-product");
+    const btnCloseModal = document.getElementById("btn-close-modal");
+    const btnCancelModal = document.getElementById("btn-cancel-modal");
+    const btnSaveProduct = document.getElementById("btn-save-product");
+
+    // Formatador de Preço
+    function fmtBRL(val: number) {
+      return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val || 0);
+    }
+
+    async function fetchProducts() {
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .order("ordem", { ascending: true });
+
+        if (error || !data || data.length === 0) {
+          console.warn("Usando catálogo local em memória...");
+          allProducts = [...POCOES_OFICIAIS];
+        } else {
+          allProducts = data;
+        }
+      } catch (e) {
+        console.error("Falha ao buscar produtos:", e);
+        allProducts = [...POCOES_OFICIAIS];
+      }
+
+      renderTable();
+    }
+
+    function renderTable() {
+      if (!tableBody) return;
+
+      const q = searchInput?.value.toLowerCase().trim() || "";
+      const cat = filterCategory?.value || "todos";
+
+      const filtered = allProducts.filter((p) => {
+        const matchesQuery = p.nome.toLowerCase().includes(q) || (p.sabor && p.sabor.toLowerCase().includes(q));
+        const matchesCategory = cat === "todos" || p.categoria === cat;
+        return matchesQuery && matchesCategory;
+      });
+
+      if (filtered.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-8 text-center text-xs text-[var(--cream)]/40 font-mono">
+              Nenhuma poção encontrada com os filtros atuais.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tableBody.innerHTML = filtered.map((p) => {
+        const isZerado = p.estoque === 0 || p.estoque === "0";
+        const isGerenciApp = p.stock_control_type === "gerenciapp";
+
+        return `
+          <tr class="hover:bg-[var(--surface-elevated)]/50 transition-colors">
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-3">
+                <img 
+                  src="${p.foto_url || '/favicon.svg'}" 
+                  alt="${p.nome}" 
+                  class="w-10 h-10 object-contain rounded-sm border border-[var(--gold)]/20 bg-black/40 p-0.5" 
+                  onerror="this.src='/favicon.svg'"
+                />
+                <div>
+                  <div class="font-display font-bold text-[var(--cream)] text-xs">${p.nome}</div>
+                  <div class="text-[10px] text-[var(--gold)] font-mono">${p.sabor || '—'}</div>
+                </div>
+              </div>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="inline-block px-2 py-0.5 rounded-full text-[9px] uppercase font-mono tracking-wider ${
+                p.categoria === 'cremoso' 
+                  ? 'bg-amber-900/30 text-amber-300 border border-amber-500/20' 
+                  : p.categoria === 'especial'
+                  ? 'bg-purple-900/30 text-purple-300 border border-purple-500/20'
+                  : 'bg-yellow-900/30 text-yellow-300 border border-yellow-500/20'
+              }">
+                ${p.categoria}
+              </span>
+            </td>
+            <td class="py-3.5 px-4 font-mono text-[var(--cream)] font-medium">
+              ${fmtBRL(p.preco)}
+            </td>
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-2">
+                <span class="font-display font-bold ${isZerado ? 'text-red-400' : 'text-[var(--cream)]'}">
+                  ${p.estoque} un
+                </span>
+                ${isZerado ? '<span class="text-[9px] bg-red-950 text-red-300 border border-red-500/30 px-1 py-0.5 rounded">Esgotado</span>' : ''}
+                ${isGerenciApp ? '<span class="text-[9px] text-[var(--cream)]/40 font-mono" title="Sincronizado via GerenciApp">⚡ GerenciApp</span>' : ''}
+              </div>
+            </td>
+            <td class="py-3.5 px-4 font-mono text-[10px] text-[var(--cream)]/60">
+              ${p.graduacao_gl ?? '—'}°GL / ${p.brix ?? '—'} Brix
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="inline-flex items-center gap-1.5 text-[10px]">
+                <span class="w-2 h-2 rounded-full ${p.ativo !== false ? 'bg-emerald-500' : 'bg-zinc-600'}"></span>
+                <span>${p.ativo !== false ? 'Ativo' : 'Inativo'}</span>
+              </span>
+            </td>
+            <td class="py-3.5 px-4 text-right">
+              <button 
+                data-id="${p.id}" 
+                class="btn-edit-prod px-3 py-1.5 border border-[var(--gold)]/30 text-[var(--gold)] hover:bg-[var(--gold)] hover:text-black rounded-sm text-[10px] uppercase font-display tracking-widest transition-all cursor-pointer"
+              >
+                Editar
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      // Bind botões de edição
+      document.querySelectorAll(".btn-edit-prod").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          const id = (e.currentTarget as HTMLElement).getAttribute("data-id");
+          const prod = allProducts.find((p) => String(p.id) === String(id));
+          if (prod) openModal(prod);
+        });
+      });
+    }
+
+    function openModal(prod: any = null) {
+      currentEditingProduct = prod;
+      if (modalTitle) {
+        modalTitle.textContent = prod ? `Editar Poção: ${prod.nome}` : "Nova Poção Alquímica";
+      }
+
+      // Preenche os campos
+      (document.getElementById("prod-id") as HTMLInputElement).value = prod?.id || "";
+      (document.getElementById("prod-nome") as HTMLInputElement).value = prod?.nome || "";
+      (document.getElementById("prod-sabor") as HTMLInputElement).value = prod?.sabor || "";
+      (document.getElementById("prod-categoria") as HTMLSelectElement).value = prod?.categoria || "fino";
+      (document.getElementById("prod-preco") as HTMLInputElement).value = prod?.preco ? String(prod.preco) : "";
+      (document.getElementById("prod-volume") as HTMLInputElement).value = prod?.volume_ml ? String(prod.volume_ml) : "750";
+      (document.getElementById("prod-estoque") as HTMLInputElement).value = prod?.estoque !== undefined ? String(prod.estoque) : "10";
+      (document.getElementById("prod-stock-control-type") as HTMLSelectElement).value = prod?.stock_control_type || "manual";
+      (document.getElementById("prod-ordem") as HTMLInputElement).value = prod?.ordem !== undefined ? String(prod.ordem) : "1";
+      (document.getElementById("prod-ativo") as HTMLInputElement).checked = prod ? prod.ativo !== false : true;
+
+      // Ficha Técnica do Modal
+      (document.getElementById("prod-graduacao") as HTMLInputElement).value = prod?.graduacao_gl ? String(prod.graduacao_gl) : "";
+      (document.getElementById("prod-brix") as HTMLInputElement).value = prod?.brix ? String(prod.brix) : "";
+      (document.getElementById("prod-notas") as HTMLInputElement).value = prod?.notas_aromaticas || "";
+      (document.getElementById("prod-ingredientes") as HTMLTextAreaElement).value = prod?.ingredientes || "";
+      (document.getElementById("prod-sugestoes") as HTMLTextAreaElement).value = prod?.sugestoes || "";
+      (document.getElementById("prod-descricao") as HTMLTextAreaElement).value = prod?.descricao || "";
+      (document.getElementById("prod-foto-url") as HTMLInputElement).value = prod?.foto_url || "";
+
+      modalBackdrop?.classList.remove("hidden");
+      modalBackdrop?.classList.add("flex");
+    }
+
+    function closeModal() {
+      modalBackdrop?.classList.add("hidden");
+      modalBackdrop?.classList.remove("flex");
+      currentEditingProduct = null;
+    }
+
+    async function handleSave() {
+      const id = (document.getElementById("prod-id") as HTMLInputElement).value;
+      const nome = (document.getElementById("prod-nome") as HTMLInputElement).value.trim();
+      const sabor = (document.getElementById("prod-sabor") as HTMLInputElement).value.trim();
+      const categoria = (document.getElementById("prod-categoria") as HTMLSelectElement).value;
+      const preco = Number((document.getElementById("prod-preco") as HTMLInputElement).value);
+      const volume_ml = Number((document.getElementById("prod-volume") as HTMLInputElement).value) || 750;
+      const estoque = Number((document.getElementById("prod-estoque") as HTMLInputElement).value) || 0;
+      const stock_control_type = (document.getElementById("prod-stock-control-type") as HTMLSelectElement).value;
+      const ordem = Number((document.getElementById("prod-ordem") as HTMLInputElement).value) || 1;
+      const ativo = (document.getElementById("prod-ativo") as HTMLInputElement).checked;
+
+      const graduacao_gl = Number((document.getElementById("prod-graduacao") as HTMLInputElement).value) || 0;
+      const brix = Number((document.getElementById("prod-brix") as HTMLInputElement).value) || 0;
+      const notas_aromaticas = (document.getElementById("prod-notas") as HTMLInputElement).value.trim();
+      const ingredientes = (document.getElementById("prod-ingredientes") as HTMLTextAreaElement).value.trim();
+      const sugestoes = (document.getElementById("prod-sugestoes") as HTMLTextAreaElement).value.trim();
+      const descricao = (document.getElementById("prod-descricao") as HTMLTextAreaElement).value.trim();
+      const foto_url = (document.getElementById("prod-foto-url") as HTMLInputElement).value.trim();
+
+      if (!nome || isNaN(preco)) {
+        alert("Preencha ao menos o Nome e o Preço da poção.");
+        return;
+      }
+
+      const payload = {
+        nome,
+        sabor,
+        categoria,
+        preco,
+        volume_ml,
+        estoque,
+        stock_control_type,
+        ordem,
+        ativo,
+        graduacao_gl,
+        brix,
+        notas_aromaticas,
+        ingredientes,
+        sugestoes,
+        descricao,
+        foto_url: foto_url || undefined,
+      };
+
+      if (btnSaveProduct) btnSaveProduct.textContent = "Salvando...";
+
+      try {
+        if (id) {
+          // Atualiza produto existente
+          const { error } = await supabase.from("products").update(payload).eq("id", id);
+          if (error) throw error;
+          
+          // Atualiza localmente
+          const idx = allProducts.findIndex((p) => String(p.id) === String(id));
+          if (idx >= 0) allProducts[idx] = { ...allProducts[idx], ...payload };
+        } else {
+          // Cria novo produto
+          const newId = "pocao-" + Date.now();
+          const { error } = await supabase.from("products").insert({ ...payload, id: newId });
+          if (error) throw error;
+          allProducts.push({ ...payload, id: newId });
+        }
+
+        alert("Poção e dados do modal salvos com sucesso no Supabase!");
+        closeModal();
+        renderTable();
+      } catch (err: any) {
+        console.error("Erro ao salvar:", err);
+        alert("Aviso: " + (err.message || "Não foi possível conectar com o Supabase. Atualizado localmente na interface."));
+        
+        // Aplica localmente para não frustrar o usuário durante o setup
+        if (id) {
+          const idx = allProducts.findIndex((p) => String(p.id) === String(id));
+          if (idx >= 0) allProducts[idx] = { ...allProducts[idx], ...payload };
+        } else {
+          allProducts.push({ ...payload, id: "pocao-" + Date.now() });
+        }
+        closeModal();
+        renderTable();
+      } finally {
+        if (btnSaveProduct) btnSaveProduct.textContent = "Salvar no Supabase";
+      }
+    }
+
+    btnNewProduct?.addEventListener("click", () => openModal(null));
+    btnCloseModal?.addEventListener("click", closeModal);
+    btnCancelModal?.addEventListener("click", closeModal);
+    btnSaveProduct?.addEventListener("click", handleSave);
+
+    searchInput?.addEventListener("input", renderTable);
+    filterCategory?.addEventListener("change", renderTable);
+
+    // Carrega dados iniciais
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fetchProducts);
+    } else {
+      fetchProducts();
+    }
+  </script>
+</AdminLayout>

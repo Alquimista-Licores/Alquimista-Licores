@@ -14,7 +14,7 @@ const hasPrep = needsPrep(p);
 ---
 
 <div
-  class="product-card group relative flex flex-col md:block aspect-auto md:aspect-[3/4] bg-[var(--surface)] border border-[rgba(178,140,70,0.2)] rounded-md overflow-hidden transition-all duration-300 hover:border-[#B28C46] cursor-pointer select-none"
+  class="product-card group relative flex flex-col md:block aspect-auto md:aspect-[4/5] bg-[var(--surface)] border border-[rgba(178,140,70,0.2)] rounded-md overflow-hidden hover:border-[#B28C46] cursor-pointer select-none"
   data-product={JSON.stringify(p)}
 >
   <!-- Dynamic Glare Light on Hover -->
@@ -22,7 +22,7 @@ const hasPrep = needsPrep(p);
 
   <!-- IMAGE LAYER -->
   <div
-    class={`relative w-full aspect-square md:absolute md:inset-x-0 md:top-0 md:h-[62%] md:aspect-auto md:w-auto bg-gradient-to-b from-[var(--surface-elevated)] to-[var(--background)] overflow-hidden transition-[height,opacity] duration-700 ease-out md:group-hover:h-full md:group-hover:opacity-35 ${
+    class={`relative w-full aspect-square md:absolute md:inset-x-0 md:top-0 md:h-[70%] md:aspect-auto md:w-auto bg-gradient-to-b from-[var(--surface-elevated)] to-[var(--background)] overflow-hidden transition-[height,opacity] duration-700 ease-out md:group-hover:h-full md:group-hover:opacity-35 ${
       isOutOfStock ? "opacity-80" : ""
     }`}
   >
@@ -91,12 +91,12 @@ const hasPrep = needsPrep(p);
   </div>
 
   <!-- DESKTOP: Bottom Info Layer -->
-  <div class="hidden md:block absolute inset-x-0 bottom-0 p-5 bg-[var(--surface)] transition-colors duration-700 md:group-hover:bg-transparent">
+  <div class="hidden md:block absolute inset-x-0 bottom-0 p-4 pt-2.5 bg-[var(--surface)] transition-colors duration-700 md:group-hover:bg-transparent">
     <h3 class="font-display font-semibold text-base lg:text-lg text-[var(--gold)] tracking-wider leading-tight">
       {p.nome}
     </h3>
-    <div class="font-serif italic text-base text-[var(--gold-soft)] mt-1.5 font-medium">{p.sabor}</div>
-    <div class="flex items-end justify-between mt-3 pt-3 border-t border-[var(--gold)]/15">
+    <div class="font-serif italic text-sm text-[var(--gold-soft)] mt-0.5 font-medium">{p.sabor}</div>
+    <div class="flex items-end justify-between mt-2 pt-2 border-t border-[var(--gold)]/15">
       <div class="font-display font-bold text-lg lg:text-xl text-[var(--gold)]">{fmtPrice(p.preco)}</div>
       {!isOutOfStock && (
         <button
@@ -118,9 +118,11 @@ const hasPrep = needsPrep(p);
     transform-style: preserve-3d;
     perspective: 900px;
     will-change: transform, box-shadow, border-color;
+    transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.35s ease;
   }
   .product-card:hover {
     border-color: #B28C46 !important;
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0s !important;
   }
   .product-card .product-img {
     will-change: transform;
@@ -170,7 +172,8 @@ const hasPrep = needsPrep(p);
 
       function onMouseEnter() {
         card.style.borderColor = "#B28C46";
-        card.style.transition = "transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.3s ease";
+        card.style.boxShadow = "0 0 18px rgba(178, 140, 70, 0.42)";
+        card.style.transition = "transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0s";
         if (img) img.style.transition = "transform 0.12s ease-out";
       }
 

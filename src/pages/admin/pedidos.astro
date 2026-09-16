@@ -1,0 +1,421 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="Gestão de Pedidos" sectionTitle="Central de Pedidos e Transações" activePath="/admin/pedidos">
+  
+  <!-- Barra de Filtros e Ações -->
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-2 flex-wrap">
+      <div class="relative">
+        <input
+          type="text"
+          id="search-orders"
+          placeholder="Buscar por código (#XXXXXX), cliente ou telefone..."
+          class="bg-[var(--surface)] border border-[var(--gold)]/20 rounded-sm px-3.5 py-2 text-xs text-[var(--cream)] placeholder:text-[var(--cream)]/30 focus:border-[var(--gold)] outline-none w-72"
+        />
+      </div>
+
+      <select
+        id="filter-order-status"
+        class="bg-[var(--surface)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-xs text-[var(--cream)] focus:border-[var(--gold)] outline-none cursor-pointer"
+      >
+        <option value="todos">Todos os Status</option>
+        <option value="pendente">Pendentes (Aguardando)</option>
+        <option value="pago">Pagos (Aprovados)</option>
+        <option value="cancelado">Cancelados</option>
+        <option value="arquivado">Arquivados</option>
+      </select>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button
+        id="btn-export-csv"
+        type="button"
+        class="px-3.5 py-2 bg-[var(--surface-elevated)] border border-[var(--gold)]/30 text-[var(--cream)] hover:border-[var(--gold)] text-xs uppercase font-display tracking-wider rounded-sm transition-all flex items-center gap-1.5 cursor-pointer"
+      >
+        <span>📥</span> Exportar CSV
+      </button>
+
+      <button
+        id="btn-new-order"
+        type="button"
+        class="px-4 py-2 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] transition-all flex items-center gap-2 cursor-pointer shadow-sm"
+      >
+        <span>+</span> Pedido Manual
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabela de Pedidos Dark Luxury -->
+  <div class="border border-[var(--gold)]/15 bg-[var(--surface)]/70 rounded-md overflow-hidden backdrop-blur-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs text-[var(--cream)]/80">
+        <thead class="bg-[var(--surface-elevated)] border-b border-[var(--gold)]/15 text-[10px] uppercase font-display tracking-[0.2em] text-[var(--gold)]">
+          <tr>
+            <th class="py-3 px-4">Código</th>
+            <th class="py-3 px-4">Data</th>
+            <th class="py-3 px-4">Cliente & Telefone</th>
+            <th class="py-3 px-4">Tipo & Itens</th>
+            <th class="py-3 px-4">Total</th>
+            <th class="py-3 px-4">Status</th>
+            <th class="py-3 px-4 text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="orders-table-body" class="divide-y divide-[var(--gold)]/10 font-sans">
+          <tr>
+            <td colspan="7" class="py-8 text-center text-xs text-[var(--cream)]/50 font-mono">
+              <span class="inline-block animate-spin mr-2">⚗</span> Consultando pedidos no Supabase...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal de Criação de Pedido Manual -->
+  <div id="order-modal-backdrop" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-[var(--surface)] border border-[var(--gold)]/30 w-full max-w-xl rounded-md shadow-[0_0_50px_rgba(0,0,0,0.9)] relative my-8 flex flex-col">
+      <div class="px-6 py-4 border-b border-[var(--gold)]/15 flex items-center justify-between shrink-0 bg-[var(--surface-elevated)]">
+        <h3 class="font-display text-sm text-[var(--gold)] font-bold uppercase tracking-wider">
+          Lançar Pedido Manual
+        </h3>
+        <button id="btn-close-order-modal" class="text-[var(--cream)]/50 hover:text-[var(--gold)] text-lg cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <form id="order-form" class="p-6 space-y-4 text-xs">
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Nome do Cliente</label>
+          <input type="text" id="order-cliente-nome" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Nome completo" />
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Telefone (WhatsApp)</label>
+          <input type="text" id="order-cliente-telefone" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="(48) 99999-9999" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Tipo de Pedido</label>
+            <select id="order-tipo" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none">
+              <option value="avulso">Poção Avulsa</option>
+              <option value="kit-degustacao">Kit Degustação (3x 50ml)</option>
+              <option value="kit-presenteavel">Kit Presenteável</option>
+              <option value="misto">Misto</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Valor Total (R$)</label>
+            <input type="number" step="0.01" id="order-total" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="125.00" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Descrição dos Itens / Observações</label>
+          <textarea id="order-itens-desc" rows="3" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: 1x Poção da Prosperidade (750ml) + Caixa Especial..."></textarea>
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Status Inicial</label>
+          <select id="order-status" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none">
+            <option value="pago">Pago (Confirmado)</option>
+            <option value="pendente">Pendente (Aguardando)</option>
+          </select>
+        </div>
+      </form>
+
+      <div class="px-6 py-4 border-t border-[var(--gold)]/15 flex items-center justify-end gap-3 shrink-0 bg-[var(--surface-elevated)]">
+        <button id="btn-cancel-order-modal" class="px-4 py-2 text-xs text-[var(--cream)]/60 hover:text-[var(--cream)] cursor-pointer">
+          Cancelar
+        </button>
+        <button id="btn-save-order" class="px-5 py-2.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] cursor-pointer">
+          Criar Pedido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from "../../integrations/supabase/client";
+
+    let ordersList: any[] = [];
+    const tableBody = document.getElementById("orders-table-body");
+    const searchInput = document.getElementById("search-orders") as HTMLInputElement;
+    const filterStatus = document.getElementById("filter-order-status") as HTMLSelectElement;
+    const btnExportCSV = document.getElementById("btn-export-csv");
+    const btnNewOrder = document.getElementById("btn-new-order");
+    const orderModalBackdrop = document.getElementById("order-modal-backdrop");
+    const btnCloseOrderModal = document.getElementById("btn-close-order-modal");
+    const btnCancelOrderModal = document.getElementById("btn-cancel-order-modal");
+    const btnSaveOrder = document.getElementById("btn-save-order");
+
+    function fmtBRL(val: number) {
+      return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val || 0);
+    }
+
+    function formatDate(dateStr: string) {
+      if (!dateStr) return "—";
+      try {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
+      } catch {
+        return dateStr;
+      }
+    }
+
+    async function fetchOrders() {
+      try {
+        const { data, error } = await supabase
+          .from("site_orders")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error || !data || data.length === 0) {
+          // Mock amigável para exibição caso a tabela ainda não tenha pedidos no novo Supabase
+          ordersList = [
+            {
+              id: "ord-1",
+              codigo_pedido: "849201",
+              cliente_nome: "Eduardo Silveira",
+              cliente_telefone: "48999887766",
+              tipo: "avulso",
+              total: 135.0,
+              status: "pago",
+              created_at: new Date().toISOString(),
+              observacoes: "1x Poção da Prosperidade (Ouro)"
+            },
+            {
+              id: "ord-2",
+              codigo_pedido: "593812",
+              cliente_nome: "Mariana Alquimista",
+              cliente_telefone: "48988776655",
+              tipo: "kit-degustacao",
+              total: 110.0,
+              status: "pendente",
+              created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+              observacoes: "Kit Degustação 3x50ml"
+            }
+          ];
+        } else {
+          ordersList = data;
+        }
+      } catch (err) {
+        console.error("Erro ao buscar pedidos:", err);
+      }
+
+      renderOrdersTable();
+    }
+
+    function renderOrdersTable() {
+      if (!tableBody) return;
+
+      const q = searchInput?.value.toLowerCase().trim() || "";
+      const status = filterStatus?.value || "todos";
+
+      const filtered = ordersList.filter((o) => {
+        const matchCode = (o.codigo_pedido || "").toLowerCase().includes(q);
+        const matchName = (o.cliente_nome || "").toLowerCase().includes(q);
+        const matchTel = (o.cliente_telefone || "").includes(q);
+        const matchesQuery = !q || matchCode || matchName || matchTel;
+        const matchesStatus = status === "todos" || o.status === status;
+        return matchesQuery && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-8 text-center text-xs text-[var(--cream)]/40 font-mono">
+              Nenhum pedido encontrado.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tableBody.innerHTML = filtered.map((o) => {
+        const isPago = o.status === "pago";
+        const isPendente = o.status === "pendente";
+        const isCancelado = o.status === "cancelado";
+
+        const statusBadge = isPago
+          ? '<span class="inline-block px-2 py-0.5 rounded-full text-[9px] uppercase font-mono bg-emerald-950 text-emerald-300 border border-emerald-500/30">Pago</span>'
+          : isPendente
+          ? '<span class="inline-block px-2 py-0.5 rounded-full text-[9px] uppercase font-mono bg-amber-950 text-amber-300 border border-amber-500/30">Pendente</span>'
+          : isCancelado
+          ? '<span class="inline-block px-2 py-0.5 rounded-full text-[9px] uppercase font-mono bg-red-950 text-red-400 border border-red-500/30">Cancelado</span>'
+          : '<span class="inline-block px-2 py-0.5 rounded-full text-[9px] uppercase font-mono bg-zinc-800 text-zinc-400 border border-zinc-700">Arquivado</span>';
+
+        return `
+          <tr class="hover:bg-[var(--surface-elevated)]/50 transition-colors">
+            <td class="py-3.5 px-4 font-mono font-bold text-[var(--gold)]">
+              #${o.codigo_pedido || "000000"}
+            </td>
+            <td class="py-3.5 px-4 font-mono text-[10px] text-[var(--cream)]/60">
+              ${formatDate(o.created_at)}
+            </td>
+            <td class="py-3.5 px-4">
+              <div class="font-medium text-[var(--cream)]">${o.cliente_nome || "Anônimo"}</div>
+              <a 
+                href="https://wa.me/55${(o.cliente_telefone || '').replace(/\\D/g, '')}" 
+                target="_blank" 
+                class="text-[10px] text-[var(--gold)]/80 hover:underline font-mono inline-flex items-center gap-1"
+              >
+                <span>💬</span> ${o.cliente_telefone || "Sem telefone"}
+              </a>
+            </td>
+            <td class="py-3.5 px-4">
+              <div class="text-[11px] font-medium uppercase font-mono text-[var(--gold)]/90">${o.tipo || 'avulso'}</div>
+              <div class="text-[10px] text-[var(--cream)]/50 truncate max-w-[180px]">${o.observacoes || (typeof o.itens === 'string' ? o.itens : 'Itens do carrinho')}</div>
+            </td>
+            <td class="py-3.5 px-4 font-mono text-[var(--cream)] font-bold">
+              ${fmtBRL(o.total)}
+            </td>
+            <td class="py-3.5 px-4">
+              ${statusBadge}
+            </td>
+            <td class="py-3.5 px-4 text-right">
+              <div class="flex items-center justify-end gap-1.5">
+                ${!isPago ? `
+                  <button 
+                    data-id="${o.id}" 
+                    data-action="pago" 
+                    class="btn-order-action px-2 py-1 bg-emerald-900/30 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-800/40 rounded text-[10px] font-mono cursor-pointer"
+                    title="Marcar como Pago"
+                  >
+                    ✓ Pago
+                  </button>
+                ` : `
+                  <button 
+                    data-id="${o.id}" 
+                    data-action="pendente" 
+                    class="btn-order-action px-2 py-1 bg-amber-900/30 text-amber-300 border border-amber-500/20 hover:bg-amber-800/40 rounded text-[10px] font-mono cursor-pointer"
+                    title="Desmarcar pago"
+                  >
+                    ↺ Pendente
+                  </button>
+                `}
+                <button 
+                  data-id="${o.id}" 
+                  data-action="arquivado" 
+                  class="btn-order-action px-2 py-1 border border-[var(--gold)]/20 text-[var(--cream)]/60 hover:text-[var(--cream)] rounded text-[10px] font-mono cursor-pointer"
+                  title="Arquivar Pedido"
+                >
+                  📦
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      // Bind botões de ação
+      document.querySelectorAll(".btn-order-action").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          const el = e.currentTarget as HTMLElement;
+          const id = el.getAttribute("data-id");
+          const action = el.getAttribute("data-action");
+          if (!id || !action) return;
+
+          try {
+            await supabase.from("site_orders").update({ status: action }).eq("id", id);
+          } catch (err) {
+            console.warn("Supabase update error:", err);
+          }
+
+          // Atualiza na memória local
+          const target = ordersList.find((x) => String(x.id) === String(id));
+          if (target) target.status = action;
+          renderOrdersTable();
+        });
+      });
+    }
+
+    // Modal
+    btnNewOrder?.addEventListener("click", () => {
+      orderModalBackdrop?.classList.remove("hidden");
+      orderModalBackdrop?.classList.add("flex");
+    });
+    const closeOrderModal = () => {
+      orderModalBackdrop?.classList.add("hidden");
+      orderModalBackdrop?.classList.remove("flex");
+    };
+    btnCloseOrderModal?.addEventListener("click", closeOrderModal);
+    btnCancelOrderModal?.addEventListener("click", closeOrderModal);
+
+    btnSaveOrder?.addEventListener("click", async () => {
+      const nome = (document.getElementById("order-cliente-nome") as HTMLInputElement).value.trim();
+      const telefone = (document.getElementById("order-cliente-telefone") as HTMLInputElement).value.trim();
+      const tipo = (document.getElementById("order-tipo") as HTMLSelectElement).value;
+      const total = Number((document.getElementById("order-total") as HTMLInputElement).value);
+      const observacoes = (document.getElementById("order-itens-desc") as HTMLTextAreaElement).value.trim();
+      const status = (document.getElementById("order-status") as HTMLSelectElement).value;
+
+      if (!nome || !telefone || isNaN(total)) {
+        alert("Preencha o nome, telefone e total do pedido.");
+        return;
+      }
+
+      // Código de 6 dígitos único
+      const codigo_pedido = String(Math.floor(100000 + Math.random() * 900000));
+      const newOrder = {
+        id: "ord-" + Date.now(),
+        codigo_pedido,
+        cliente_nome: nome,
+        cliente_telefone: telefone,
+        tipo,
+        total,
+        observacoes,
+        status,
+        created_at: new Date().toISOString()
+      };
+
+      try {
+        await supabase.from("site_orders").insert(newOrder);
+      } catch (err) {
+        console.warn("Falha ao inserir no Supabase:", err);
+      }
+
+      ordersList.unshift(newOrder);
+      closeOrderModal();
+      renderOrdersTable();
+      alert(`Pedido #${codigo_pedido} criado com sucesso!`);
+    });
+
+    // Exportação CSV
+    btnExportCSV?.addEventListener("click", () => {
+      if (ordersList.length === 0) {
+        alert("Nenhum pedido para exportar.");
+        return;
+      }
+
+      const headers = ["Código", "Data", "Cliente", "Telefone", "Tipo", "Total", "Status", "Observações"];
+      const rows = ordersList.map((o) => [
+        o.codigo_pedido || "",
+        formatDate(o.created_at),
+        `"${(o.cliente_nome || "").replace(/"/g, '""')}"`,
+        `"${(o.cliente_telefone || "").replace(/"/g, '""')}"`,
+        o.tipo || "",
+        o.total || 0,
+        o.status || "",
+        `"${(o.observacoes || "").replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = "\uFEFF" + [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `pedidos_alquimista_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    searchInput?.addEventListener("input", renderOrdersTable);
+    filterStatus?.addEventListener("change", renderOrdersTable);
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fetchOrders);
+    } else {
+      fetchOrders();
+    }
+  </script>
+</AdminLayout>

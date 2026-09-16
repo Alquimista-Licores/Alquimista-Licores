@@ -1,29 +1,51 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
-import Badge from '../components/Badge.astro';
 
 const SECTIONS = [
   {
-    title: "A Origem do Fogo",
-    text: "Tudo começou com uma curiosidade genuína: como frutas, ervas e especiarias poderiam se transformar em algo que acolhe a alma? Na cozinha de casa, com um caderno de anotações e muita paciência, nasceram os primeiros experimentos.",
+    title: "A ORIGEM",
+    paragraphs: [
+      "Tudo começou em 2016, com um pacote de jabuticabas e uma pergunta simples: o que fazer com elas?",
+      "A busca por uma resposta levou ao primeiro licor. Vieram os primeiros testes, outros sabores e, pouco a pouco, uma ideia simples começou a ganhar forma.",
+      "Da vontade de misturar ingredientes, experimentar e criar algo diferente nasceu Alquimista, e com ela, um universo inteiro de poções.",
+    ],
     image: "/assets/sobre-origem.jpg",
-    alt: "Ingredientes naturais e preparo artesanal",
+    alt: "A Origem da Alquimista",
     reverse: false,
   },
   {
-    title: "O Tempo como Ingrediente",
-    text: "Não usamos atalhos. Cada poção passa por semanas — às vezes meses — de maceração e maturação lenta. O tempo não é um detalhe; é o ingrediente principal que extrai a essência pura de cada elemento.",
-    image: "/assets/sobre-tempo.jpg",
-    alt: "Garrafas e processo de maceração",
+    title: "A FILOSOFIA",
+    paragraphs: [
+      "Para nós, qualidade não está apenas no que existe dentro da garrafa. Está em todo o caminho até ela chegar às suas mãos.",
+      "Na escolha dos ingredientes, no tempo de cada processo, na criação de cada receita, no acabamento e na apresentação.",
+      "É por isso que fazemos com calma. E fazemos com alma.",
+      "Feito com (C)alma.",
+    ],
+    image: "/assets/sobre-filosofia.jpg",
+    alt: "A Filosofia da Alquimista",
     reverse: true,
   },
   {
-    title: "Feito à Mão, em Pequenos Lotes",
-    text: "Produzimos em escala humana, em Criciúma/SC. Cada garrafa é envasada, rotulada e finalizada manualmente pelo próprio Alquimista. É assim que garantimos que nenhuma garrafa seja apenas mais uma.",
-    image: "/assets/sobre-artesanal.jpg",
-    alt: "Produção artesanal em pequenos lotes",
+    title: "O PROCESSO",
+    paragraphs: [
+      "Cada poção é produzida artesanalmente, em pequenos lotes e sem atalhos. Respeitamos o tempo de cada preparo e utilizamos ingredientes selecionados, sem corantes, conservantes ou aditivos artificiais.",
+      "O sabor, a cor e o aroma vêm dos próprios ingredientes.",
+    ],
+    image: "/assets/sobre-processo.jpg",
+    alt: "O Processo da Alquimista",
     reverse: false,
+  },
+  {
+    title: "O CICLO",
+    paragraphs: [
+      "Transformar também significa reaproveitar.",
+      "Sempre que atendem aos nossos padrões de conservação, higienização e apresentação, garrafas ganham um novo ciclo dentro da Alquimista.",
+      "Uma escolha que reduz desperdícios e combina com aquilo em que acreditamos: aproveitar melhor os elementos que já temos antes de buscar novos.",
+    ],
+    image: "/assets/sobre-ciclo.jpg",
+    alt: "O Ciclo da Alquimista",
+    reverse: true,
   },
 ];
 ---
@@ -35,40 +57,26 @@ const SECTIONS = [
   <div class="relative overflow-hidden">
     <!-- GLOWING ORBS IN BACKGROUND -->
     <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      <div class="absolute top-[10%] left-[15%] w-96 h-96 rounded-full bg-[var(--gold)]/10 blur-3xl"></div>
-      <div class="absolute top-[45%] right-[10%] w-[30rem] h-[30rem] rounded-full bg-[var(--amber-warm)]/10 blur-3xl"></div>
-      <div class="absolute top-[80%] left-[20%] w-96 h-96 rounded-full bg-[var(--gold)]/10 blur-3xl"></div>
+      <div class="absolute top-[8%] left-[15%] w-96 h-96 rounded-full bg-[var(--gold)]/10 blur-3xl"></div>
+      <div class="absolute top-[35%] right-[10%] w-[30rem] h-[30rem] rounded-full bg-[var(--amber-warm)]/10 blur-3xl"></div>
+      <div class="absolute top-[65%] left-[10%] w-96 h-96 rounded-full bg-[var(--gold)]/10 blur-3xl"></div>
     </div>
 
     <div class="max-w-6xl mx-auto px-6 pb-24 relative">
-      <PageHeader
-        title="O Alquimista"
-        subtitle="Ingredientes simples atravessando o ritual da transformação."
-      />
-
-      <!-- PROCESS PILLS -->
-      <div class="flex flex-wrap justify-center items-center gap-3 mt-4 mb-12">
-        <Badge variant="gold" symbol="🜚" tooltip="100% botânicos e ingredientes naturais">
-          100% Orgânico
-        </Badge>
-        <Badge variant="dark" symbol="⚗" tooltip="Infusão de 40 dias sem aceleradores químicos">
-          Maceração 40 Dias
-        </Badge>
-        <Badge variant="gold" symbol="👑" tooltip="Feito à mão em pequenos lotes numerados">
-          Selo Real
-        </Badge>
-        <Badge variant="dark" symbol="❖" tooltip="Criciúma — Serra Catarinense">
-          Serra Catarinense
-        </Badge>
+      <div class="sobre-reveal">
+        <PageHeader
+          title="O Alquimista"
+          subtitle="Ingredientes simples atravessando o ritual da transformação."
+        />
       </div>
 
       <!-- STORY SECTIONS / JORNADA -->
-      <div id="jornada" class="space-y-24 md:space-y-36 mt-8 scroll-mt-28">
+      <div id="jornada" class="space-y-24 md:space-y-36 mt-14 scroll-mt-28">
         {SECTIONS.map((s) => (
           <div class={`flex flex-col ${s.reverse ? "md:flex-row-reverse" : "md:flex-row"} gap-10 md:gap-16 items-center`}>
             <!-- VISUAL -->
-            <div class="w-full md:w-1/2">
-              <div class="overflow-hidden rounded-sm border border-[var(--gold)]/20 gold-glow bg-[var(--surface-elevated)] group">
+            <div class="w-full md:w-1/2 sobre-reveal">
+              <div class="overflow-hidden rounded-md group">
                 <img
                   src={s.image}
                   alt={s.alt}
@@ -80,36 +88,103 @@ const SECTIONS = [
             </div>
 
             <!-- TEXT -->
-            <div class="w-full md:w-1/2 space-y-4 text-center md:text-left">
-              <h2 class="text-3xl md:text-4xl text-[var(--gold)] tracking-wide font-medium">
+            <div class="w-full md:w-1/2 space-y-4 text-center md:text-left sobre-reveal sobre-delay-1">
+              <h2 class="text-3xl md:text-4xl text-[var(--gold)] tracking-wide font-display font-medium">
                 {s.title}
               </h2>
-              <p class="font-body text-base md:text-lg leading-relaxed text-[var(--cream)]/90">
-                {s.text}
-              </p>
+              <div class="space-y-3 font-body text-base md:text-lg leading-relaxed text-[var(--cream)]/90">
+                {s.paragraphs.map((p) => (
+                  <p class={p === "Feito com (C)alma." ? "font-serif italic text-lg md:text-xl text-[var(--gold-soft)] pt-1" : ""}>
+                    {p}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <!-- CENTERED HIGHLIGHT -->
-      <div class="mt-28 md:mt-36 text-center">
-        <div class="inline-block px-12 py-8 border border-[var(--gold)]/30 bg-[var(--surface)]/70 rounded-sm gold-glow">
-          <p class="font-display text-3xl md:text-5xl text-[#D9C9B0] tracking-wider font-medium">
-            Feito com (c)alma.
-          </p>
-        </div>
-      </div>
-
       <!-- FINAL MANIFESTO -->
-      <div class="mt-20 md:mt-28 mb-16 text-center max-w-3xl mx-auto">
-        <div class="text-[var(--gold)]/50 text-2xl mb-6 font-serif">✦</div>
-        <p class="font-sans italic text-lg md:text-2xl text-[var(--cream)]/90 leading-relaxed">
-          <span class="text-[var(--gold)] text-3xl font-serif leading-none mr-1">“</span>
-          No fim, talvez a alquimia não esteja na busca pelo ouro, mas na capacidade de transformar ingredientes simples em experiências memoráveis.
-          <span class="text-[var(--gold)] text-3xl font-serif leading-none ml-1">”</span>
+      <div class="mt-20 md:mt-28 mb-16 text-center max-w-2xl mx-auto sobre-reveal">
+        <div class="text-[var(--gold)]/50 text-xl mb-4 font-serif">✦</div>
+        <p class="font-sans italic text-base md:text-xl text-[var(--cream)]/90 leading-relaxed">
+          <span class="text-[var(--gold)] text-2xl font-serif leading-none mr-1">“</span>
+          No fim, talvez a alquimia não esteja na busca pelo ouro,<br class="hidden sm:inline" />
+          mas na capacidade de transformar ingredientes simples<br class="hidden sm:inline" />
+          em experiências memoráveis.
+          <span class="text-[var(--gold)] text-2xl font-serif leading-none ml-1">”</span>
         </p>
       </div>
     </div>
   </div>
 </Layout>
+
+<style>
+  .sobre-reveal {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translateY(32px) scale(0.98);
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, filter, transform;
+  }
+
+  .sobre-reveal.is-revealed {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0) scale(1);
+  }
+
+  .sobre-delay-1 {
+    transition-delay: 120ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sobre-reveal {
+      opacity: 1 !important;
+      filter: none !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  function initSobreReveal() {
+    const reveals = document.querySelectorAll('.sobre-reveal');
+    if (!reveals.length) return;
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '0px 0px -40px 0px',
+        }
+      );
+
+      reveals.forEach((el) => {
+        // If element is already within viewport on initial load, reveal immediately
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add('is-revealed');
+        } else {
+          observer.observe(el);
+        }
+      });
+    } else {
+      reveals.forEach((el) => el.classList.add('is-revealed'));
+    }
+  }
+
+  initSobreReveal();
+  document.addEventListener('astro:page-load', initSobreReveal);
+</script>
