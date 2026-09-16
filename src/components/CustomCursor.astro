@@ -227,28 +227,35 @@ const {
 
     // Helper to detect if an overlay/modal (Cart Drawer, Product Modal, Admin Modals, Dialogs) is currently active/open
     function getActiveOverlayOrModal(): HTMLElement | null {
-      const modalSelectors = [
-        "#cart-drawer-overlay:not(.hidden)",
-        "#cart-drawer-panel",
-        "#product-modal-container:not(.hidden)",
-        "#age-gate:not(.hidden)",
-        "[id^='modal-']:not(.hidden)",
-        "[id$='-modal']:not(.hidden)",
-        ".modal:not(.hidden):not([style*='display: none'])",
-        ".modal.is-active",
-        "dialog[open]",
-        "[role='dialog']:not(.hidden)",
-        ".fixed.inset-0.z-50:not(.hidden)",
-        ".fixed.inset-0.z-\\[100\\]:not(.hidden)"
-      ];
+      // 1. Cart Drawer
+      const cartOverlay = document.getElementById("cart-drawer-overlay");
+      if (cartOverlay && !cartOverlay.classList.contains("hidden") && window.getComputedStyle(cartOverlay).display !== "none") {
+        return cartOverlay;
+      }
 
-      for (let i = 0; i < modalSelectors.length; i++) {
-        const el = document.querySelector<HTMLElement>(modalSelectors[i]);
-        if (el) {
-          const style = window.getComputedStyle(el);
-          if (style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0") {
-            return el;
-          }
+      // 2. Product Modal
+      const productModal = document.getElementById("product-modal-container");
+      if (productModal && !productModal.classList.contains("hidden") && window.getComputedStyle(productModal).display !== "none") {
+        return productModal;
+      }
+
+      // 3. Age Gate
+      const ageGate = document.getElementById("age-gate");
+      if (ageGate && !ageGate.classList.contains("hidden") && window.getComputedStyle(ageGate).display !== "none") {
+        return ageGate;
+      }
+
+      // 4. Any active open admin or generic modal
+      const potentialModals = document.querySelectorAll<HTMLElement>(
+        "[id^='modal-']:not(#modal-close-desktop):not(#modal-close-mobile):not(#modal-qty-minus):not(#modal-qty-plus):not(#modal-wa-btn), [id$='-modal'], .modal, dialog[open], [role='dialog']"
+      );
+
+      for (let i = 0; i < potentialModals.length; i++) {
+        const el = potentialModals[i];
+        if (el.classList.contains("hidden")) continue;
+        const style = window.getComputedStyle(el);
+        if (style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0") {
+          return el;
         }
       }
 

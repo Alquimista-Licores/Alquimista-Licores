@@ -338,7 +338,7 @@ npm run build
 
 ### [16/09/2026] — Estilização dos Campos Preenchíveis & Isolamento de Modais no Cursor
 - **Campos Preenchíveis em Cinza Chumbo Profundo:** Adicionadas regras globais em [`global.css`](file:///d:/projetos%20antigravity/site_alquimista/src/styles/global.css) aplicando a cor `#1a1c23` (cinza chumbo profundo com borda dourada suave) para todos os `input`, `select` e `textarea`, garantindo excelente contraste com a página sem ser 100% preto.
-- **Isolamento do Cursor nos Modais:** Atualizado `getActiveOverlayOrModal()` em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro) para reconhecer modais administrativos (`[id^='modal-']`, `.fixed.inset-0.z-50`). Quando um modal está aberto, nenhum elemento no corpo atrás do modal é englobado ou atrai o cursor magnético.
+- **Isolamento do Cursor nos Modais:** Refatorada a função `getActiveOverlayOrModal()` em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro) para verificar rigorosamente apenas overlays e modais abertos e visíveis (sem falsos positivos em elementos ocultos como `#cart-drawer-panel`). O englobamento magnético de botões e links voltou a funcionar em 100% da aplicação quando nenhum modal está aberto.
 
 ### [16/09/2026] — Ilustração do Alquimista Mestre no Carregamento da Área Administrativa (`/admin`)
 - **Carregador Oficial:** Atualizada a tela de carregamento em [`AdminLayout.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/layouts/AdminLayout.astro) para utilizar a ilustração dourada do Alquimista Mestre (`public/assets/alquimista-mestre.png`) com pulso luminoso (`animate-pulse`) e anel de expansão.
