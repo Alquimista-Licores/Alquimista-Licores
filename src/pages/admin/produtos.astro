@@ -336,17 +336,17 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         const isGerenciApp = p.stock_control_type === "gerenciapp";
 
         return `
-          <tr class="hover:bg-[var(--surface-elevated)]/50 transition-colors">
+          <tr data-id="${p.id}" class="product-row hover:bg-[var(--surface-elevated)]/60 transition-colors cursor-pointer group">
             <td class="py-3.5 px-4">
               <div class="flex items-center gap-3">
                 <img 
                   src="${p.foto_url || '/favicon.svg'}" 
                   alt="${p.nome}" 
-                  class="w-10 h-10 object-contain rounded-sm border border-[var(--gold)]/20 bg-black/40 p-0.5" 
+                  class="w-10 h-10 object-contain rounded-sm border border-[var(--gold)]/20 bg-black/40 p-0.5 group-hover:border-[var(--gold)]/60 transition-colors" 
                   onerror="this.src='/favicon.svg'"
                 />
                 <div>
-                  <div class="font-display font-bold text-[var(--cream)] text-xs">${p.nome}</div>
+                  <div class="font-display font-bold text-[var(--cream)] text-xs group-hover:text-[var(--gold)] transition-colors">${p.nome}</div>
                   <div class="text-[10px] text-[var(--gold)] font-mono">${p.sabor || '—'}</div>
                 </div>
               </div>
@@ -386,7 +386,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             <td class="py-3.5 px-4 text-right">
               <button 
                 data-id="${p.id}" 
-                class="btn-edit-prod px-3 py-1.5 border border-[var(--gold)]/30 text-[var(--gold)] hover:bg-[var(--gold)] hover:text-black rounded-sm text-[10px] uppercase font-display tracking-widest transition-all cursor-pointer"
+                class="btn-edit-prod px-3 py-1.5 border border-[var(--gold)]/30 text-[var(--gold)] group-hover:bg-[var(--gold)] group-hover:text-black rounded-sm text-[10px] uppercase font-display tracking-widest transition-all cursor-pointer"
               >
                 Editar
               </button>
@@ -395,10 +395,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         `;
       }).join("");
 
-      // Bind botões de edição
-      document.querySelectorAll(".btn-edit-prod").forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          const id = (e.currentTarget as HTMLElement).getAttribute("data-id");
+      // Bind clique na linha inteira do produto
+      document.querySelectorAll(".product-row").forEach((row) => {
+        row.addEventListener("click", (e) => {
+          const id = (row as HTMLElement).getAttribute("data-id");
           const prod = allProducts.find((p) => String(p.id) === String(id));
           if (prod) openModal(prod);
         });

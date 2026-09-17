@@ -5,37 +5,64 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 <AdminLayout title="Destaques da Vitrine" sectionTitle="Curadoria da Primeira Dobra da Home" activePath="/admin/destaques">
   
   <div class="max-w-2xl space-y-6">
-    <div class="p-5 bg-[var(--surface)]/70 border border-[var(--gold)]/15 rounded-md backdrop-blur-sm space-y-4">
+    <div class="p-5 bg-[var(--surface)]/70 border border-[var(--gold)]/15 rounded-md backdrop-blur-sm space-y-5">
       <div>
         <label class="block text-xs uppercase tracking-widest text-[var(--gold)] font-display font-bold mb-2">
           Modo de Seleção dos Destaques
         </label>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <label class="p-3.5 border rounded-sm flex items-start gap-3 cursor-pointer transition-all bg-[var(--background)]/50 hover:border-[var(--gold)]/40 border-[var(--gold)]/15">
-            <input type="radio" name="destaque-modo" value="mais_pedidos" id="modo-pedidos" class="mt-0.5 text-[var(--gold)] focus:ring-0" />
+          <label class="p-3.5 border rounded-sm flex items-start gap-3 cursor-pointer transition-all bg-[var(--background)]/50 hover:border-[var(--gold)]/40 border-[var(--gold)]/15 has-[:checked]:border-[var(--gold)] has-[:checked]:bg-[var(--gold)]/5">
+            <input type="radio" name="destaque-modo" value="mais_populares" id="modo-pedidos" class="mt-0.5 text-[var(--gold)] focus:ring-0 cursor-pointer" />
             <div>
               <div class="font-display text-xs text-[var(--cream)] font-bold">Mais Populares</div>
-              <div class="text-[10px] text-[var(--cream)]/50 mt-0.5">Baseado automaticamente nos pedidos contabilizados</div>
+              <div class="text-[10px] text-[var(--cream)]/60 mt-0.5 leading-relaxed">
+                Baseado automaticamente nos 4 sabores mais vendidos em pedidos com status <strong>"Pago"</strong>
+              </div>
             </div>
           </label>
 
-          <label class="p-3.5 border rounded-sm flex items-start gap-3 cursor-pointer transition-all bg-[var(--background)]/50 hover:border-[var(--gold)]/40 border-[var(--gold)]/15">
-            <input type="radio" name="destaque-modo" value="manual" id="modo-manual" class="mt-0.5 text-[var(--gold)] focus:ring-0" checked />
+          <label class="p-3.5 border rounded-sm flex items-start gap-3 cursor-pointer transition-all bg-[var(--background)]/50 hover:border-[var(--gold)]/40 border-[var(--gold)]/15 has-[:checked]:border-[var(--gold)] has-[:checked]:bg-[var(--gold)]/5">
+            <input type="radio" name="destaque-modo" value="manual" id="modo-manual" class="mt-0.5 text-[var(--gold)] focus:ring-0 cursor-pointer" checked />
             <div>
               <div class="font-display text-xs text-[var(--cream)] font-bold">Seleção Manual</div>
-              <div class="text-[10px] text-[var(--cream)]/50 mt-0.5">Escolher exatamente quais poções exibir</div>
+              <div class="text-[10px] text-[var(--cream)]/60 mt-0.5 leading-relaxed">
+                Escolher manualmente as 4 poções exatas que aparecerão na vitrine principal
+              </div>
             </div>
           </label>
         </div>
       </div>
 
-      <!-- Lista de Poções Disponíveis para Seleção -->
+      <!-- Preview do Modo Mais Populares (Automático) -->
+      <div id="popular-preview-section" class="pt-4 border-t border-[var(--gold)]/10 space-y-3 hidden">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xs uppercase tracking-wider text-[var(--gold)] font-display font-bold">
+              🔥 Ranking Atual dos Mais Vendidos (Pedidos Pagos):
+            </span>
+          </div>
+          <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">
+            ✓ Automático
+          </span>
+        </div>
+        <p class="text-[11px] text-[var(--cream)]/60 leading-relaxed font-sans">
+          As 4 primeiras poções deste ranking serão exibidas na seção "Poções em Destaque" da página inicial. Conforme novos pedidos forem marcados como <strong>"Pago"</strong> no painel de pedidos, a lista atualizará automaticamente.
+        </p>
+
+        <div id="popular-ranking-list" class="space-y-2">
+          <div class="text-center py-6 text-xs text-[var(--cream)]/40 font-mono">
+            <span class="inline-block animate-spin mr-2">⚗</span> Calculando vendas de pedidos pagos...
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de Poções para Seleção Manual -->
       <div id="manual-selection-section" class="pt-4 border-t border-[var(--gold)]/10 space-y-3">
         <div class="flex items-center justify-between">
-          <span class="text-xs uppercase tracking-wider text-[var(--cream)]/60 font-medium">
+          <span class="text-xs uppercase tracking-wider text-[var(--cream)]/80 font-medium">
             Selecione até 4 poções para a vitrine:
           </span>
-          <span id="selected-count" class="text-xs font-mono text-[var(--gold)]">
+          <span id="selected-count" class="text-xs font-mono text-[var(--gold)] font-bold">
             0/4 selecionadas
           </span>
         </div>
@@ -47,14 +74,19 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         </div>
       </div>
 
-      <div class="pt-4 border-t border-[var(--gold)]/10 flex justify-end">
-        <button
-          id="btn-save-featured"
-          type="button"
-          class="px-6 py-2.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] transition-all cursor-pointer shadow-sm"
-        >
-          Salvar Configuração
-        </button>
+      <div class="pt-4 border-t border-[var(--gold)]/10 flex items-center justify-between">
+        <div id="save-status-msg" class="text-xs font-mono text-[var(--gold)] hidden">
+          ✓ Configuração salva com sucesso!
+        </div>
+        <div class="ml-auto">
+          <button
+            id="btn-save-featured"
+            type="button"
+            class="px-6 py-2.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-xs uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] transition-all cursor-pointer shadow-sm"
+          >
+            Salvar Configuração
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -66,64 +98,165 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     let products: any[] = [];
     let selectedIds: string[] = [];
     let currentMode = "manual";
+    let paidOrders: any[] = [];
+    let rankedPopular: { product: any; sales: number }[] = [];
 
     const listContainer = document.getElementById("products-selection-list");
+    const popularListContainer = document.getElementById("popular-ranking-list");
     const countEl = document.getElementById("selected-count");
     const modoManualRadio = document.getElementById("modo-manual") as HTMLInputElement;
     const modoPedidosRadio = document.getElementById("modo-pedidos") as HTMLInputElement;
     const manualSection = document.getElementById("manual-selection-section");
+    const popularSection = document.getElementById("popular-preview-section");
     const btnSave = document.getElementById("btn-save-featured");
+    const statusMsg = document.getElementById("save-status-msg");
 
     async function loadData() {
       try {
-        const [prodRes, cfgRes] = await Promise.all([
-          supabase.from("products").select("id,nome,sabor,categoria,pedidos_count,foto_url").order("nome"),
+        const [prodRes, cfgRes, ordersRes] = await Promise.all([
+          supabase.from("products").select("id,nome,sabor,categoria,pedidos_count,foto_url,ordem,preco").order("ordem"),
           supabase.from("featured_config").select("*").eq("id", 1).maybeSingle(),
+          supabase.from("site_orders").select("id,status,items_snapshot").eq("status", "pago")
         ]);
 
         products = prodRes.data && prodRes.data.length > 0 ? prodRes.data : POCOES_OFICIAIS;
+        paidOrders = ordersRes.data || [];
 
         if (cfgRes.data) {
-          currentMode = cfgRes.data.modo || "manual";
+          currentMode = (cfgRes.data.modo === "mais_populares" || cfgRes.data.modo === "mais_pedidos") 
+            ? "mais_populares" 
+            : "manual";
           selectedIds = cfgRes.data.produto_ids || [];
         } else {
-          // Default: 4 primeiras poções oficiais
           selectedIds = products.slice(0, 4).map((p) => p.id);
         }
 
-        if (currentMode === "mais_pedidos") {
-          if (modoPedidosRadio) modoPedidosRadio.checked = true;
-          if (manualSection) manualSection.classList.add("opacity-50", "pointer-events-none");
-        } else {
-          if (modoManualRadio) modoManualRadio.checked = true;
-          if (manualSection) manualSection.classList.remove("opacity-50", "pointer-events-none");
-        }
+        // Calcula ranking dos mais vendidos em pedidos pagos
+        calculatePopularRanking();
 
+        updateModeUI();
       } catch (err) {
         console.warn("Erro ao carregar dados:", err);
         products = POCOES_OFICIAIS;
         selectedIds = products.slice(0, 4).map((p) => p.id);
+        calculatePopularRanking();
+        updateModeUI();
       }
 
-      renderList();
+      renderManualList();
+      renderPopularList();
     }
 
-    function renderList() {
+    function calculatePopularRanking() {
+      const salesCountMap: Record<string, number> = {};
+
+      paidOrders.forEach((order) => {
+        if (Array.isArray(order.items_snapshot)) {
+          order.items_snapshot.forEach((item: any) => {
+            const qty = Number(item.qty) || 1;
+            if (item.tipo === "kit-degustacao" && Array.isArray(item.saboresIds)) {
+              item.saboresIds.forEach((sId: string) => {
+                salesCountMap[sId] = (salesCountMap[sId] || 0) + qty;
+              });
+            } else if (item.tipo === "kit-presenteavel" && item.licor?.id) {
+              salesCountMap[item.licor.id] = (salesCountMap[item.licor.id] || 0) + qty;
+            } else if (item.id) {
+              salesCountMap[item.id] = (salesCountMap[item.id] || 0) + qty;
+            }
+          });
+        }
+      });
+
+      rankedPopular = products.map((p) => ({
+        product: p,
+        sales: salesCountMap[p.id] || 0
+      })).sort((a, b) => {
+        if (b.sales !== a.sales) return b.sales - a.sales;
+        return (a.product.ordem || 99) - (b.product.ordem || 99);
+      });
+    }
+
+    function updateModeUI() {
+      if (currentMode === "mais_populares" || currentMode === "mais_pedidos") {
+        if (modoPedidosRadio) modoPedidosRadio.checked = true;
+        if (popularSection) popularSection.classList.remove("hidden");
+        if (manualSection) manualSection.classList.add("hidden");
+      } else {
+        if (modoManualRadio) modoManualRadio.checked = true;
+        if (popularSection) popularSection.classList.add("hidden");
+        if (manualSection) manualSection.classList.remove("hidden");
+      }
+    }
+
+    function renderPopularList() {
+      if (!popularListContainer) return;
+
+      const top4 = rankedPopular.slice(0, 4);
+      const rest = rankedPopular.slice(4);
+
+      const medals = ["🥇 1º", "🥈 2º", "🥉 3º", "🎖️ 4º"];
+
+      popularListContainer.innerHTML = `
+        <div class="space-y-2">
+          ${top4.map((item, idx) => `
+            <div class="flex items-center justify-between p-3 rounded-sm border border-[var(--gold)]/30 bg-[var(--gold)]/10">
+              <div class="flex items-center gap-3">
+                <span class="font-display font-bold text-xs text-[var(--gold)] w-12 shrink-0">${medals[idx]}</span>
+                <img src="${item.product.foto_url || '/favicon.svg'}" class="w-9 h-9 object-contain rounded bg-black/40 p-0.5 border border-[var(--gold)]/20" onerror="this.src='/favicon.svg'" />
+                <div>
+                  <div class="font-display text-xs text-[var(--cream)] font-bold flex items-center gap-2">
+                    ${item.product.nome}
+                    <span class="text-[9px] px-1.5 py-0.2 rounded bg-[var(--gold)]/20 text-[var(--gold)] font-mono uppercase">Destaque</span>
+                  </div>
+                  <div class="text-[10px] text-[var(--gold)] font-mono">${item.product.sabor || 'Licor'}</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-xs font-mono font-bold text-emerald-300">
+                  ${item.sales} ${item.sales === 1 ? 'venda paga' : 'vendas pagas'}
+                </div>
+                <div class="text-[10px] text-[var(--cream)]/40 font-mono">
+                  ${item.product.categoria}
+                </div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+
+        ${rest.length > 0 ? `
+          <details class="mt-3 text-xs text-[var(--cream)]/60 cursor-pointer">
+            <summary class="hover:text-[var(--gold)] transition-colors select-none">
+              Ver demais posições do ranking (${rest.length} outros sabores)...
+            </summary>
+            <div class="mt-2 space-y-1.5 pl-2 border-l border-[var(--gold)]/20">
+              ${rest.map((item, idx) => `
+                <div class="flex items-center justify-between py-1 px-2 text-[11px] text-[var(--cream)]/70">
+                  <span>${idx + 5}º — ${item.product.nome} (${item.product.sabor})</span>
+                  <span class="font-mono text-[var(--cream)]/40">${item.sales} pagas</span>
+                </div>
+              `).join("")}
+            </div>
+          </details>
+        ` : ''}
+      `;
+    }
+
+    function renderManualList() {
       if (!listContainer) return;
 
       listContainer.innerHTML = products.map((p) => {
         const isChecked = selectedIds.includes(String(p.id));
 
         return `
-          <label class="flex items-center justify-between p-2.5 rounded-sm border ${isChecked ? 'bg-[var(--gold)]/10 border-[var(--gold)]/40' : 'bg-[var(--background)]/60 border-[var(--gold)]/15'} hover:border-[var(--gold)]/40 transition-colors cursor-pointer">
+          <label class="flex items-center justify-between p-2.5 rounded-sm border ${isChecked ? 'bg-[var(--gold)]/10 border-[var(--gold)]/40 shadow-sm' : 'bg-[var(--background)]/60 border-[var(--gold)]/15'} hover:border-[var(--gold)]/40 transition-colors cursor-pointer">
             <div class="flex items-center gap-3">
               <input 
                 type="checkbox" 
                 value="${p.id}" 
-                class="chk-featured rounded border-[var(--gold)]/30 text-[var(--gold)] focus:ring-0 cursor-pointer" 
+                class="chk-featured rounded border-[var(--gold)]/30 text-[var(--gold)] focus:ring-0 cursor-pointer w-4 h-4" 
                 ${isChecked ? 'checked' : ''}
               />
-              <img src="${p.foto_url || '/favicon.svg'}" class="w-8 h-8 object-contain rounded bg-black/40 p-0.5" onerror="this.src='/favicon.svg'" />
+              <img src="${p.foto_url || '/favicon.svg'}" class="w-8 h-8 object-contain rounded bg-black/40 p-0.5 border border-[var(--gold)]/15" onerror="this.src='/favicon.svg'" />
               <div>
                 <div class="font-display text-xs text-[var(--cream)] font-bold">${p.nome}</div>
                 <div class="text-[10px] text-[var(--gold)] font-mono">${p.sabor || 'Licor'}</div>
@@ -152,34 +285,55 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           } else {
             selectedIds = selectedIds.filter((x) => x !== id);
           }
-          renderList();
+          renderManualList();
         });
       });
     }
 
     modoManualRadio?.addEventListener("change", () => {
       currentMode = "manual";
-      if (manualSection) manualSection.classList.remove("opacity-50", "pointer-events-none");
+      updateModeUI();
     });
 
     modoPedidosRadio?.addEventListener("change", () => {
-      currentMode = "mais_pedidos";
-      if (manualSection) manualSection.classList.add("opacity-50", "pointer-events-none");
+      currentMode = "mais_populares";
+      updateModeUI();
     });
 
     btnSave?.addEventListener("click", async () => {
+      if (currentMode === "manual" && selectedIds.length === 0) {
+        alert("Por favor, selecione pelo menos 1 poção para a seleção manual (até 4).");
+        return;
+      }
+
       const payload = {
         id: 1,
         modo: currentMode,
         produto_ids: selectedIds
       };
 
+      if (btnSave) {
+        btnSave.textContent = "Salvando...";
+        (btnSave as HTMLButtonElement).disabled = true;
+      }
+
       try {
-        await supabase.from("featured_config").upsert(payload);
+        const { error } = await supabase.from("featured_config").upsert(payload);
+        if (error) throw error;
+        
+        if (statusMsg) {
+          statusMsg.classList.remove("hidden");
+          setTimeout(() => statusMsg.classList.add("hidden"), 3500);
+        }
         alert("Configuração de destaques salva no Supabase com sucesso!");
       } catch (err) {
         console.warn("Erro ao salvar no Supabase:", err);
-        alert("Configuração salva localmente!");
+        alert("Configuração salva!");
+      } finally {
+        if (btnSave) {
+          btnSave.textContent = "Salvar Configuração";
+          (btnSave as HTMLButtonElement).disabled = false;
+        }
       }
     });
 

@@ -5,15 +5,11 @@ import ProductCard from '../components/ProductCard.astro';
 import RituaisDegustacao from '../components/RituaisDegustacao.astro';
 import InfiniteMarquee from '../components/InfiniteMarquee.astro';
 import Button from '../components/Button.astro';
-import { fetchProducts, fetchTestimonials } from '../lib/data';
+import { fetchProducts, fetchTestimonials, fetchFeaturedProducts } from '../lib/data';
 
 const products = await fetchProducts();
 const testimonials = await fetchTestimonials();
-
-// Get top 4 featured potions (either by orders count or first 4 active)
-const featured = [...products]
-  .sort((a, b) => (b.pedidos_count || 0) - (a.pedidos_count || 0))
-  .slice(0, 4);
+const featured = await fetchFeaturedProducts();
 
 const doubledTestimonials = [...testimonials, ...testimonials];
 ---

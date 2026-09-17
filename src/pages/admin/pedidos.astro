@@ -111,6 +111,134 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     </div>
   </div>
 
+  <!-- Modal de Detalhes Completos do Pedido -->
+  <div id="order-details-modal-backdrop" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-[var(--surface)] border border-[var(--gold)]/30 w-full max-w-2xl rounded-md shadow-[0_0_60px_rgba(0,0,0,0.9)] relative my-8 flex flex-col max-h-[90vh]">
+      <!-- Header do Modal de Detalhes -->
+      <div class="px-6 py-4 border-b border-[var(--gold)]/15 flex items-center justify-between shrink-0 bg-[var(--surface-elevated)]">
+        <div class="flex items-center gap-3">
+          <span class="text-xl text-[var(--gold)]">⚗</span>
+          <div>
+            <h3 id="details-order-title" class="font-display text-sm md:text-base text-[var(--gold)] font-bold uppercase tracking-wider">
+              Pedido #000000
+            </h3>
+            <div id="details-order-date" class="text-[11px] font-mono text-[var(--cream)]/50">
+              —
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="details-order-status-badge">
+            <!-- Badge -->
+          </div>
+          <button id="btn-close-details-modal" class="text-[var(--cream)]/50 hover:text-[var(--gold)] text-lg cursor-pointer p-1">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Body do Modal de Detalhes -->
+      <div class="p-6 space-y-5 overflow-y-auto flex-1 text-xs">
+        <!-- Grid Cliente & Entrega -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Bloco Cliente -->
+          <div class="p-3.5 border border-[var(--gold)]/15 bg-[var(--surface-elevated)]/40 rounded-sm space-y-2">
+            <div class="font-display text-[10px] uppercase tracking-widest text-[var(--gold)]/80 font-bold flex items-center gap-1.5">
+              <span>👤</span> Informações do Cliente
+            </div>
+            <div>
+              <div class="text-[10px] uppercase text-[var(--cream)]/40">Nome:</div>
+              <div id="details-cliente-nome" class="font-medium text-[var(--cream)] text-sm">—</div>
+            </div>
+            <div>
+              <div class="text-[10px] uppercase text-[var(--cream)]/40">WhatsApp:</div>
+              <a id="details-cliente-whats" href="#" target="_blank" class="text-xs text-[var(--gold)] hover:underline font-mono inline-flex items-center gap-1.5 mt-0.5">
+                <span>💬</span> <span>—</span>
+              </a>
+            </div>
+            <div id="details-indicacao-box" class="pt-1.5 border-t border-[var(--gold)]/10 text-[11px]">
+              <div class="text-[10px] uppercase text-[var(--cream)]/40">Indicação:</div>
+              <div id="details-indicacao-val" class="text-[var(--cream)]/80 font-sans mt-0.5">—</div>
+            </div>
+          </div>
+
+          <!-- Bloco Entrega -->
+          <div class="p-3.5 border border-[var(--gold)]/15 bg-[var(--surface-elevated)]/40 rounded-sm space-y-2">
+            <div class="font-display text-[10px] uppercase tracking-widest text-[var(--gold)]/80 font-bold flex items-center gap-1.5">
+              <span>📍</span> Entrega / Logística
+            </div>
+            <div>
+              <div class="text-[10px] uppercase text-[var(--cream)]/40">Tipo:</div>
+              <div id="details-entrega-tipo" class="font-medium text-[var(--cream)] text-xs mt-0.5">—</div>
+            </div>
+            <div id="details-endereco-box">
+              <div class="text-[10px] uppercase text-[var(--cream)]/40">Endereço de Entrega:</div>
+              <div id="details-endereco-val" class="text-[var(--cream)]/90 text-xs mt-0.5 leading-relaxed font-sans">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Composição dos Itens -->
+        <div class="border border-[var(--gold)]/15 rounded-sm overflow-hidden bg-[var(--surface-elevated)]/20">
+          <div class="px-4 py-2.5 bg-[var(--surface-elevated)]/80 border-b border-[var(--gold)]/15 font-display text-[10px] uppercase tracking-widest text-[var(--gold)] font-bold flex items-center justify-between">
+            <span>📜 Itens do Pedido</span>
+            <span id="details-items-count" class="text-[10px] font-mono text-[var(--cream)]/50">0 itens</span>
+          </div>
+          <div id="details-items-list" class="divide-y divide-[var(--gold)]/10 p-3 space-y-2.5 font-sans">
+            <!-- Renderizado dinamicamente -->
+          </div>
+        </div>
+
+        <!-- Resumo Financeiro & Alteração de Status -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+          <!-- Alteração Rápida de Status -->
+          <div class="p-3.5 border border-[var(--gold)]/15 bg-[var(--surface-elevated)]/40 rounded-sm space-y-2">
+            <label class="block font-display text-[10px] uppercase tracking-widest text-[var(--gold)]/80 font-bold">
+              Alterar Status do Pedido
+            </label>
+            <div class="flex items-center gap-2">
+              <select id="details-status-select" class="flex-1 bg-[var(--background)] border border-[var(--gold)]/30 rounded-sm px-3 py-1.5 text-xs text-[var(--cream)] focus:border-[var(--gold)] outline-none font-mono">
+                <option value="pendente">Pendente (Aguardando)</option>
+                <option value="pago">Pago (Confirmado)</option>
+                <option value="cancelado">Cancelado</option>
+                <option value="arquivado">Arquivado</option>
+              </select>
+              <button id="btn-details-save-status" class="px-3.5 py-1.5 bg-[var(--gold)] text-[var(--background)] font-display tracking-widest text-[11px] uppercase font-bold rounded-sm hover:bg-[var(--gold-hover)] cursor-pointer transition-all">
+                Salvar
+              </button>
+            </div>
+          </div>
+
+          <!-- Resumo de Valores -->
+          <div class="p-3.5 border border-[var(--gold)]/20 bg-[var(--surface-elevated)]/60 rounded-sm space-y-1.5 font-mono">
+            <div class="flex justify-between items-center text-[11px] text-[var(--cream)]/60">
+              <span>Subtotal dos Produtos:</span>
+              <span id="details-subtotal-val" class="text-[var(--cream)]/90 font-bold">R$ 0,00</span>
+            </div>
+            <div class="flex justify-between items-center text-[11px] text-[var(--cream)]/60">
+              <span>Taxa de Entrega / Frete:</span>
+              <span id="details-frete-val" class="text-[var(--gold)]/90 font-bold">R$ 0,00</span>
+            </div>
+            <div class="flex justify-between items-baseline pt-2 border-t border-[var(--gold)]/15 text-sm">
+              <span class="font-bold text-[var(--cream)] font-display uppercase tracking-wider text-xs">Total Geral:</span>
+              <span id="details-total-val" class="font-bold text-lg text-[var(--gold)]">R$ 0,00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer do Modal de Detalhes -->
+      <div class="px-6 py-4 border-t border-[var(--gold)]/15 flex items-center justify-between shrink-0 bg-[var(--surface-elevated)]">
+        <a id="btn-details-direct-wa" href="#" target="_blank" class="px-4 py-2 border border-[var(--gold)]/30 text-[var(--gold)] hover:bg-[var(--gold)] hover:text-black font-display tracking-widest text-[11px] uppercase font-bold rounded-sm transition-all flex items-center gap-2 cursor-pointer font-sans">
+          <span>💬</span> Chamar no WhatsApp
+        </a>
+        <button id="btn-close-details-bottom" class="px-5 py-2 bg-[var(--surface)] border border-[var(--gold)]/20 text-[var(--cream)]/80 hover:text-[var(--gold)] hover:border-[var(--gold)] font-display tracking-widest text-[11px] uppercase font-bold rounded-sm transition-all cursor-pointer">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal de Criação de Pedido Manual -->
   <div id="order-modal-backdrop" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
     <div class="bg-[var(--surface)] border border-[var(--gold)]/30 w-full max-w-xl rounded-md shadow-[0_0_50px_rgba(0,0,0,0.9)] relative my-8 flex flex-col">
@@ -176,6 +304,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     let ordersList: any[] = [];
     let isArchivedOpen = false;
+    let currentDetailOrderId: string | null = null;
 
     const tableBody = document.getElementById("orders-table-body");
     const archivedTableBody = document.getElementById("archived-table-body");
@@ -193,6 +322,29 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     const btnCloseOrderModal = document.getElementById("btn-close-order-modal");
     const btnCancelOrderModal = document.getElementById("btn-cancel-order-modal");
     const btnSaveOrder = document.getElementById("btn-save-order");
+
+    // Elementos do Modal de Detalhes
+    const detailsModalBackdrop = document.getElementById("order-details-modal-backdrop");
+    const btnCloseDetailsModal = document.getElementById("btn-close-details-modal");
+    const btnCloseDetailsBottom = document.getElementById("btn-close-details-bottom");
+    const detailsOrderTitle = document.getElementById("details-order-title");
+    const detailsOrderDate = document.getElementById("details-order-date");
+    const detailsOrderStatusBadge = document.getElementById("details-order-status-badge");
+    const detailsClienteNome = document.getElementById("details-cliente-nome");
+    const detailsClienteWhats = document.getElementById("details-cliente-whats") as HTMLAnchorElement;
+    const detailsIndicacaoBox = document.getElementById("details-indicacao-box");
+    const detailsIndicacaoVal = document.getElementById("details-indicacao-val");
+    const detailsEntregaTipo = document.getElementById("details-entrega-tipo");
+    const detailsEnderecoBox = document.getElementById("details-endereco-box");
+    const detailsEnderecoVal = document.getElementById("details-endereco-val");
+    const detailsItemsCount = document.getElementById("details-items-count");
+    const detailsItemsList = document.getElementById("details-items-list");
+    const detailsStatusSelect = document.getElementById("details-status-select") as HTMLSelectElement;
+    const btnDetailsSaveStatus = document.getElementById("btn-details-save-status");
+    const detailsSubtotalVal = document.getElementById("details-subtotal-val");
+    const detailsFreteVal = document.getElementById("details-frete-val");
+    const detailsTotalVal = document.getElementById("details-total-val");
+    const btnDetailsDirectWa = document.getElementById("btn-details-direct-wa") as HTMLAnchorElement;
 
     function fmtBRL(val: number) {
       return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val || 0);
@@ -223,6 +375,153 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       }
       return o.observacoes || (typeof o.itens === 'string' ? o.itens : 'Itens do carrinho');
     }
+
+    function openOrderDetails(orderId: string) {
+      const order = ordersList.find((o) => String(o.id) === String(orderId));
+      if (!order) return;
+      currentDetailOrderId = order.id;
+
+      if (detailsOrderTitle) detailsOrderTitle.textContent = `Pedido #${order.codigo_pedido || "000000"}`;
+      if (detailsOrderDate) detailsOrderDate.textContent = formatDate(order.created_at);
+
+      const isPago = order.status === "pago";
+      const isPendente = order.status === "pendente";
+      const isCancelado = order.status === "cancelado";
+
+      const badgeHtml = isPago
+        ? '<span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] uppercase font-mono bg-emerald-950 text-emerald-300 border border-emerald-500/30 font-bold">Pago</span>'
+        : isPendente
+        ? '<span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] uppercase font-mono bg-amber-950 text-amber-300 border border-amber-500/30 font-bold">Pendente</span>'
+        : isCancelado
+        ? '<span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] uppercase font-mono bg-red-950 text-red-400 border border-red-500/30 font-bold">Cancelado</span>'
+        : '<span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] uppercase font-mono bg-zinc-800 text-zinc-400 border border-zinc-700 font-bold">Arquivado</span>';
+
+      if (detailsOrderStatusBadge) detailsOrderStatusBadge.innerHTML = badgeHtml;
+      if (detailsClienteNome) detailsClienteNome.textContent = order.cliente_nome || "Não informado";
+
+      const cleanTel = (order.cliente_telefone || "").replace(/\D/g, "");
+      if (detailsClienteWhats) {
+        detailsClienteWhats.href = `https://wa.me/55${cleanTel}`;
+        const spanText = detailsClienteWhats.querySelector("span:last-child");
+        if (spanText) spanText.textContent = order.cliente_telefone || "Sem telefone";
+      }
+
+      if (detailsIndicacaoBox) {
+        if (order.indicador_nome || order.indicador_whatsapp) {
+          detailsIndicacaoBox.classList.remove("hidden");
+          if (detailsIndicacaoVal) {
+            detailsIndicacaoVal.textContent = `${order.indicador_nome || ""}${order.indicador_whatsapp ? ` (${order.indicador_whatsapp})` : ""}`;
+          }
+        } else {
+          detailsIndicacaoBox.classList.add("hidden");
+        }
+      }
+
+      if (detailsEntregaTipo) {
+        detailsEntregaTipo.innerHTML = order.tipo_entrega === "delivery"
+          ? `<span class="text-amber-300 font-bold">🛵 Delivery Motoboy</span>`
+          : `<span class="text-emerald-300 font-bold">🏠 Retirada no Local</span>`;
+      }
+
+      if (detailsEnderecoBox) {
+        if (order.tipo_entrega === "delivery" && order.endereco_completo) {
+          detailsEnderecoBox.classList.remove("hidden");
+          if (detailsEnderecoVal) detailsEnderecoVal.textContent = order.endereco_completo;
+        } else {
+          detailsEnderecoBox.classList.add("hidden");
+        }
+      }
+
+      // Renderiza Itens do Snapshot
+      if (detailsItemsList) {
+        const items = Array.isArray(order.items_snapshot) ? order.items_snapshot : [];
+        if (detailsItemsCount) detailsItemsCount.textContent = `${items.length} item(ns)`;
+
+        if (items.length === 0) {
+          detailsItemsList.innerHTML = `<div class="text-center py-4 text-[var(--cream)]/40 font-mono">${order.observacoes || "Nenhum item detalhado."}</div>`;
+        } else {
+          detailsItemsList.innerHTML = items.map((item: any) => {
+            const iconHtml = item.foto_url
+              ? `<img src="${item.foto_url}" class="w-11 h-11 object-cover rounded-sm border border-[var(--gold)]/20 shrink-0" />`
+              : `<div class="w-11 h-11 rounded-sm bg-[var(--surface-elevated)] border border-[var(--gold)]/20 flex items-center justify-center text-[var(--gold)]/60 text-lg shrink-0">${item.tipo === "kit-degustacao" || item.tipo === "kit-presenteavel" ? "🎁" : "⚗"}</div>`;
+
+            let title = item.nome || "Poção";
+            let subdetails = item.sabor ? `<div class="text-[11px] text-[var(--gold-soft)] italic">${item.sabor}</div>` : "";
+
+            if (item.tipo === "kit-degustacao") {
+              title = "Kit Degustação (3x 50ml)";
+              const gars = (item.saboresLabels || []).map((s: any) => s.sabor || s.nome).join(" • ");
+              subdetails = `<div class="text-[11px] text-[var(--gold-soft)] italic">${gars || "3 mini-poções"}</div>`;
+            } else if (item.tipo === "kit-presenteavel") {
+              title = "Kit Presenteável";
+              subdetails = `<div class="text-[11px] text-[var(--gold-soft)] italic">${item.licor?.nome || "Licor"} · ${item.acompanhamento || ""} · ${item.embalagem || ""}${item.dedicatoria ? ` · "${item.dedicatoria}"` : ""}</div>`;
+            }
+
+            const unitPrice = item.preco || 0;
+            const qty = item.qty || 1;
+            const totalItem = unitPrice * qty;
+
+            return `
+              <div class="flex items-center gap-3 py-2 px-1 border-b border-[var(--gold)]/10 last:border-b-0">
+                ${iconHtml}
+                <div class="flex-1 min-w-0">
+                  <div class="font-display font-bold text-xs text-[var(--cream)] truncate">${title}</div>
+                  ${subdetails}
+                  <div class="text-[10px] text-[var(--cream)]/50 font-mono mt-0.5">Qtd: <strong class="text-[var(--gold)]">${qty}</strong> × ${fmtBRL(unitPrice)}</div>
+                </div>
+                <div class="text-right font-mono font-bold text-xs text-[var(--gold)] shrink-0">
+                  ${fmtBRL(totalItem)}
+                </div>
+              </div>
+            `;
+          }).join("");
+        }
+      }
+
+      if (detailsSubtotalVal) detailsSubtotalVal.textContent = fmtBRL(order.subtotal || 0);
+      if (detailsFreteVal) {
+        detailsFreteVal.textContent = order.tipo_entrega === "delivery" && order.frete_valor > 0
+          ? fmtBRL(order.frete_valor)
+          : order.tipo_entrega === "delivery" ? "A combinar" : "Grátis (Retirada)";
+      }
+      if (detailsTotalVal) detailsTotalVal.textContent = fmtBRL(order.total || 0);
+
+      if (detailsStatusSelect) detailsStatusSelect.value = order.status || "pendente";
+
+      if (btnDetailsDirectWa) {
+        btnDetailsDirectWa.href = `https://wa.me/55${cleanTel}`;
+      }
+
+      detailsModalBackdrop?.classList.remove("hidden");
+      detailsModalBackdrop?.classList.add("flex");
+    }
+
+    const closeDetailsModal = () => {
+      detailsModalBackdrop?.classList.add("hidden");
+      detailsModalBackdrop?.classList.remove("flex");
+      currentDetailOrderId = null;
+    };
+
+    btnCloseDetailsModal?.addEventListener("click", closeDetailsModal);
+    btnCloseDetailsBottom?.addEventListener("click", closeDetailsModal);
+    detailsModalBackdrop?.addEventListener("click", (e) => {
+      if (e.target === detailsModalBackdrop) closeDetailsModal();
+    });
+
+    btnDetailsSaveStatus?.addEventListener("click", async () => {
+      if (!currentDetailOrderId || !detailsStatusSelect) return;
+      const newStatus = detailsStatusSelect.value;
+      try {
+        await supabase.from("site_orders").update({ status: newStatus }).eq("id", currentDetailOrderId);
+      } catch (err) {
+        console.warn("Supabase update error:", err);
+      }
+
+      const target = ordersList.find((x) => String(x.id) === String(currentDetailOrderId));
+      if (target) target.status = newStatus;
+      renderOrdersTable();
+      openOrderDetails(currentDetailOrderId);
+    });
 
     async function fetchOrders() {
       try {
@@ -316,7 +615,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             const itemsDesc = formatOrderItems(o);
 
             return `
-              <tr class="hover:bg-[var(--surface-elevated)]/50 transition-colors">
+              <tr class="order-row hover:bg-[var(--surface-elevated)]/50 transition-colors cursor-pointer" data-id="${o.id}">
                 <td class="py-3.5 px-4 font-mono font-bold text-[var(--gold)]">
                   #${o.codigo_pedido || "000000"}
                 </td>
@@ -329,6 +628,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
                     href="https://wa.me/55${(o.cliente_telefone || '').replace(/\\D/g, '')}" 
                     target="_blank" 
                     class="text-[10px] text-[var(--gold)]/80 hover:underline font-mono inline-flex items-center gap-1"
+                    onclick="event.stopPropagation()"
                   >
                     <span>💬</span> ${o.cliente_telefone || "Sem telefone"}
                   </a>
@@ -368,6 +668,13 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
                     </button>
                     <div class="order-dropdown-menu hidden absolute right-0 top-full mt-1 w-44 bg-[var(--surface-elevated)] border border-[var(--gold)]/30 rounded-sm shadow-2xl py-1 z-30 divide-y divide-[var(--gold)]/10 text-xs font-mono text-left">
                       <div class="py-1">
+                        <button 
+                          type="button"
+                          data-id="${o.id}" 
+                          class="btn-view-details w-full text-left px-3 py-1.5 text-[var(--gold)] hover:bg-[var(--gold)]/15 flex items-center gap-2 cursor-pointer transition-colors"
+                        >
+                          <span>🔍</span> Ver Detalhes
+                        </button>
                         ${!isPago ? `
                           <button 
                             data-id="${o.id}" 
@@ -389,6 +696,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
                           href="https://wa.me/55${(o.cliente_telefone || '').replace(/\\D/g, '')}" 
                           target="_blank" 
                           class="w-full text-left px-3 py-1.5 text-[var(--cream)]/80 hover:text-[var(--gold)] hover:bg-[var(--gold)]/10 flex items-center gap-2 transition-colors font-mono"
+                          onclick="event.stopPropagation()"
                         >
                           <span>💬</span> WhatsApp
                         </a>
@@ -438,7 +746,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
               : `<span class="text-[10px] text-emerald-300/70 font-mono">🏠 Retirada</span>`;
 
             return `
-              <tr class="hover:bg-[var(--surface-elevated)]/30 transition-colors opacity-75 hover:opacity-100">
+              <tr class="order-row hover:bg-[var(--surface-elevated)]/30 transition-colors opacity-75 hover:opacity-100 cursor-pointer" data-id="${o.id}">
                 <td class="py-3 px-4 font-mono font-bold text-[var(--gold)]/80">
                   #${o.codigo_pedido || "000000"}
                 </td>
@@ -473,6 +781,13 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
                     <div class="order-dropdown-menu hidden absolute right-0 top-full mt-1 w-44 bg-[var(--surface-elevated)] border border-[var(--gold)]/30 rounded-sm shadow-2xl py-1 z-30 divide-y divide-[var(--gold)]/10 text-xs font-mono text-left">
                       <div class="py-1">
                         <button 
+                          type="button"
+                          data-id="${o.id}" 
+                          class="btn-view-details w-full text-left px-3 py-1.5 text-[var(--gold)] hover:bg-[var(--gold)]/15 flex items-center gap-2 cursor-pointer transition-colors"
+                        >
+                          <span>🔍</span> Ver Detalhes
+                        </button>
+                        <button 
                           data-id="${o.id}" 
                           data-action="pendente" 
                           class="btn-order-action w-full text-left px-3 py-1.5 text-[var(--gold)] hover:bg-[var(--gold)]/15 flex items-center gap-2 cursor-pointer transition-colors"
@@ -483,6 +798,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
                           href="https://wa.me/55${(o.cliente_telefone || '').replace(/\\D/g, '')}" 
                           target="_blank" 
                           class="w-full text-left px-3 py-1.5 text-[var(--cream)]/80 hover:text-[var(--gold)] hover:bg-[var(--gold)]/10 flex items-center gap-2 transition-colors font-mono"
+                          onclick="event.stopPropagation()"
                         >
                           <span>💬</span> WhatsApp
                         </a>
@@ -495,6 +811,28 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           }).join("");
         }
       }
+
+      // Clique nas linhas da tabela para abrir detalhes
+      document.querySelectorAll(".order-row").forEach((row) => {
+        row.addEventListener("click", (e) => {
+          const target = e.target as HTMLElement;
+          if (target.closest(".order-menu-container") || target.closest("a") || target.closest("button")) {
+            return;
+          }
+          const id = row.getAttribute("data-id");
+          if (id) openOrderDetails(id);
+        });
+      });
+
+      // Botão 'Ver Detalhes' no menu
+      document.querySelectorAll(".btn-view-details").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          document.querySelectorAll(".order-dropdown-menu").forEach((m) => m.classList.add("hidden"));
+          const id = btn.getAttribute("data-id");
+          if (id) openOrderDetails(id);
+        });
+      });
 
       // Bind botões de trigger dos menus (3 pontinhos)
       document.querySelectorAll(".btn-order-menu-trigger").forEach((trigger) => {
@@ -516,6 +854,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       // Bind botões de ação (ativos e arquivados)
       document.querySelectorAll(".btn-order-action").forEach((btn) => {
         btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
           const el = e.currentTarget as HTMLElement;
           const id = el.getAttribute("data-id");
           const action = el.getAttribute("data-action");

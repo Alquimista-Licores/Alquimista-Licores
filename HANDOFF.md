@@ -780,5 +780,28 @@ Este guia consolida todas as conexões, variáveis, tabelas, regras de seguranç
 
 ---
 
+---
+
+### [17/09/2026] — Gestão de Pedidos Administrativos & Modal de Detalhes
+1. **Painel de Pedidos ([`src/pages/admin/pedidos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/pedidos.astro)):**
+   - **Modal de Detalhes do Pedido:** Ao clicar em qualquer linha de pedido ou no menu "🔍 Ver Detalhes", abre um modal completo com informações do cliente, WhatsApp direto, tipo de entrega/retirada, endereço, snapshot dos itens (incluindo poções selecionadas nos Kits Degustação e acompanhamentos/embalagem do Kit Presenteável), resumo financeiro e alterador de status rápido.
+   - **Ações Rápidas em Menu Dropdown (3 pontos `⋮`):** Agrupa ações de visualização de detalhes, alteração de status (Pendente, Em Produção, Concluído), link direto para conversa de WhatsApp, cancelamento e arquivamento/desarquivamento.
+   - **Acordeon de Pedidos Arquivados:** Pedidos arquivados foram movidos para um acordeon discreto no rodapé da página com badge de contagem e botão para restaurar/desarquivar.
+2. **Integração de Pedidos & Checkout ([`src/components/CartDrawer.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CartDrawer.astro)):**
+   - Máscara e validação estrita de telefone `(DD) 9XXXX-XXXX` (com validação de DDD real).
+   - Autocomplete de endereço do frete ao clicar em sugestões do OpenStreetMap.
+   - Origem do cálculo de frete fixada na coordenada oficial `-28.718361, -49.358579`.
+   - Persistência direta em `public.site_orders` no Supabase com status `pendente` e `request_id` único.
+
+3. **Painel de Produtos ([`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro)):**
+   - Linhas da tabela de produtos agora são 100% clicáveis (`cursor-pointer`) para abrir o modal de edição de qualquer poção.
+
+4. **Poções em Destaque Dinâmicas & Painel de Destaques ([`src/pages/admin/destaques.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/destaques.astro) e [`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro)):**
+   - **Modo Mais Populares (Automático):** As 4 poções exibidas na primeira dobra da Home são calculadas em tempo real com base nos sabores mais vendidos em pedidos com status `"pago"` no Supabase (incluindo poções avulsas, frascos individuais de kits de degustação e licores de kits presenteáveis via RPC segura `public.get_featured_potions()`).
+   - **Modo Seleção Manual:** Permite ao administrador escolher exatamente até 4 poções para figurarem na vitrine.
+   - O painel administrativo exibe um preview ao vivo do ranking dos mais vendidos em pedidos pagos.
+
+---
+
 *Nota: Ao realizar futuras mudanças de código, adicione uma nova entrada na seção 7 deste arquivo e atualize as seções correspondentes.*
 

@@ -416,6 +416,72 @@ export async function fetchProducts(): Promise<Product[]> {
   }
 }
 
+export async function fetchFeaturedConfig(): Promise<{ modo: string; produto_ids: string[] }> {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/featured_config?select=*&id=eq.1`, {
+      headers: getSupabaseHeaders()
+    });
+    if (!res.ok) throw new Error("Failed to fetch featured config");
+    const data = await res.json();
+    if (Array.isArray(data) && data.length > 0) {
+      return {
+        modo: data[0].modo || "manual",
+        produto_ids: data[0].produto_ids || []
+      };
+    }
+  } catch (e) {
+    console.warn("Using fallback featured config:", e);
+  }
+  return { modo: "manual", produto_ids: [] };
+}
+
+export async function fetchFeaturedProducts(): Promise<Product[]> {
+  // 1. Tenta executar a procedure segura get_featured_potions no Supabase
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_featured_potions`, {
+      method: "POST",
+      headers: {
+        ...getSupabaseHeaders(),
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({})
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data;
+      }
+    }
+  } catch (e) {
+    console.warn("RPC get_featured_potions falhou, usando algoritmo local:", e);
+  }
+
+  // 2. Fallback resiliente caso RPC falhe
+  try {
+    const [allProducts, config] = await Promise.all([
+      fetchProducts(),
+      fetchFeaturedConfig()
+    ]);
+
+    if (config.modo === "manual" && config.produto_ids && config.produto_ids.length > 0) {
+      const selected = config.produto_ids
+        .map((id) => allProducts.find((p) => String(p.id) === String(id)))
+        .filter((p): p is Product => Boolean(p));
+
+      if (selected.length === 4) return selected;
+      const remaining = allProducts.filter((p) => !selected.some((s) => s.id === p.id));
+      return [...selected, ...remaining].slice(0, 4);
+    }
+
+    // Modo Popular fallback por pedidos_count
+    return [...allProducts]
+      .sort((a, b) => (b.pedidos_count || 0) - (a.pedidos_count || 0))
+      .slice(0, 4);
+  } catch {
+    return FALLBACK_PRODUCTS.slice(0, 4);
+  }
+}
+
 export async function fetchTestimonials(): Promise<Testimonial[]> {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/testimonials?select=*&ativo=eq.true`, {
