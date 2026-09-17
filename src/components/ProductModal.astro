@@ -372,6 +372,7 @@
     const name = document.getElementById("modal-product-name");
     const sabor = document.getElementById("modal-product-sabor");
     const price = document.getElementById("modal-product-price");
+    const vol = document.getElementById("modal-product-vol");
     const notas = document.getElementById("modal-product-notas");
     const desc = document.getElementById("modal-product-desc");
     const prepAlert = document.getElementById("modal-prep-alert");
@@ -637,9 +638,24 @@
       if (catBadge) catBadge.textContent = p.categoria === 'fino' ? 'Licor Fino' : p.categoria === 'cremoso' ? 'Licor Cremoso' : 'Licor Especial';
       if (name) name.textContent = p.nome;
       if (sabor) sabor.textContent = p.sabor;
-      if (price) price.textContent = Number.isInteger(p.preco) ? `R$ ${p.preco}` : `R$ ${Number(p.preco).toFixed(2).replace('.', ',')}`;
-      if (notas) notas.textContent = p.notas_aromaticas || "";
-      if (desc) desc.textContent = p.descricao || "";
+      if (price) price.textContent = Number.isInteger(Number(p.preco)) ? `R$ ${Number(p.preco)}` : `R$ ${Number(p.preco).toFixed(2).replace('.', ',')}`;
+      if (vol) vol.textContent = `Volume: ${p.volume_ml || 750}ml`;
+      if (notas) {
+        if (p.notas_aromaticas) {
+          notas.textContent = p.notas_aromaticas;
+          (notas as HTMLElement).style.display = "";
+        } else {
+          (notas as HTMLElement).style.display = "none";
+        }
+      }
+      if (desc) {
+        if (p.descricao) {
+          desc.textContent = p.descricao;
+          (desc as HTMLElement).style.display = "";
+        } else {
+          (desc as HTMLElement).style.display = "none";
+        }
+      }
 
       const needsPrep = p.categoria === 'cremoso' && !(p.sabor || "").toLowerCase().includes("doce de leite");
       if (prepAlert) {
@@ -651,8 +667,8 @@
         else badgePrepWrap.classList.add("hidden");
       }
 
-      if (statGrad) statGrad.textContent = `${p.graduacao_gl || 24}°GL`;
-      if (statBrix) statBrix.textContent = `${p.brix || 28}°Bx`;
+      if (statGrad) statGrad.textContent = p.graduacao_gl != null ? `${p.graduacao_gl}°GL` : "--";
+      if (statBrix) statBrix.textContent = p.brix != null ? `${p.brix}°Bx` : "--";
 
       if (statIngrTooltip) {
         statIngrTooltip.textContent = p.ingredientes || "Ingredientes selecionados artesanalmente com álcool de cereais e frutas/especiarias naturais.";
@@ -758,8 +774,39 @@
       closeModal();
     });
 
+    let allProductsCache: any[] = [];
+
+    async function resolveProductData(productId?: string, pObj?: any): Promise<{ product: any; originCard: HTMLElement | null }> {
+      // Always try to fetch fresh products from Supabase API / DB if cache is empty or on demand
+      if (allProductsCache.length === 0) {
+        try {
+          const fresh = await fetchProducts();
+          if (Array.isArray(fresh) && fresh.length > 0) {
+            allProductsCache = fresh;
+          }
+        } catch {}
+      }
+
+      const lookupId = productId || pObj?.id;
+      const lookupName = pObj?.nome || productId;
+
+      let found = allProductsCache.find((p: any) => (lookupId && p.id === lookupId) || (lookupName && p.nome === lookupName));
+      if (found) {
+        const card = document.querySelector(`.product-card[data-product*="${found.id}"]`) as HTMLElement;
+        return { product: found, originCard: card };
+      }
+
+      if (pObj) {
+        const card = pObj.id ? (document.querySelector(`.product-card[data-product*="${pObj.id}"]`) as HTMLElement) : null;
+        return { product: pObj, originCard: card };
+      }
+
+      found = FALLBACK_PRODUCTS.find((p: any) => (lookupId && p.id === lookupId) || (lookupName && p.nome === lookupName));
+      return { product: found || null, originCard: null };
+    }
+
     // Delegate click on any card to open modal with expanding card effect
-    document.addEventListener("click", (e) => {
+    document.addEventListener("click", async (e) => {
       const target = e.target as HTMLElement;
       if (target.closest(".quick-add-btn")) {
         // Handled separately
@@ -769,48 +816,11 @@
       if (card && card.dataset.product) {
         try {
           const productData = JSON.parse(card.dataset.product);
-          openModalWithProduct(productData, card);
+          const { product, originCard } = await resolveProductData(productData.id, productData);
+          openModalWithProduct(product || productData, card || originCard);
         } catch (err) {}
       }
     });
-
-    let allProductsCache: any[] = [];
-
-    async function resolveProductData(productId?: string, pObj?: any): Promise<{ product: any; originCard: HTMLElement | null }> {
-      if (pObj) return { product: pObj, originCard: null };
-      if (!productId) return { product: null, originCard: null };
-
-      // 1. Try DOM card matching data-product containing productId
-      const card = document.querySelector(`.product-card[data-product*="${productId}"]`) as HTMLElement;
-      if (card && card.dataset.product) {
-        try {
-          return { product: JSON.parse(card.dataset.product), originCard: card };
-        } catch {}
-      }
-
-      // 2. Check local cache
-      let found = allProductsCache.find((p: any) => p.id === productId || p.nome === productId);
-      if (found) return { product: found, originCard: null };
-
-      // 3. Try FALLBACK_PRODUCTS
-      found = FALLBACK_PRODUCTS.find((p: any) => p.id === productId || p.nome === productId);
-      if (found) {
-        allProductsCache.push(found);
-        return { product: found, originCard: null };
-      }
-
-      // 4. Fetch from DB / API
-      try {
-        const fetched = await fetchProducts();
-        if (Array.isArray(fetched) && fetched.length > 0) {
-          allProductsCache = fetched;
-          found = allProductsCache.find((p: any) => p.id === productId || p.nome === productId);
-          if (found) return { product: found, originCard: null };
-        }
-      } catch {}
-
-      return { product: null, originCard: null };
-    }
 
     // Custom event to open product modal by data or ID
     window.addEventListener("open-product-modal", async (e: any) => {

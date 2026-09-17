@@ -336,6 +336,9 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [16/09/2026] — Sincronização Dinâmica do Modal de Produto com o Painel Administrativo (`ProductModal`)
+- **Dados 100% Dinâmicos no Modal:** Atualizado [`ProductModal.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/ProductModal.astro) para que todos os campos (foto principal, galeria, nome, sabor/subtítulo, categoria, preço, volume em ml `p.volume_ml`, °GL `p.graduacao_gl`, Brix `p.brix`, ingredientes, notas aromáticas, descrição, sugestões de consumo e quantidade/alerta de estoque) sejam renderizados dinamicamente a partir dos dados atualizados no banco do Supabase / Área Administrativa (`/admin/produtos`).
+
 ### [16/09/2026] — Resolução de Produtos no Modal por ID (`ProductModal` & `RituaisDegustacao`)
 - **Abertura de Modal de Todos os Sabores:** Atualizado o manipulador do evento `open-product-modal` em [`ProductModal.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/ProductModal.astro) para incluir resolução dinâmica por ID através de fallback local (`FALLBACK_PRODUCTS`) e Supabase (`fetchProducts()`), mesmo quando a poção não possui card renderizado na grade principal.
 - **Animação FLIP a partir dos Botões:** Atualizado [`RituaisDegustacao.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/RituaisDegustacao.astro) para passar `originElement: btn`, expandindo o modal suavemente a partir do botão de poção clicado nos rituais.
