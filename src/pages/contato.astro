@@ -6,27 +6,31 @@ import { SITE, waUrl } from '../lib/data';
 const FAQ = [
   {
     q: "Os licores são realmente artesanais?",
-    a: "Sim. Todos são produzidos manualmente pelo Alquimista, em pequenos lotes, com ingredientes naturais e sem corantes artificiais.",
+    a: "Sim. Nossas poções são produzidas artesanalmente, em pequenos lotes, com ingredientes selecionados e sem corantes, conservantes ou aditivos artificiais. A cor, o aroma e o sabor vêm dos próprios ingredientes.",
   },
   {
     q: "Como funciona o pedido?",
-    a: "Você monta seu pedido aqui no site e finalizamos pelo WhatsApp com confirmação de disponibilidade, endereço e prazo.",
+    a: "Você monta seu pedido pelo site e envia para nós. Pelo WhatsApp, confirmamos a disponibilidade, o endereço de entrega ou retirada e o prazo.",
   },
   {
     q: "Posso personalizar o kit?",
-    a: "Sim! Você escolhe o sabor do licor, o acompanhamento artesanal e o tipo de embalagem.",
+    a: "Sim. Você pode escolher o sabor do licor, o acompanhamento artesanal e as opções de embalagem disponíveis para montar o seu presente.",
   },
   {
     q: "Qual o prazo de entrega?",
-    a: "Confirmado via WhatsApp conforme disponibilidade. Licores cremosos exigem 2 dias de preparo e kits ao menos 1 dia.",
+    a: "O prazo varia conforme o produto e a disponibilidade.\nLicores cremosos: até 2 dias para preparo.\nKits: pelo menos 1 dia para montagem.\nO prazo final é confirmado pelo WhatsApp.",
   },
   {
     q: "Vocês entregam onde?",
-    a: "Atendemos Criciúma e região via motoboy. Informe seu endereço no carrinho para calcularmos a rota.",
+    a: "Entregamos em Criciúma e região via motoboy. Informe seu endereço no carrinho para verificarmos a disponibilidade e calcularmos a entrega.",
   },
   {
     q: "Posso retirar pessoalmente?",
-    a: "Sim! A retirada é gratuita no endereço: Rod. Antonio Darós, 1105 - São João, Criciúma - SC.",
+    a: "Sim. A retirada é gratuita em nosso endereço:\nRod. Antonio Darós, 1105 — São João, Criciúma — SC.",
+  },
+  {
+    q: "Como devo conservar o licor?",
+    a: "Depois de aberto, mantenha de preferência na geladeira.\nLicores finos: até 7 meses.\nLicores cremosos: até 2 meses.",
   },
 ];
 ---
@@ -140,8 +144,8 @@ const FAQ = [
                 </svg>
               </button>
             </h3>
-            <div class={`faq-content overflow-hidden transition-all duration-300 ${i === 0 ? "max-h-60 opacity-100" : "max-h-0 opacity-0"}`}>
-              <p class="pb-6 font-sans italic text-sm md:text-base text-[var(--text-soft)] leading-relaxed">
+            <div class={`faq-content overflow-hidden transition-all duration-300 ${i === 0 ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
+              <p class="pb-6 font-sans italic text-sm md:text-base text-[var(--text-soft)] leading-relaxed whitespace-pre-line">
                 {f.a}
               </p>
             </div>
@@ -170,7 +174,7 @@ const FAQ = [
           const oCont = other.querySelector(".faq-content");
           const oChev = other.querySelector(".faq-chevron");
           oTrig?.setAttribute("aria-expanded", "false");
-          oCont?.classList.remove("max-h-60", "opacity-100");
+          oCont?.classList.remove("max-h-[500px]", "opacity-100");
           oCont?.classList.add("max-h-0", "opacity-0");
           oChev?.classList.remove("rotate-180");
         });
@@ -178,7 +182,7 @@ const FAQ = [
         if (!isExpanded) {
           trigger.setAttribute("aria-expanded", "true");
           content?.classList.remove("max-h-0", "opacity-0");
-          content?.classList.add("max-h-60", "opacity-100");
+          content?.classList.add("max-h-[500px]", "opacity-100");
           chevron?.classList.add("rotate-180");
         }
       });
