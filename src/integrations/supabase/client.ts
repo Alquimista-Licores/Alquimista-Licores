@@ -9,7 +9,7 @@ const OFFICIAL_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 export const SUPABASE_CONFIG = {
   url: import.meta.env.PUBLIC_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL || "https://bktegbisdaqdhpqtxqxy.supabase.co",
-  anonKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.SUPABASE_PUBLISHABLE_KEY || OFFICIAL_ANON_KEY,
+  anonKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY || import.meta.env.SUPABASE_PUBLISHABLE_KEY || OFFICIAL_ANON_KEY,
   projectId: import.meta.env.VITE_SUPABASE_PROJECT_ID || "bktegbisdaqdhpqtxqxy",
   storage: {
     productImages: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images",
