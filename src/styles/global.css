@@ -279,7 +279,7 @@
   }
 
   .logo-shimmer-wrapper:hover .logo-shimmer-sheen::after {
-    animation: logoReflexSweep 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: logoReflexSweep 1.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
   }
 
   @keyframes logoReflexSweep {
