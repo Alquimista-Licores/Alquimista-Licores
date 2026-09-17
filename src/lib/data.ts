@@ -79,13 +79,17 @@ export const FALLBACK_PRODUCTS: Product[] = [
     nome: "Poção Tropical",
     sabor: "Abacaxi",
     categoria: "fino",
-    preco: 35,
+    preco: 38,
     volume_ml: 750,
-    estoque: 6,
+    estoque: 3,
     notas_aromaticas: "Tropical • Doce • Cítrica",
     descricao: "Fruta tropical que se revela a cada gole, com doçura natural e frescor cítrico.",
     sugestoes: "Servir gelado, puro ou on the rocks. \nEm coquetéis tropicais (ex: Piña Colada, Margarita).\nAcompanha pratos leves (frutos do mar grelhados, saladas) e sobremesas tropicais (coco, manga).",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466111214-ldr0bl/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779215893047-7zmklw.jpg",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779215893047-7zmklw.jpg",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779215894079-zx4li3.jpg"
+    ],
     ativo: true,
     graduacao_gl: 16.5,
     brix: 20,
@@ -97,16 +101,20 @@ export const FALLBACK_PRODUCTS: Product[] = [
   },
   {
     id: "b0d77291-b5ed-4548-8837-887f674c1b4c",
-    nome: "Poção da Alegria",
+    nome: "Poção da Travessura",
     sabor: "Banana",
     categoria: "fino",
     preco: 38,
     volume_ml: 750,
-    estoque: 4,
+    estoque: 3,
     notas_aromaticas: "Doce • Aveludada • Baunilha",
     descricao: "Bebida com bastante perfume da fruta e com doçura suave",
     sugestoes: "Degustar gelado, puro.\nEm coquetéis com gin ou rum (ex: Banana Daiquiri).\nHarmoniza com sobremesas cremosas (chocolate, doce de leite) e café.",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466211910-2f3x4n/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779216392902-zga08w.png",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779216391228-lu08d0.png",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779216392902-zga08w.png"
+    ],
     ativo: true,
     graduacao_gl: 22.5,
     brix: 25,
@@ -127,7 +135,11 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Cítrica • Frutada • Leve",
     descricao: "Sabor exótico, com doçura suave e com notas citricas.",
     sugestoes: "Servir gelado, puro ou on the rocks.\nEm drinks sour cítricos (ex: butiá sour com cachaça e limão).\nAcompanha pratos leves (saladas tropicais, peixes) ou queijos suaves.",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466237265-amfdmc/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779218939141-a6d2kf.png",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779218938177-1klenr.png",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779218939141-a6d2kf.png"
+    ],
     ativo: true,
     graduacao_gl: 16,
     brix: 35,
@@ -144,11 +156,15 @@ export const FALLBACK_PRODUCTS: Product[] = [
     categoria: "fino",
     preco: 40,
     volume_ml: 750,
-    estoque: 2,
+    estoque: 4,
     notas_aromaticas: "Torrefação • Cítrica • Amarga",
     descricao: "Intenso e marcante, mistura o amargor do café com o frescor cítrico da laranja.",
     sugestoes: "Servir gelado como digestivo.\nEm coquetéis de café (Espresso Martini, Irish Coffee).\nAcompanha sobremesas com café ou chocolate (tiramisu, brownies) e drinks cremosos.",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466281130-kvnx5l/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779219252603-7xoki8.png",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779219252603-7xoki8.png",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779219254882-ujlqav.jpg"
+    ],
     ativo: true,
     graduacao_gl: 16,
     brix: 36,
@@ -169,7 +185,12 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Especiado • Quente • Amadeirado",
     descricao: "Aroma quente e envolvente, especiaria suave que aquece o paladar.",
     sugestoes: "Servir gelado, puro, após refeições (digestivo).\nEm coquetéis autorais (ex: Canela Sour) ou para aromatizar vinho quente (quentão).\nCombina com sobremesas de canela, chocolate e frutas assadas (maçã, pera).",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466298321-gico88/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779222706428-0bpri5.png",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779222705422-r563bw.png",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779222706428-0bpri5.png",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779222707314-vftgol.png"
+    ],
     ativo: true,
     graduacao_gl: 18,
     brix: 41,
@@ -186,11 +207,15 @@ export const FALLBACK_PRODUCTS: Product[] = [
     categoria: "fino",
     preco: 35,
     volume_ml: 750,
-    estoque: 11,
+    estoque: 12,
     notas_aromaticas: "Herbácea • Frutada Suave • Leve",
     descricao: "Notas verdes e amadeiradas com doçura sutil, lembra tardes de verão. ",
     sugestoes: "Servir gelado, puro ou com gelo.\nPode ser usado em coquetéis com gin ou vodka para realçar o aroma herbal.\nHarmoniza com queijos frescos (cabra, ricota), frutas secas e saladas delicadas.",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466315741-2c4axn/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779224589945-7mnwpn.png",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779224588555-71sgk1.png",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779224589945-7mnwpn.png"
+    ],
     ativo: true,
     graduacao_gl: 21,
     brix: 31,
@@ -211,7 +236,11 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Frutada • Adocicada • Leve Acidez",
     descricao: "Sabores intensos de jabuticaba madura, frutado e aveludado.",
     sugestoes: "Servir gelado, puro ou on the rocks.\nEm coquetéis vermelhos (caipirinha de jabuticaba) ou misturado a espumantes suaves.\nCombina com sobremesas de frutas vermelhas, chocolates finos e queijos de pasta mole.",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466361965-9ey0h6/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779224690253-rkky19.png",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779224690253-rkky19.png",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779224691408-j9ixcd.png"
+    ],
     ativo: true,
     graduacao_gl: 15,
     brix: 31,
@@ -228,11 +257,16 @@ export const FALLBACK_PRODUCTS: Product[] = [
     categoria: "fino",
     preco: 35,
     volume_ml: 750,
-    estoque: 0,
+    estoque: 3,
     notas_aromaticas: "Tropical • Cítrica • Refrescante",
     descricao: "Notas tropicais vibrantes, equilibranco acidez marcante com doçura.",
     sugestoes: "Em coquetéis tropicais (caipirinha de maracujá, mojito).\nServir gelado, puro ou com gelo como refresco.\nHarmoniza com frutas frescas, sobremesas geladas (sorbete, panna cotta) e pratos exóticos.",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466383948-e9bzfg/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779224979918-0qfi3h.png",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779224978379-48cwmj.png",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779224979918-0qfi3h.png",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779224981048-eetco0.jpg"
+    ],
     ativo: true,
     graduacao_gl: 15,
     brix: 44,
@@ -253,7 +287,11 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Intenso • Cacau • Aveludado",
     descricao: "Licor cremoso com cacau e chocolate nobre meio amargo, textura aveludada e final intenso e marcante.",
     sugestoes: "Puro e gelado em taça pequena, como digestivo. Serve para encerrar uma refeição com aveludado sabor de cacau.\nSobre sobremesas: como pudim de leite, sorvetes e bolos de chocolate. \nBebidas quentes como café expresso ou cappuccino, realçando notas torradas.\nCoquetelaria: base para drinks cremosos (White Russian, Alexander) substituindo licor de café. Garante cor e sabor chocolate intenso.",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466401507-ibzz7o/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779225698421-slhmil.png",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779225698421-slhmil.png",
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779225699616-iaayu0.png"
+    ],
     ativo: true,
     graduacao_gl: 11.5,
     brix: 37,
@@ -268,13 +306,16 @@ export const FALLBACK_PRODUCTS: Product[] = [
     nome: "Poção do Doce Sossego",
     sabor: "Maracujá Cremoso",
     categoria: "cremoso",
-    preco: 45,
+    preco: 40,
     volume_ml: 750,
-    estoque: 0,
+    estoque: 8,
     notas_aromaticas: "Tropical • Cítrico • Doce",
     descricao: "Licor cremoso artesanal de maracujá, doce e levemente cítrico. Textura aveludada e sabor tropical, equilibrado e fresco.",
     sugestoes: "Bem gelado, realçando frescor e acidez característica.\nDrinques tropicais: em batidas ou coquetéis (ex. caipirinha de maracujá ou com vodka) para um toque frutado.\nCom frutas: acompanha saladas de frutas frescas ou torta de maracujá. A combinação reforça o caráter tropical.",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466419519-mhjt7u/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779225742269-dvo0n5.png",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779225742269-dvo0n5.png"
+    ],
     ativo: true,
     graduacao_gl: 12.5,
     brix: 37,
@@ -295,7 +336,10 @@ export const FALLBACK_PRODUCTS: Product[] = [
     notas_aromaticas: "Cremoso • Caramelo • Canela",
     descricao: "Licor cremoso artesanal de doce de leite com baunilha e canela. Doce e aconchegante, com textura aveludada e aroma caramelizado.",
     sugestoes: "Dose gelada: servir como digestivo em copo pequeno. Gelar intensifica a cremosidade.\nSobremesas intensas: ideal com doces de café ou chocolate amargo (ex., brigadeiro gourmet, pudim ou mousse de café). O licor adoça e complementa sabores caramelizados.\nDrinks cremosos: experimente em coquetéis como versão doce do Espress Martini (café + licor de doce de leite). Confere textura aveludada e aroma de caramelo.\nCoberturas: pode ser usado como calda sobre sorvetes, cheesecakes ou panquecas, ampliando camadas de sabor.",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466440655-rs4xq5/card.webp",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779225771272-bsvv4i.png",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779225771272-bsvv4i.png"
+    ],
     ativo: true,
     graduacao_gl: 12.5,
     brix: 28,
@@ -312,11 +356,14 @@ export const FALLBACK_PRODUCTS: Product[] = [
     categoria: "especial",
     preco: 50,
     volume_ml: 750,
-    estoque: 5,
+    estoque: 0,
     notas_aromaticas: "Mística • Especiado • Aromático",
-    descricao: "Licor sedoso à base de leite, com infusão de café e especiarias. Notas de baunilha, cacau e noz-moscada, com leve toque cítrico, final suave e aveludado.",
-    sugestoes: "Temperatura levemente fria: servir em taça pequena a cerca de 10–15 °C. \nPuro ou com gelo: degustar solo, como digestivo aromático após refeição. Não exagerar em gelo para não ofuscar as especiarias.\nDrinks criativos: substituir aguardente ou vodka em coquetéis de café (ex., martini de baunilha) para obter cremosidade extra.",
-    foto_url: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images/1786466461895-nxr6jl/card.webp",
+    descricao: "Licor cremoso artesanal com infusão de café e especiarias. Notas ricas de baunilha, cacau e noz-moscada, com leve toque cítrico, final suave e aveludado.",
+    sugestoes: "Temperatura levemente fria: servir em taça pequena a cerca de 10–15 °C. \nPuro ou com gelo: degustar solo, como digestivo aromático após refeição. Não exagerar em gelo para não ofuscar as especiarias.\nDrinks criativos: substituir aguardente ou vodka em coquetéis de café (ex., martini de baunilha) para obter cremosidade extra.",
+    foto_url: "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779225794987-wkk7xy.jpg",
+    fotos_urls: [
+      "https://pldyufxqitpoyutiszhc.supabase.co/storage/v1/object/public/product-images/1779225794987-wkk7xy.jpg"
+    ],
     ativo: true,
     graduacao_gl: 12.5,
     brix: 31,
@@ -331,14 +378,13 @@ export const FALLBACK_PRODUCTS: Product[] = [
 export const FALLBACK_TESTIMONIALS: Testimonial[] = [
   { id: "eb69c03d-dd42-4fb0-895b-1f1a5f68d342", nome: "Carlos T.", texto: "Presenteei minha mãe com o Kit Presenteável e ela amou. Embalagem impecável.", ativo: true },
   { id: "e926955c-d78e-4d6b-85f4-7ec281d15c98", nome: "Anice Cardoso", texto: "Licores saborosos e alcoólicos na medida certa. E é sempre uma boa opção para presentear. Adoro 🤌🏼🤌🏼🥰", ativo: true },
-  { id: "10663f84-2502-43f1-a277-af8e93686a78", nome: "Fernanda Mangilli", texto: "Os licores são deliciosos, gostei muito do licor de maracujá inclusive comprei mais.", ativo: true },
-  { id: "080b042b-8933-4446-b1f6-64405c3ff030", nome: "Pvianab4", texto: "Licores super deliciosos, atendimento excelente!", ativo: true },
+  { id: "10663f84-2502-43f1-a277-af8e93686a78", nome: "Fernanda Mangilli", texto: "Os licores são deliciosos, gostei muito do licor de maracujá inclusive comprei mais. ", ativo: true },
+  { id: "080b042b-8933-4446-b1f6-64405c3ff030", nome: "Pvianab4", texto: "Licores super deliciosos, atendimento excelente! ", ativo: true },
   { id: "7992dad6-da61-4b2a-8449-b345a34ccaad", nome: "Luiz Felipe K.", texto: "Licores excelentes, um melhor que o outro..\nO meu preferido é o de jaboticaba", ativo: true },
-  { id: "3edeb4b7-6b6d-4bc2-9bd7-417f7a10d405", nome: "Carine Rego", texto: "Um dos melhores licores de maracujá que já provei! Top", ativo: true },
+  { id: "3edeb4b7-6b6d-4bc2-9bd7-417f7a10d405", nome: "Carine Rego", texto: "Um dos melhores licores de maracujá que já provei! Top ", ativo: true },
   { id: "69cb7f34-71e7-44c9-95fc-5ae16abf4b6d", nome: "Valdinei Matias", texto: "Excelente licor, sabor marcante e uma experiência inesquecível", ativo: true },
-  { id: "659a6a40-da93-4ce0-8de4-5e82d319e2a8", nome: "Vera Lúcia Manoel", texto: "São muito bons saborosos ,ótima qualidade,adorei", ativo: true },
-  { id: "818d0d10-85a8-4091-8669-1c06c2221d75", nome: "Robert Nogueira", texto: "Licor de qualidade!!", ativo: true },
-  { id: "4bd80e4a-e966-4f65-9f73-ecd30f268b22", nome: "Mikael Silva", texto: "Muito bom, o cara é bom, bom demais", ativo: true }
+  { id: "659a6a40-da93-4ce0-8de4-5e82d319e2a8", nome: "Vera Lúcia Manoel", texto: "São muito bons saborosos ,ótima qualidade,adorei ", ativo: true },
+  { id: "818d0d10-85a8-4091-8669-1c06c2221d75", nome: "Robert Nogueira", texto: "Licor de qualidade!! ", ativo: true }
 ];
 
 export const FALLBACK_KIT_PRICES: KitPrice[] = [
