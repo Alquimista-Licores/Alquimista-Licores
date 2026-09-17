@@ -360,7 +360,7 @@
 </style>
 
 <script>
-  import { createStockAlert } from '../lib/data';
+  import { createStockAlert, fetchProducts, FALLBACK_PRODUCTS } from '../lib/data';
 
   function setupProductModal() {
     const container = document.getElementById("product-modal-container");
@@ -774,19 +774,53 @@
       }
     });
 
-    // Custom event to open product modal by data or ID
-    window.addEventListener("open-product-modal", (e: any) => {
-      const p = e.detail?.product;
-      const targetCard = e.detail?.originElement || (e.detail?.productId ? document.querySelector(`.product-card[data-product*="${e.detail.productId}"]`) : null);
-      if (p) {
-        openModalWithProduct(p, targetCard as HTMLElement);
-      } else if (e.detail?.productId) {
-        const card = document.querySelector(`.product-card[data-product*="${e.detail.productId}"]`) as HTMLElement;
-        if (card && card.dataset.product) {
-          try {
-            openModalWithProduct(JSON.parse(card.dataset.product), card);
-          } catch (err) {}
+    let allProductsCache: any[] = [];
+
+    async function resolveProductData(productId?: string, pObj?: any): Promise<{ product: any; originCard: HTMLElement | null }> {
+      if (pObj) return { product: pObj, originCard: null };
+      if (!productId) return { product: null, originCard: null };
+
+      // 1. Try DOM card matching data-product containing productId
+      const card = document.querySelector(`.product-card[data-product*="${productId}"]`) as HTMLElement;
+      if (card && card.dataset.product) {
+        try {
+          return { product: JSON.parse(card.dataset.product), originCard: card };
+        } catch {}
+      }
+
+      // 2. Check local cache
+      let found = allProductsCache.find((p: any) => p.id === productId || p.nome === productId);
+      if (found) return { product: found, originCard: null };
+
+      // 3. Try FALLBACK_PRODUCTS
+      found = FALLBACK_PRODUCTS.find((p: any) => p.id === productId || p.nome === productId);
+      if (found) {
+        allProductsCache.push(found);
+        return { product: found, originCard: null };
+      }
+
+      // 4. Fetch from DB / API
+      try {
+        const fetched = await fetchProducts();
+        if (Array.isArray(fetched) && fetched.length > 0) {
+          allProductsCache = fetched;
+          found = allProductsCache.find((p: any) => p.id === productId || p.nome === productId);
+          if (found) return { product: found, originCard: null };
         }
+      } catch {}
+
+      return { product: null, originCard: null };
+    }
+
+    // Custom event to open product modal by data or ID
+    window.addEventListener("open-product-modal", async (e: any) => {
+      const p = e.detail?.product;
+      const productId = e.detail?.productId;
+      const passedOrigin = e.detail?.originElement as HTMLElement | null;
+
+      const { product, originCard } = await resolveProductData(productId, p);
+      if (product) {
+        openModalWithProduct(product, passedOrigin || originCard);
       }
     });
 

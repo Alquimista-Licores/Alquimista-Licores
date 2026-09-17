@@ -336,6 +336,10 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [16/09/2026] — Resolução de Produtos no Modal por ID (`ProductModal` & `RituaisDegustacao`)
+- **Abertura de Modal de Todos os Sabores:** Atualizado o manipulador do evento `open-product-modal` em [`ProductModal.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/ProductModal.astro) para incluir resolução dinâmica por ID através de fallback local (`FALLBACK_PRODUCTS`) e Supabase (`fetchProducts()`), mesmo quando a poção não possui card renderizado na grade principal.
+- **Animação FLIP a partir dos Botões:** Atualizado [`RituaisDegustacao.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/RituaisDegustacao.astro) para passar `originElement: btn`, expandindo o modal suavemente a partir do botão de poção clicado nos rituais.
+
 ### [16/09/2026] — Ajuste no Cursor da Dobra Rituais de Degustação (`CustomCursor`)
 - **Proteção para Elementos Recolhidos:** Atualizada a função `isTargetActuallyVisible()` em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro) para ignorar elementos dentro de rituais recolhidos (`.ritual-card:not(.is-active)`), além de checar a opacidade/visibilidade de todos os elementos pais. O círculo externo dourado engloba apenas os botões de poção do ritual ativamente expandido.
 

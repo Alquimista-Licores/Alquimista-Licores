@@ -560,7 +560,7 @@ const RITUALS: Ritual[] = [
         if (potionId) {
           window.dispatchEvent(
             new CustomEvent("open-product-modal", {
-              detail: { productId: potionId }
+              detail: { productId: potionId, originElement: btn }
             })
           );
         }
