@@ -336,6 +336,9 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [17/09/2026] — Configuração Oficial da Chave Anon do Supabase (`.env` & Client)
+- **Chave de API Oficial Injetada:** Atualizadas as variáveis no arquivo `.env` e configurado o fallback oficial da chave anon pública JWT (`PUBLIC_SUPABASE_ANON_KEY`) em [`src/integrations/supabase/client.ts`](file:///d:/projetos%20antigravity/site_alquimista/src/integrations/supabase/client.ts) e [`src/lib/data.ts`](file:///d:/projetos%20antigravity/site_alquimista/src/lib/data.ts). Todas as chamadas de salvamento, edição de produtos e consultas ao banco do Supabase (`bktegbisdaqdhpqtxqxy`) agora operam com autenticação ativa sem erros de chave inválida.
+
 ### [17/09/2026] — Tratamento de Erro ao Salvar Produtos no Painel Admin (`/admin/produtos`)
 - **Tratamento Resiliente de Erros do Supabase:** Atualizado [`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro). Caso a chave `PUBLIC_SUPABASE_ANON_KEY` não esteja preenchida no arquivo `.env` ou no ambiente da Vercel, o sistema impede a exibição da mensagem crua `"Invalid API key"`, aplica a alteração no catálogo em memória, re-renderiza a tabela e notifica o usuário de forma amigável sobre o salvamento local e a pendência da chave de API da nuvem.
 

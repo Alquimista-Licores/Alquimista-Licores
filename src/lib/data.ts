@@ -61,8 +61,9 @@ export const SITE = {
   origin: { lat: -28.7184, lng: -49.3523 },
 };
 
+const OFFICIAL_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrdGVnYmlzZGFxZGhwcXR4cXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1Njg2NzksImV4cCI6MjEwNTE0NDY3OX0.nUbhe2vFtcnFOZPO6Nww-IjdGJAPCIC1Z82CladmjG4";
 const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL || "https://bktegbisdaqdhpqtxqxy.supabase.co";
-const SUPABASE_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.SUPABASE_PUBLISHABLE_KEY || "";
+const SUPABASE_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.SUPABASE_PUBLISHABLE_KEY || OFFICIAL_ANON_KEY;
 
 function getSupabaseHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
