@@ -81,7 +81,7 @@ Para garantir que modais, header, vídeo hero, botão do WhatsApp e partículas 
   - *Background (Plano 3):* Micro-poeira atmosférica (0.9px–1.8px) com movimento lento.
   - *Otimização:* Listener passivo único em `window`, cancelamento de RAF em navegação Astro (`astro:page-load`), 60 FPS estáveis.
 - **`InfiniteMarquee.astro`**: Marquee infinito nobre com tipografia refinada, símbolos dos quatro elementos alquímicos (`🜃`, `🜁`, `🜄`, `🜂`), animação contínua e fade gradiente nas bordas. Posicionado logo abaixo da dobra Hero.
-- **`Header.astro`**: Barra superior fixa com tipografia geométrica arredondada fina, linha dourada indicadora de rota ativa e botão do Caldeirão de compras.
+- **`Header.astro`**: Barra superior fixa com glassmorphism nobre (`backdrop-blur-md` ativo em nível de compositor GPU e preservado no build de produção), tipografia geométrica arredondada fina, linha dourada indicadora de rota ativa e botão do Caldeirão de compras.
 - **`WhatsAppFAB.astro`**: Ícone do WhatsApp transparente (sem fundo circular sólido), renderizado com cor dourada e filtro de sombra suave.
 - **`RituaisDegustacao.astro`**: Dobra assimétrica estilo *Grimório de Servir*, posicionada imediatamente após *Poções em Destaque*. Apresenta 4 rituais (I — Puro & Gelado, II — Sobre Gelo, III — À Mesa, IV — Em Alquimia) com crossfade cinematográfico contínuo entre imagens dedicadas e links para produtos recomendados.
 - **`Button.astro`**: Componente polimórfico de botão/link do Design System com suporte a 6 variantes visuais (`primary`, `outline`, `shimmer`, `liquid`, `ghost`, `icon`).
