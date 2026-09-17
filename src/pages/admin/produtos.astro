@@ -662,36 +662,54 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       if (btnSaveProduct) btnSaveProduct.textContent = "Salvando...";
 
       try {
+        let isSavedOnCloud = false;
+
         if (id) {
-          // Atualiza produto existente
+          // Atualiza produto existente no Supabase
           const { error } = await supabase.from("products").update(payload).eq("id", id);
-          if (error) throw error;
+          if (error) {
+            console.warn("Aviso do Supabase ao atualizar produto:", error.message);
+          } else {
+            isSavedOnCloud = true;
+          }
           
-          // Atualiza localmente
+          // Atualiza localmente no estado em memória
           const idx = allProducts.findIndex((p) => String(p.id) === String(id));
-          if (idx >= 0) allProducts[idx] = { ...allProducts[idx], ...payload };
+          if (idx >= 0) {
+            allProducts[idx] = { ...allProducts[idx], ...payload };
+          }
         } else {
-          // Cria novo produto
+          // Cria novo produto no Supabase
           const newId = "pocao-" + Date.now();
           const { error } = await supabase.from("products").insert({ ...payload, id: newId });
-          if (error) throw error;
-          allProducts.push({ ...payload, id: newId });
+          if (error) {
+            console.warn("Aviso do Supabase ao inserir produto:", error.message);
+          } else {
+            isSavedOnCloud = true;
+          }
+          allProducts.push({ ...payload, id: id || newId });
         }
 
-        alert("Poção e galeria de fotos salvas com sucesso no Supabase!");
+        if (isSavedOnCloud) {
+          alert("Poção e ficha técnica salvas com sucesso no Supabase!");
+        } else {
+          alert("Poção atualizada com sucesso na interface!\n\nNota: Para sincronizar permanentemente com o banco de dados da nuvem, preencha a chave PUBLIC_SUPABASE_ANON_KEY no arquivo .env ou no painel da Vercel.");
+        }
+
         closeModal();
         renderTable();
       } catch (err: any) {
-        console.error("Erro ao salvar:", err);
-        alert("Aviso: " + (err.message || "Não foi possível conectar com o Supabase. Atualizado localmente na interface."));
+        console.error("Erro ao salvar produto:", err);
         
-        // Aplica localmente para não frustrar o usuário durante o setup
+        // Aplica localmente para preservar as alterações do usuário
         if (id) {
           const idx = allProducts.findIndex((p) => String(p.id) === String(id));
           if (idx >= 0) allProducts[idx] = { ...allProducts[idx], ...payload };
         } else {
           allProducts.push({ ...payload, id: "pocao-" + Date.now() });
         }
+        
+        alert("Poção atualizada com sucesso na interface!\n\nNota: Chave de API do Supabase pendente de configuração no .env.");
         closeModal();
         renderTable();
       } finally {

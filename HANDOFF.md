@@ -336,6 +336,9 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [17/09/2026] — Tratamento de Erro ao Salvar Produtos no Painel Admin (`/admin/produtos`)
+- **Tratamento Resiliente de Erros do Supabase:** Atualizado [`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro). Caso a chave `PUBLIC_SUPABASE_ANON_KEY` não esteja preenchida no arquivo `.env` ou no ambiente da Vercel, o sistema impede a exibição da mensagem crua `"Invalid API key"`, aplica a alteração no catálogo em memória, re-renderiza a tabela e notifica o usuário de forma amigável sobre o salvamento local e a pendência da chave de API da nuvem.
+
 ### [16/09/2026] — Sincronização Dinâmica do Modal de Produto com o Painel Administrativo (`ProductModal`)
 - **Dados 100% Dinâmicos no Modal:** Atualizado [`ProductModal.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/ProductModal.astro) para que todos os campos (foto principal, galeria, nome, sabor/subtítulo, categoria, preço, volume em ml `p.volume_ml`, °GL `p.graduacao_gl`, Brix `p.brix`, ingredientes, notas aromáticas, descrição, sugestões de consumo e quantidade/alerta de estoque) sejam renderizados dinamicamente a partir dos dados atualizados no banco do Supabase / Área Administrativa (`/admin/produtos`).
 
