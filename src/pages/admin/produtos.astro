@@ -184,15 +184,58 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           </div>
         </div>
 
-        <!-- Bloco 4: Fotos da Poção -->
-        <div>
-          <div class="font-display text-[11px] text-[var(--gold)] uppercase tracking-widest border-b border-[var(--gold)]/10 pb-1 mb-3 flex items-center gap-1.5 font-bold">
-            <span>🖼</span> Imagem de Capa do Produto
+        <!-- Bloco 4: Fotos & Galeria da Poção -->
+        <div class="border border-[var(--gold)]/20 p-4 rounded-md bg-[var(--surface-elevated)]/40 space-y-4">
+          <div class="font-display text-[11px] text-[var(--gold)] uppercase tracking-widest border-b border-[var(--gold)]/10 pb-2 flex items-center justify-between font-bold">
+            <span class="flex items-center gap-1.5">
+              <span>🖼</span> Galeria de Fotos & Imagem de Capa
+            </span>
+            <span class="text-[10px] text-[var(--cream)]/40 font-mono normal-case">
+              ⭐ A foto de capa é a principal (cards e mini-cards)
+            </span>
           </div>
+
+          <!-- Upload Drop Zone & Actions -->
+          <div class="flex flex-col sm:flex-row items-center gap-3">
+            <label class="w-full sm:w-auto px-4 py-2.5 bg-[var(--surface)] border border-dashed border-[var(--gold)]/40 hover:border-[var(--gold)] rounded-sm text-center cursor-pointer transition-all hover:bg-[var(--gold)]/10 flex items-center justify-center gap-2 text-xs text-[var(--cream)] group">
+              <span class="text-base group-hover:scale-110 transition-transform">📤</span>
+              <span class="font-display tracking-wider uppercase text-[11px] font-bold text-[var(--gold)]">Carregar Fotos (Upload)</span>
+              <input type="file" id="prod-fotos-file" multiple accept="image/*" class="hidden" />
+            </label>
+
+            <div class="flex-1 flex items-center gap-2 w-full">
+              <input
+                type="url"
+                id="prod-foto-url-input"
+                class="flex-1 bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-1.5 text-[var(--cream)] focus:border-[var(--gold)] outline-none font-mono text-[11px]"
+                placeholder="Ou cole o link de uma imagem externa (URL)..."
+              />
+              <button
+                type="button"
+                id="btn-add-url-photo"
+                class="px-3 py-1.5 border border-[var(--gold)]/30 text-[var(--gold)] hover:bg-[var(--gold)] hover:text-black text-[11px] font-display uppercase tracking-wider rounded-sm transition-all cursor-pointer whitespace-nowrap"
+              >
+                + Adicionar
+              </button>
+            </div>
+          </div>
+
+          <!-- Status de Upload -->
+          <div id="upload-status" class="hidden text-xs text-[var(--gold)] font-mono animate-pulse flex items-center gap-2">
+            <span class="inline-block animate-spin">⚗</span> Enviando imagem(ns) para o Supabase Storage...
+          </div>
+
+          <!-- Grid de Thumbnails da Galeria -->
           <div>
-            <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">URL Pública da Foto</label>
-            <input type="url" id="prod-foto-url" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none font-mono text-[11px]" placeholder="https://.../card.webp" />
+            <div class="text-[10px] uppercase font-mono tracking-wider text-[var(--cream)]/50 mb-2">
+              Fotos da Poção (Passe o mouse para definir a Capa ou Remover):
+            </div>
+            <div id="gallery-container" class="grid grid-cols-2 sm:grid-cols-4 gap-3 min-h-[100px] border border-[var(--gold)]/10 p-2.5 rounded-sm bg-[var(--background)]/60">
+              <!-- Renderizado via JS -->
+            </div>
           </div>
+
+          <input type="hidden" id="prod-foto-url" />
         </div>
       </form>
 
@@ -216,6 +259,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     let allProducts: any[] = [];
     let currentEditingProduct: any = null;
+    let currentGallery: string[] = [];
+    let currentCoverUrl: string = "";
 
     const tableBody = document.getElementById("products-table-body");
     const searchInput = document.getElementById("search-product") as HTMLInputElement;
@@ -226,6 +271,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     const btnCloseModal = document.getElementById("btn-close-modal");
     const btnCancelModal = document.getElementById("btn-cancel-modal");
     const btnSaveProduct = document.getElementById("btn-save-product");
+
+    const fotosFileInput = document.getElementById("prod-fotos-file") as HTMLInputElement;
+    const fotoUrlInput = document.getElementById("prod-foto-url-input") as HTMLInputElement;
+    const btnAddUrlPhoto = document.getElementById("btn-add-url-photo");
+    const uploadStatus = document.getElementById("upload-status");
+    const galleryContainer = document.getElementById("gallery-container");
 
     // Formatador de Preço
     function fmtBRL(val: number) {
@@ -350,6 +401,156 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       });
     }
 
+    // Renderiza os Thumbnails da Galeria de Fotos no Modal do Admin
+    function renderGallery() {
+      if (!galleryContainer) return;
+
+      if (currentGallery.length === 0) {
+        galleryContainer.innerHTML = `
+          <div class="col-span-full py-6 text-center text-xs text-[var(--cream)]/40 font-mono">
+            Nenhuma foto adicionada ainda. Faça upload ou insira um link para começar.
+          </div>
+        `;
+        return;
+      }
+
+      galleryContainer.innerHTML = currentGallery.map((url, idx) => {
+        const isCover = url === currentCoverUrl || (idx === 0 && !currentCoverUrl);
+        return `
+          <div class="relative group aspect-square rounded-sm overflow-hidden border ${
+            isCover ? 'border-2 border-[var(--gold)] shadow-[0_0_15px_rgba(200,169,126,0.35)]' : 'border-[var(--gold)]/20 hover:border-[var(--gold)]/50'
+          } bg-black/60">
+            <img src="${url}" alt="Foto ${idx + 1}" class="w-full h-full object-cover" onerror="this.src='/favicon.svg'" />
+            
+            <!-- Badge de Capa -->
+            ${isCover ? `
+              <div class="absolute top-1.5 left-1.5 z-20 px-1.5 py-0.5 bg-[var(--gold)] text-[var(--background)] font-display font-bold text-[9px] uppercase tracking-wider rounded shadow-md flex items-center gap-1">
+                ⭐ Capa
+              </div>
+            ` : ''}
+
+            <!-- Botão de Remover X (Top Right) -->
+            <button
+              type="button"
+              data-remove-url="${url}"
+              class="btn-remove-photo absolute top-1.5 right-1.5 z-30 w-6 h-6 rounded-full bg-red-950/80 hover:bg-red-600 text-white font-bold text-xs flex items-center justify-center transition-all shadow-lg cursor-pointer"
+              title="Remover Imagem"
+            >
+              ✕
+            </button>
+
+            <!-- Botão de Tornar Capa (Bottom Overlay) -->
+            ${!isCover ? `
+              <div class="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex justify-center z-20">
+                <button
+                  type="button"
+                  data-set-cover="${url}"
+                  class="btn-set-cover w-full py-1 bg-[var(--surface-elevated)] border border-[var(--gold)]/40 hover:bg-[var(--gold)] hover:text-black text-[var(--gold)] text-[9px] uppercase font-display font-bold tracking-wider rounded transition-all cursor-pointer shadow-md"
+                >
+                  ⭐ Tornar Capa
+                </button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join("");
+
+      // Bind dos botões X (Remover)
+      galleryContainer.querySelectorAll(".btn-remove-photo").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const targetUrl = (e.currentTarget as HTMLElement).getAttribute("data-remove-url");
+          if (targetUrl) {
+            currentGallery = currentGallery.filter((u) => u !== targetUrl);
+            if (currentCoverUrl === targetUrl) {
+              currentCoverUrl = currentGallery.length > 0 ? currentGallery[0] : "";
+            }
+            renderGallery();
+          }
+        });
+      });
+
+      // Bind dos botões de Tornar Capa
+      galleryContainer.querySelectorAll(".btn-set-cover").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const targetUrl = (e.currentTarget as HTMLElement).getAttribute("data-set-cover");
+          if (targetUrl) {
+            currentCoverUrl = targetUrl;
+            // Move foto da capa para o inicio da sequencia
+            currentGallery = [targetUrl, ...currentGallery.filter((u) => u !== targetUrl)];
+            renderGallery();
+          }
+        });
+      });
+    }
+
+    // Handler de Upload de Arquivos de Imagem
+    async function handleFilesUpload(files: FileList) {
+      if (!files || files.length === 0) return;
+      if (uploadStatus) uploadStatus.classList.remove("hidden");
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExt = file.name.split(".").pop() || "jpg";
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        try {
+          // Upload para o Bucket product-images no Supabase Storage
+          const { data, error } = await supabase.storage
+            .from("product-images")
+            .upload(filePath, file, { cacheControl: "3600", upsert: true });
+
+          if (error) throw error;
+
+          const { data: publicData } = supabase.storage
+            .from("product-images")
+            .getPublicUrl(filePath);
+
+          const publicUrl = publicData?.publicUrl || "";
+          if (publicUrl && !currentGallery.includes(publicUrl)) {
+            currentGallery.push(publicUrl);
+            if (!currentCoverUrl) currentCoverUrl = publicUrl;
+          }
+        } catch (err: any) {
+          console.warn("Falha no upload do Supabase Storage. Usando fallback de leitura local...", err);
+          
+          // Fallback resiliente usando FileReader DataURL
+          const localUrl = await new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target?.result as string || "");
+            reader.readAsDataURL(file);
+          });
+
+          if (localUrl && !currentGallery.includes(localUrl)) {
+            currentGallery.push(localUrl);
+            if (!currentCoverUrl) currentCoverUrl = localUrl;
+          }
+        }
+      }
+
+      if (uploadStatus) uploadStatus.classList.add("hidden");
+      if (fotosFileInput) fotosFileInput.value = "";
+      renderGallery();
+    }
+
+    fotosFileInput?.addEventListener("change", (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files) handleFilesUpload(files);
+    });
+
+    btnAddUrlPhoto?.addEventListener("click", () => {
+      const url = fotoUrlInput?.value.trim();
+      if (!url) return;
+      if (!currentGallery.includes(url)) {
+        currentGallery.push(url);
+        if (!currentCoverUrl) currentCoverUrl = url;
+        renderGallery();
+      }
+      fotoUrlInput.value = "";
+    });
+
     function openModal(prod: any = null) {
       currentEditingProduct = prod;
       if (modalTitle) {
@@ -375,7 +576,26 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       (document.getElementById("prod-ingredientes") as HTMLTextAreaElement).value = prod?.ingredientes || "";
       (document.getElementById("prod-sugestoes") as HTMLTextAreaElement).value = prod?.sugestoes || "";
       (document.getElementById("prod-descricao") as HTMLTextAreaElement).value = prod?.descricao || "";
-      (document.getElementById("prod-foto-url") as HTMLInputElement).value = prod?.foto_url || "";
+
+      // Galeria e Foto de Capa
+      currentCoverUrl = prod?.foto_url || "";
+      currentGallery = [];
+      if (currentCoverUrl) currentGallery.push(currentCoverUrl);
+
+      const rawFotos = prod?.fotos_urls || prod?.fotos_url;
+      if (Array.isArray(rawFotos)) {
+        rawFotos.forEach((u: string) => {
+          if (u && typeof u === "string" && !currentGallery.includes(u)) {
+            currentGallery.push(u);
+          }
+        });
+      }
+
+      if (!currentCoverUrl && currentGallery.length > 0) {
+        currentCoverUrl = currentGallery[0];
+      }
+
+      renderGallery();
 
       modalBackdrop?.classList.remove("hidden");
       modalBackdrop?.classList.add("flex");
@@ -385,6 +605,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       modalBackdrop?.classList.add("hidden");
       modalBackdrop?.classList.remove("flex");
       currentEditingProduct = null;
+      currentGallery = [];
+      currentCoverUrl = "";
     }
 
     async function handleSave() {
@@ -405,7 +627,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       const ingredientes = (document.getElementById("prod-ingredientes") as HTMLTextAreaElement).value.trim();
       const sugestoes = (document.getElementById("prod-sugestoes") as HTMLTextAreaElement).value.trim();
       const descricao = (document.getElementById("prod-descricao") as HTMLTextAreaElement).value.trim();
-      const foto_url = (document.getElementById("prod-foto-url") as HTMLInputElement).value.trim();
+
+      const finalCoverUrl = currentCoverUrl || (currentGallery.length > 0 ? currentGallery[0] : "");
+      // Garante que a capa fique na primeira posicao do array de galeria
+      const finalGallery = finalCoverUrl
+        ? [finalCoverUrl, ...currentGallery.filter((u) => u !== finalCoverUrl)]
+        : currentGallery;
 
       if (!nome || isNaN(preco)) {
         alert("Preencha ao menos o Nome e o Preço da poção.");
@@ -428,7 +655,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         ingredientes,
         sugestoes,
         descricao,
-        foto_url: foto_url || undefined,
+        foto_url: finalCoverUrl || undefined,
+        fotos_urls: finalGallery.length > 0 ? finalGallery : undefined,
       };
 
       if (btnSaveProduct) btnSaveProduct.textContent = "Salvando...";
@@ -450,7 +678,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           allProducts.push({ ...payload, id: newId });
         }
 
-        alert("Poção e dados do modal salvos com sucesso no Supabase!");
+        alert("Poção e galeria de fotos salvas com sucesso no Supabase!");
         closeModal();
         renderTable();
       } catch (err: any) {

@@ -6,17 +6,41 @@
   <div id="product-modal-card" class="bg-[var(--surface)] md:border md:border-[var(--gold)]/30 w-full md:w-[min(1050px,92vw)] md:max-w-[1050px] h-[100dvh] md:h-[72vh] md:max-h-[640px] rounded-xl md:rounded-xl flex flex-col md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] overflow-hidden shadow-2xl relative gold-glow will-change-transform max-w-full overflow-x-hidden">
     
     <!-- LEFT: IMAGE GALLERY -->
-    <div class="relative shrink-0 aspect-square md:aspect-auto md:h-full bg-gradient-to-b from-[var(--surface-elevated)] to-[var(--background)] overflow-hidden">
+    <div class="relative shrink-0 aspect-square md:aspect-auto md:h-full bg-gradient-to-b from-[var(--surface-elevated)] to-[var(--background)] overflow-hidden group/gallery">
       <img
         id="modal-product-img"
         src=""
         alt=""
-        class="w-full h-full object-cover object-center transition-all duration-500"
+        class="w-full h-full object-cover object-center transition-all duration-300"
       />
       <div id="modal-smoke" class="smoke-layer hidden"></div>
       <div id="modal-category-badge" class="badge-pill-gold absolute top-4 left-4 z-10 font-bold uppercase shadow-xl backdrop-blur-md">
         Licor Fino
       </div>
+
+      <!-- GALLERY SEQUENCER ARROWS -->
+      <button
+        id="modal-prev-img"
+        type="button"
+        class="hidden absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-[var(--background)]/80 text-[var(--gold)] border border-[var(--gold)]/30 hover:border-[var(--gold)] hover:bg-[var(--gold)] hover:text-black transition-all items-center justify-center cursor-pointer shadow-lg backdrop-blur-sm"
+        aria-label="Foto anterior"
+      >
+        ❮
+      </button>
+      <button
+        id="modal-next-img"
+        type="button"
+        class="hidden absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-[var(--background)]/80 text-[var(--gold)] border border-[var(--gold)]/30 hover:border-[var(--gold)] hover:bg-[var(--gold)] hover:text-black transition-all items-center justify-center cursor-pointer shadow-lg backdrop-blur-sm"
+        aria-label="Próxima foto"
+      >
+        ❯
+      </button>
+
+      <!-- SEQUENCE DOTS & COUNTER -->
+      <div id="modal-gallery-dots" class="hidden absolute bottom-3 inset-x-0 z-20 flex items-center justify-center gap-1.5 px-4 pointer-events-none">
+        <!-- Renderizado dinamicamente -->
+      </div>
+
       <button
         id="modal-close-mobile"
         class="md:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-[var(--background)]/80 text-[var(--cream)] hover:text-[var(--gold)] z-20 cursor-pointer"
@@ -388,6 +412,74 @@
     let originCardElement: HTMLElement | null = null;
     let isClosing = false;
 
+    let modalGallery: string[] = [];
+    let modalGalleryIndex = 0;
+
+    const prevImgBtn = document.getElementById("modal-prev-img");
+    const nextImgBtn = document.getElementById("modal-next-img");
+    const dotsContainer = document.getElementById("modal-gallery-dots");
+
+    function renderModalGalleryDots() {
+      if (!dotsContainer || !prevImgBtn || !nextImgBtn) return;
+
+      if (modalGallery.length > 1) {
+        prevImgBtn.classList.remove("hidden");
+        prevImgBtn.classList.add("flex");
+        nextImgBtn.classList.remove("hidden");
+        nextImgBtn.classList.add("flex");
+        dotsContainer.classList.remove("hidden");
+        dotsContainer.classList.add("flex");
+
+        dotsContainer.innerHTML = modalGallery.map((_, idx) => `
+          <span class="pointer-events-auto h-2 transition-all cursor-pointer rounded-full ${
+            idx === modalGalleryIndex
+              ? 'w-6 bg-[var(--gold)] shadow-[0_0_8px_var(--gold)]'
+              : 'w-2 bg-[var(--cream)]/40 hover:bg-[var(--gold-soft)]'
+          }" data-idx="${idx}"></span>
+        `).join("");
+
+        dotsContainer.querySelectorAll("[data-idx]").forEach((dot) => {
+          dot.addEventListener("click", (e) => {
+            const idx = Number((e.currentTarget as HTMLElement).getAttribute("data-idx"));
+            modalGalleryIndex = idx;
+            updateModalGalleryImage();
+          });
+        });
+      } else {
+        prevImgBtn.classList.add("hidden");
+        prevImgBtn.classList.remove("flex");
+        nextImgBtn.classList.add("hidden");
+        nextImgBtn.classList.remove("flex");
+        dotsContainer.classList.add("hidden");
+        dotsContainer.classList.remove("flex");
+      }
+    }
+
+    function updateModalGalleryImage() {
+      if (!modalGallery || modalGallery.length === 0) return;
+      const currentUrl = modalGallery[modalGalleryIndex];
+      if (img) {
+        img.style.opacity = "0.4";
+        setTimeout(() => {
+          img.src = currentUrl || "/assets/logo-alquimista.png";
+          img.style.opacity = "1";
+        }, 120);
+      }
+      renderModalGalleryDots();
+    }
+
+    prevImgBtn?.addEventListener("click", () => {
+      if (modalGallery.length <= 1) return;
+      modalGalleryIndex = (modalGalleryIndex - 1 + modalGallery.length) % modalGallery.length;
+      updateModalGalleryImage();
+    });
+
+    nextImgBtn?.addEventListener("click", () => {
+      if (modalGallery.length <= 1) return;
+      modalGalleryIndex = (modalGalleryIndex + 1) % modalGallery.length;
+      updateModalGalleryImage();
+    });
+
     function formatPhone(val: string) {
       const digits = val.replace(/\D/g, "").slice(0, 11);
       if (digits.length <= 2) return digits.length ? `(${digits}` : "";
@@ -524,8 +616,24 @@
       originCardElement = originElement || null;
       isClosing = false;
 
+      // Monta a galeria de fotos em sequencia com a foto de capa no inicio
+      modalGallery = [];
+      if (p.foto_url) modalGallery.push(p.foto_url);
+      
+      const rawFotos = p.fotos_urls || p.fotos;
+      if (Array.isArray(rawFotos)) {
+        rawFotos.forEach((u: any) => {
+          const urlStr = typeof u === "string" ? u : (u?.full || u?.card || u?.thumb || "");
+          if (urlStr && !modalGallery.includes(urlStr)) {
+            modalGallery.push(urlStr);
+          }
+        });
+      }
+
+      modalGalleryIndex = 0;
+      updateModalGalleryImage();
+
       if (qtyVal) qtyVal.textContent = "1";
-      if (img) img.src = p.foto_url || "/assets/logo-alquimista.png";
       if (catBadge) catBadge.textContent = p.categoria === 'fino' ? 'Licor Fino' : p.categoria === 'cremoso' ? 'Licor Cremoso' : 'Licor Especial';
       if (name) name.textContent = p.nome;
       if (sabor) sabor.textContent = p.sabor;
