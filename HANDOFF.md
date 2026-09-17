@@ -336,6 +336,10 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [17/09/2026] — Campo "Dias de Maceração" no Painel Admin & Modal do Produto (`/admin/produtos` & `ProductModal`)
+- **Gestão de Dias de Maceração:** Adicionado o campo "Dias de Maceração" (`dias_maceracao`) na ficha técnica do formulário de edição de produtos em [`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro).
+- **Exibição Dinâmica no Modal:** Atualizado [`ProductModal.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/ProductModal.astro) e a interface `Product` em [`src/lib/data.ts`](file:///d:/projetos%20antigravity/site_alquimista/src/lib/data.ts) para refletir dynamicamente a quantidade de dias de maceração cadastrada no admin (`Maceração X Dias` e tooltip `Envelhecido durante X luas...`).
+
 ### [17/09/2026] — Substituição dos Tons Azuis por Grafite Escuro (`global.css`)
 - **Remoção de Tons Azuis / Navy Blue:** Atualizados os tokens CSS da variante `.dark` e os estilos globais de inputs/formulários em [`src/styles/global.css`](file:///d:/projetos%20antigravity/site_alquimista/src/styles/global.css). Substituídos todos os valores OKLCH azuis herdados do tema padrão por um paleta nobre em tom **Grafite Escuro / Cinza Chumbo Profundo** (`#121214` e `#18181c`), alinhando perfeitamente os inputs, selects, cards e sidebars à estética obsidian artesanal do Alquimista.
 

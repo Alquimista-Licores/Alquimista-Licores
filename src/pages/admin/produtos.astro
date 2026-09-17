@@ -153,7 +153,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           <div class="font-display text-[11px] text-[var(--gold)] uppercase tracking-widest border-b border-[var(--gold)]/10 pb-1 mb-3 flex items-center gap-1.5 font-bold">
             <span>📜</span> Ficha Técnica do Modal do Produto
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
             <div>
               <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Graduação Alcoólica (°GL)</label>
               <input type="number" step="0.1" id="prod-graduacao" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: 27.5" />
@@ -161,6 +161,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             <div>
               <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Densidade & Doçura (Brix)</label>
               <input type="number" step="0.1" id="prod-brix" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: 32.0" />
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Dias de Maceração</label>
+              <input type="number" id="prod-maceracao" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" placeholder="Ex: 40" value="40" />
             </div>
           </div>
 
@@ -572,6 +576,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       // Ficha Técnica do Modal
       (document.getElementById("prod-graduacao") as HTMLInputElement).value = prod?.graduacao_gl ? String(prod.graduacao_gl) : "";
       (document.getElementById("prod-brix") as HTMLInputElement).value = prod?.brix ? String(prod.brix) : "";
+      (document.getElementById("prod-maceracao") as HTMLInputElement).value = prod?.dias_maceracao !== undefined && prod?.dias_maceracao !== null ? String(prod.dias_maceracao) : "40";
       (document.getElementById("prod-notas") as HTMLInputElement).value = prod?.notas_aromaticas || "";
       (document.getElementById("prod-ingredientes") as HTMLTextAreaElement).value = prod?.ingredientes || "";
       (document.getElementById("prod-sugestoes") as HTMLTextAreaElement).value = prod?.sugestoes || "";
@@ -623,6 +628,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
       const graduacao_gl = Number((document.getElementById("prod-graduacao") as HTMLInputElement).value) || 0;
       const brix = Number((document.getElementById("prod-brix") as HTMLInputElement).value) || 0;
+      const dias_maceracao = Number((document.getElementById("prod-maceracao") as HTMLInputElement).value) || 40;
       const notas_aromaticas = (document.getElementById("prod-notas") as HTMLInputElement).value.trim();
       const ingredientes = (document.getElementById("prod-ingredientes") as HTMLTextAreaElement).value.trim();
       const sugestoes = (document.getElementById("prod-sugestoes") as HTMLTextAreaElement).value.trim();
@@ -651,6 +657,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         ativo,
         graduacao_gl,
         brix,
+        dias_maceracao,
         notas_aromaticas,
         ingredientes,
         sugestoes,

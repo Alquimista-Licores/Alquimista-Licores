@@ -76,8 +76,8 @@
           <span class="badge-pill-gold has-tooltip" data-tooltip="Garante pureza botânica sem conservantes ou corantes artificiais">
             <span>🜚</span> 100% Orgânico
           </span>
-          <span class="badge-pill-dark has-tooltip" data-tooltip="Envelhecido durante 40 luas para atingir sua forma final">
-            <span>⚗</span> Maceração 40 Dias
+          <span id="modal-badge-maceracao-wrap" class="badge-pill-dark has-tooltip" data-tooltip="Envelhecido durante 40 luas para atingir sua forma final">
+            <span>⚗</span> <span id="modal-badge-maceracao-text">Maceração 40 Dias</span>
           </span>
           <span id="modal-badge-prep-wrap" class="hidden badge-pill-ember has-tooltip" data-tooltip="Preparado sob demanda (2 dias de maceração)">
             <span style="color: var(--amber-warm);">✦</span> Sob Encomenda
@@ -377,6 +377,8 @@
     const desc = document.getElementById("modal-product-desc");
     const prepAlert = document.getElementById("modal-prep-alert");
     const badgePrepWrap = document.getElementById("modal-badge-prep-wrap");
+    const badgeMaceracaoWrap = document.getElementById("modal-badge-maceracao-wrap");
+    const badgeMaceracaoText = document.getElementById("modal-badge-maceracao-text");
     const statGrad = document.getElementById("modal-stat-grad");
     const statBrix = document.getElementById("modal-stat-brix");
     const statIngr = document.getElementById("modal-stat-ingr");
@@ -665,6 +667,14 @@
       if (badgePrepWrap) {
         if (needsPrep) badgePrepWrap.classList.remove("hidden");
         else badgePrepWrap.classList.add("hidden");
+      }
+
+      const diasMac = p.dias_maceracao !== undefined && p.dias_maceracao !== null ? p.dias_maceracao : (p.maceracao_dias || 40);
+      if (badgeMaceracaoText) {
+        badgeMaceracaoText.textContent = `Maceração ${diasMac} Dias`;
+      }
+      if (badgeMaceracaoWrap) {
+        badgeMaceracaoWrap.setAttribute("data-tooltip", `Envelhecido durante ${diasMac} luas para atingir sua forma final`);
       }
 
       if (statGrad) statGrad.textContent = p.graduacao_gl != null ? `${p.graduacao_gl}°GL` : "--";

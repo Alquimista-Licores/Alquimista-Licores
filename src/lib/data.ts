@@ -15,6 +15,7 @@ export interface Product {
   ativo: boolean;
   graduacao_gl: number;
   brix: number;
+  dias_maceracao?: number | null;
   pedidos_count: number;
   ordem: number;
   ingredientes: string | null;
