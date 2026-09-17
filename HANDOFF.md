@@ -336,6 +336,9 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [17/09/2026] — Substituição dos Tons Azuis por Grafite Escuro (`global.css`)
+- **Remoção de Tons Azuis / Navy Blue:** Atualizados os tokens CSS da variante `.dark` e os estilos globais de inputs/formulários em [`src/styles/global.css`](file:///d:/projetos%20antigravity/site_alquimista/src/styles/global.css). Substituídos todos os valores OKLCH azuis herdados do tema padrão por um paleta nobre em tom **Grafite Escuro / Cinza Chumbo Profundo** (`#121214` e `#18181c`), alinhando perfeitamente os inputs, selects, cards e sidebars à estética obsidian artesanal do Alquimista.
+
 ### [17/09/2026] — Configuração Oficial da Chave Anon do Supabase (`.env` & Client)
 - **Chave de API Oficial Injetada:** Atualizadas as variáveis no arquivo `.env` e configurado o fallback oficial da chave anon pública JWT (`PUBLIC_SUPABASE_ANON_KEY`) em [`src/integrations/supabase/client.ts`](file:///d:/projetos%20antigravity/site_alquimista/src/integrations/supabase/client.ts) e [`src/lib/data.ts`](file:///d:/projetos%20antigravity/site_alquimista/src/lib/data.ts). Todas as chamadas de salvamento, edição de produtos e consultas ao banco do Supabase (`bktegbisdaqdhpqtxqxy`) agora operam com autenticação ativa sem erros de chave inválida.
 
