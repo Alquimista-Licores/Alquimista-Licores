@@ -246,8 +246,19 @@ const doubledTestimonials = [...testimonials, ...testimonials];
 
       const freshIds = freshFeatured.map((p) => p.id);
 
-      // Só re-renderiza se os IDs ou a ordem mudaram
-      const hasChanged = currentIds.length !== freshIds.length || currentIds.some((id, idx) => id !== freshIds[idx]);
+      // Re-renderiza se os IDs, ordem, estoque ou preço mudaram
+      const hasChanged = currentCards.length !== freshFeatured.length || freshFeatured.some((freshP, idx) => {
+        try {
+          const currentP = JSON.parse(currentCards[idx]?.dataset.product || "{}");
+          return (
+            currentP.id !== freshP.id || 
+            Number(currentP.estoque ?? 0) !== Number(freshP.estoque ?? 0) || 
+            Number(currentP.preco) !== Number(freshP.preco)
+          );
+        } catch {
+          return true;
+        }
+      });
       if (!hasChanged) return;
 
       grid.innerHTML = freshFeatured.map((p) => {

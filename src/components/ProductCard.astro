@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { product: p } = Astro.props;
-const isOutOfStock = p.estoque <= 0;
+const isOutOfStock = Number(p.estoque ?? 0) <= 0;
 const hasPrep = needsPrep(p);
 ---
 

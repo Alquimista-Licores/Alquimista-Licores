@@ -106,7 +106,7 @@ const kitPrices = await fetchKitPrices();
           <div id="deg-products-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 transition-all duration-200">
             {products.map((p) => {
               const hasPrep = needsPrep(p);
-              const isOutOfStock = p.estoque <= 0;
+              const isOutOfStock = Number(p.estoque ?? 0) <= 0;
               return (
                 <button
                   type="button"
@@ -223,7 +223,7 @@ const kitPrices = await fetchKitPrices();
           <div id="pres-products-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 transition-all duration-200">
             {products.map((p) => {
               const hasPrep = needsPrep(p);
-              const isOutOfStock = p.estoque <= 0;
+              const isOutOfStock = Number(p.estoque ?? 0) <= 0;
               return (
                 <button
                   type="button"
