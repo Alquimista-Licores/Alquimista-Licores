@@ -249,6 +249,11 @@ const {
         return false;
       }
 
+      // Exclude FAQ / Perguntas Frequentes elements from magnetic enclosing
+      if (el.closest('.faq-trigger, .faq-item, [class*="faq-"]')) {
+        return false;
+      }
+
       const activeModal = getActiveOverlayOrModal();
       if (activeModal && !activeModal.contains(el)) {
         return false;
