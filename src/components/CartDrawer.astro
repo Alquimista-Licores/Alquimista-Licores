@@ -60,6 +60,7 @@
           <input
             id="checkout-phone"
             type="tel"
+            maxlength="15"
             placeholder="Ex: (48) 99123-4567"
             class="w-full bg-[var(--surface)] border border-[var(--gold)]/30 px-3.5 py-2.5 text-sm rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
           />
@@ -146,6 +147,7 @@
           <input
             id="indicador-whats"
             type="tel"
+            maxlength="15"
             placeholder="WhatsApp de quem indicou"
             class="bg-[var(--background)] border border-[var(--gold)]/30 px-2.5 py-1.5 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
           />
@@ -201,6 +203,8 @@
 </div>
 
 <script>
+  import { supabase } from "../integrations/supabase/client";
+
   function setupCart() {
     const overlay = document.getElementById("cart-drawer-overlay");
     const panel = document.getElementById("cart-drawer-panel");
@@ -448,6 +452,78 @@
       updateTotals();
     });
 
+    // Phone formatting & validation helpers
+    function formatBRPhone(val: string) {
+      const digits = val.replace(/\D/g, "").slice(0, 11);
+      if (digits.length === 0) return "";
+      if (digits.length <= 2) return `(${digits}`;
+      if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+      if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+      return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+    }
+
+    function isValidBRPhone(phoneStr: string): boolean {
+      const digits = phoneStr.replace(/\D/g, "");
+      if (digits.length !== 10 && digits.length !== 11) return false;
+      // Rejeita sequências com todos os dígitos iguais (ex: 11111111111, 00000000000)
+      if (/^(\d)\1+$/.test(digits)) return false;
+
+      const ddd = parseInt(digits.slice(0, 2), 10);
+      const validDDDs = [
+        11, 12, 13, 14, 15, 16, 17, 18, 19,
+        21, 22, 24, 27, 28,
+        31, 32, 33, 34, 35, 37, 38,
+        41, 42, 43, 44, 45, 46, 47, 48, 49,
+        51, 53, 54, 55,
+        61, 62, 63, 64, 65, 66, 67, 68, 69,
+        71, 73, 74, 75, 77, 79,
+        81, 82, 83, 84, 85, 86, 87, 88, 89,
+        91, 92, 93, 94, 95, 96, 97, 98, 99
+      ];
+      if (!validDDDs.includes(ddd)) return false;
+
+      // Celular (11 dígitos): o 3º dígito deve ser 9
+      if (digits.length === 11 && digits[2] !== "9") return false;
+      // Fixo (10 dígitos): o 3º dígito não pode ser 0 ou 1
+      if (digits.length === 10 && (digits[2] === "0" || digits[2] === "1")) return false;
+
+      return true;
+    }
+
+    phoneInput?.addEventListener("input", (e) => {
+      const input = e.target as HTMLInputElement;
+      input.value = formatBRPhone(input.value);
+      input.classList.remove("!border-red-500");
+    });
+
+    indicadorWhats?.addEventListener("input", (e) => {
+      const input = e.target as HTMLInputElement;
+      input.value = formatBRPhone(input.value);
+      input.classList.remove("!border-red-500");
+    });
+
+    // Helper to format Nominatim result into a readable street/address
+    function formatAddressForInput(item: any): string {
+      if (item.address) {
+        const a = item.address;
+        const road = a.road || a.pedestrian || a.street || a.highway || a.footway || a.path || "";
+        const suburb = a.suburb || a.neighbourhood || a.city_district || a.quarter || "";
+        const city = a.city || a.town || a.municipality || a.village || "";
+        
+        const parts = [];
+        if (road) {
+          parts.push(road);
+        } else if (item.name && item.name !== city && item.name !== suburb) {
+          parts.push(item.name);
+        }
+        if (suburb) parts.push(suburb);
+        if (city && city !== suburb) parts.push(city);
+        
+        if (parts.length > 0) return parts.join(", ");
+      }
+      return item.display_name.split(",").slice(0, 3).map((s: string) => s.trim()).join(", ") || item.display_name;
+    }
+
     // Address Search via Nominatim
     let searchTimeout: any = null;
     addressQuery?.addEventListener("input", () => {
@@ -480,10 +556,12 @@
             if (list.length > 0) {
               list.forEach((item: any) => {
                 const li = document.createElement("li");
-                const label = item.display_name;
+                const mainTitle = item.address?.road || item.name || item.display_name.split(",")[0];
+                const fullLabel = item.display_name;
                 li.innerHTML = `
                   <button type="button" class="w-full text-left px-3 py-2 text-xs text-[var(--cream)] hover:bg-[var(--gold)]/15 border-b border-[var(--gold)]/10 last:border-b-0 leading-tight">
-                    ${label}
+                    <div class="font-bold text-[var(--gold)] truncate">${mainTitle}</div>
+                    <div class="text-[11px] text-[var(--text-soft)] truncate">${fullLabel}</div>
                   </button>
                 `;
                 li.querySelector("button")?.addEventListener("click", () => {
@@ -492,7 +570,8 @@
                     lat: parseFloat(item.lat),
                     lon: parseFloat(item.lon)
                   };
-                  addressQuery.value = item.display_name.split(",")[0] || item.display_name;
+                  const cleanAddr = formatAddressForInput(item);
+                  addressQuery.value = cleanAddr;
                   suggestionsList.classList.add("hidden");
                   calculateFreight(selectedAddress.lat, selectedAddress.lon);
                 });
@@ -509,10 +588,17 @@
       }, 400);
     });
 
+    // Close suggestions dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      if (addressQuery && suggestionsList && !addressQuery.contains(e.target as Node) && !suggestionsList.contains(e.target as Node)) {
+        suggestionsList.classList.add("hidden");
+      }
+    });
+
     async function calculateFreight(lat: number, lon: number) {
       if (shippingStatus) shippingStatus.innerHTML = `<span class="text-[var(--gold)] animate-pulse">Calculando rota e frete...</span>`;
       try {
-        const origin = { lat: -28.7184, lng: -49.3523 };
+        const origin = { lat: -28.718361, lng: -49.358579 };
         const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${origin.lng},${origin.lat};${lon},${lat}?overview=false`);
         const data = await res.json();
         if (data.routes && data.routes[0]) {
@@ -545,8 +631,8 @@
       }
     }
 
-    // Submit Order to WhatsApp
-    submitBtn?.addEventListener("click", () => {
+    // Submit Order to Supabase and WhatsApp
+    submitBtn?.addEventListener("click", async () => {
       const name = nameInput?.value.trim();
       const phone = phoneInput?.value.trim();
 
@@ -557,7 +643,23 @@
       }
       if (!phone) {
         alert("Por favor, informe seu telefone / WhatsApp.");
+        phoneInput?.classList.add("!border-red-500");
         phoneInput?.focus();
+        return;
+      }
+      if (!isValidBRPhone(phone)) {
+        alert("Por favor, informe um número de WhatsApp válido com DDD (ex: (48) 99123-4567).");
+        phoneInput?.classList.add("!border-red-500");
+        phoneInput?.focus();
+        return;
+      }
+
+      const indNome = indicadorNome?.value.trim();
+      const indWhats = indicadorWhats?.value.trim();
+      if (indWhats && !isValidBRPhone(indWhats)) {
+        alert("O número de WhatsApp de quem indicou parece inválido. Por favor, corrija ou deixe em branco.");
+        indicadorWhats?.classList.add("!border-red-500");
+        indicadorWhats?.focus();
         return;
       }
 
@@ -579,6 +681,9 @@
       const dataStr = new Date().toLocaleDateString("pt-BR");
       const horaStr = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
+      // Código de 6 dígitos único para o pedido
+      const codigoPedido = String(Math.floor(100000 + Math.random() * 900000));
+
       const itemBlocks = cartItems.map((item) => {
         if (item.tipo === "avulso") {
           return `- *x${item.qty} ${item.nome} (${item.sabor})*\n  R$ ${(item.preco * item.qty).toFixed(2).replace('.', ',')}`;
@@ -599,7 +704,7 @@
       }).join("\n\n");
 
       const msgLines = [
-        `Resumo do pedido de *${name}*`,
+        `Resumo do pedido *#${codigoPedido}* de *${name}*`,
         `🗓️ Data: ${dataStr} ⏰ Hora: ${horaStr}`,
         ``,
         `*Tipo de serviço:* ${deliveryType === "delivery" ? "Delivery 🛵" : "Retirada no Local 🏠"}`,
@@ -624,8 +729,6 @@
         ``
       );
 
-      const indNome = indicadorNome?.value.trim();
-      const indWhats = indicadorWhats?.value.trim();
       if (indNome || indWhats) {
         msgLines.push(`🌟 Indicação: ${indNome}${indWhats ? ` - ${indWhats}` : ""}`, ``);
       }
@@ -637,6 +740,31 @@
         ``,
         `Fico no aguardo da confirmação do pedido. Obrigado!`
       );
+
+      // Salva no banco de dados do Supabase como 'pendente'
+      try {
+        const orderPayload = {
+          codigo_pedido: codigoPedido,
+          cliente_nome: name,
+          cliente_telefone: phone,
+          indicador_nome: indNome || null,
+          indicador_whatsapp: indWhats || null,
+          items_snapshot: cartItems,
+          subtotal: subtotal,
+          frete_valor: frete,
+          total: total,
+          tipo_entrega: deliveryType,
+          endereco_completo: deliveryType === "delivery" ? enderecoCompleto : "",
+          status: "pendente",
+          status_gerenciapp: "pendente"
+        };
+        const { error } = await supabase.from("site_orders").insert([orderPayload]);
+        if (error) {
+          console.warn("Aviso ao registrar pedido no Supabase:", error);
+        }
+      } catch (dbErr) {
+        console.warn("Falha de rede ao conectar com Supabase:", dbErr);
+      }
 
       const fullMessage = msgLines.join("\n");
       const waUrl = `https://api.whatsapp.com/send?phone=5548991737692&text=${encodeURIComponent(fullMessage)}`;

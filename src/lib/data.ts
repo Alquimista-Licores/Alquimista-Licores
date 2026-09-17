@@ -59,7 +59,7 @@ export const SITE = {
   mapsUrl: "https://maps.app.goo.gl/aytmRg4bwkG1ZK528",
   reviewUrl: "https://g.page/r/CWzwaZr9lnaDEAE/review",
   instagram: "https://www.instagram.com/alquimista.licores",
-  origin: { lat: -28.7184, lng: -49.3523 },
+  origin: { lat: -28.718361, lng: -49.358579 },
 };
 
 const OFFICIAL_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrdGVnYmlzZGFxZGhwcXR4cXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1Njg2NzksImV4cCI6MjEwNTE0NDY3OX0.nUbhe2vFtcnFOZPO6Nww-IjdGJAPCIC1Z82CladmjG4";

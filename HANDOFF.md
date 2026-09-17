@@ -336,6 +336,23 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [17/09/2026] — Menu de Ações em Três Pontinhos (`/admin/pedidos`)
+- **Menu Dropdown Discreto (⋮):** As ações de cada linha de pedido (Marcar Pago / Marcar Pendente, Abrir WhatsApp, Cancelar e Arquivar / Restaurar) foram encapsuladas em um botão elegante de três pontinhos com fechamento automático ao clicar fora ou ao executar uma ação, mantendo a tabela visualmente limpa e sofisticada.
+
+### [17/09/2026] — Acordeon Discreto para Pedidos Arquivados (`/admin/pedidos`)
+- **Separação de Pedidos Ativos e Arquivados:** A tabela principal exibe apenas os pedidos em andamento (Pendentes, Pagos e Cancelados).
+- **Acordeon no Final da Página:** Os pedidos com status `arquivado` são agrupados em um acordeon colapsável discreto no rodapé da página com badge contendo a contagem total, botão para expandir/ocultar e ação direta de `↺ Restaurar` para devolver o pedido à lista ativa.
+
+### [17/09/2026] — Integração de Pedidos no Supabase & Painel Administrativo (`CartDrawer` & `/admin/pedidos`)
+- **Salvamento Automático de Pedidos:** Ao clicar em "Enviar Pedido no WhatsApp", o pedido é gravado no Supabase (`public.site_orders`) com status inicial `pendente`, código de 6 dígitos gerado (`codigo_pedido`), dados completos do cliente, snapshot JSON dos itens (`items_snapshot`), subtotal, frete, endereço, tipo de entrega (Delivery/Retirada) e indicação.
+- **Visualização em Tempo Real na Área Administrativa:** A tela `/admin/pedidos` ([`pedidos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/pedidos.astro)) consulta `site_orders` do Supabase e renderiza os pedidos com badges de status, itens formatados, tipo de entrega, link direto para o WhatsApp do cliente e botões de ação para alterar o status (Pago, Pendente, Arquivado, Cancelado).
+- **Políticas RLS Configuradas:** Liberada política de `INSERT` público em `site_orders` e permissões completas (`ALL`) para administradores.
+
+### [17/09/2026] — Validação de Telefone, Autopreenchimento de Endereço e Coordenadas de Frete (`CartDrawer`)
+- **Máscara & Validação Estrita de Telefone:** Implementada formatação automática `(DD) 9XXXX-XXXX` nos campos de WhatsApp do comprador e de Indicação, com validação de DDDs válidos do Brasil, bloqueio de números repetidos e dígitos inválidos.
+- **Autopreenchimento de Endereço nas Sugestões:** Ao selecionar uma opção do dropdown de busca do OpenStreetMap/Nominatim, o endereço formatado e legível (rua, bairro e cidade) é automaticamente preenchido no campo de texto.
+- **Coordenadas de Origem Oficiais:** Calibradas as coordenadas exatas da sede do Alquimista para cálculo de frete motoboy via OSRM (`lat: -28.718361, lng: -49.358579`) em [`CartDrawer.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CartDrawer.astro) e [`src/lib/data.ts`](file:///d:/projetos%20antigravity/site_alquimista/src/lib/data.ts).
+
 ### [17/09/2026] — Campo "Dias de Maceração" no Painel Admin & Modal do Produto (`/admin/produtos` & `ProductModal`)
 - **Gestão de Dias de Maceração:** Adicionado o campo "Dias de Maceração" (`dias_maceracao`) na ficha técnica do formulário de edição de produtos em [`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro).
 - **Exibição Dinâmica no Modal:** Atualizado [`ProductModal.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/ProductModal.astro) e a interface `Product` em [`src/lib/data.ts`](file:///d:/projetos%20antigravity/site_alquimista/src/lib/data.ts) para refletir dynamicamente a quantidade de dias de maceração cadastrada no admin (`Maceração X Dias` e tooltip `Envelhecido durante X luas...`).
