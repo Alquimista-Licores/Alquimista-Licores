@@ -202,4 +202,5 @@ const hasPrep = needsPrep(p);
 
   initProductCardParallax();
   document.addEventListener("astro:page-load", initProductCardParallax);
+  window.addEventListener("products-rendered", initProductCardParallax);
 </script>
