@@ -336,17 +336,13 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [16/09/2026] — Ajuste no Cursor da Dobra Rituais de Degustação (`CustomCursor`)
+- **Ajuste de Englobamento e Opacidade em Rituais de Degustação:** Removida a classe `.ritual-card` de `cardsSelector` em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro). Agora o círculo externo dourado do cursor permanece visível e rastreando normalmente (sem englobar o card e sem ficar transparente) ao passar o mouse pelos 4 blocos de rituais, englobando magneticamente apenas os botões de sugestão de poções (`.potion-suggestion-link`) ao final de cada descrição.
+
 ### [16/09/2026] — Efeito de Reflexo Diagonal no Logo (`Header` & `Footer`)
 - **Reflexo Metálico em Hover:** Adicionada a classe `.logo-shimmer-wrapper` e o elemento `.logo-shimmer-sheen` em [`Header.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/Header.astro) e [`Footer.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/Footer.astro). Ao passar o mouse sobre a logo, uma faixa diagonal de luz luminosa dourada desliza da esquerda para a direita recortada com a máscara exata da logo (`-webkit-mask-image`).
 
-### [16/09/2026] — Restauração das 6 Regras de Interatividade do Cursor (`CustomCursor`)
-- **Restabelecimento Completo das Regras**: Reativadas em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro) todas as especificações originais:
-  1. *Transparência em Cards:* Opacidade 0% (`cursor-hidden`) ao passar o ponteiro diretamente sobre qualquer card de produto ou ritual.
-  2. *Soft Links no Header/Footer:* Esmaecimento suave para 50% de opacidade (`cursor-soft`) sem englobamento retangular para links de navegação.
-  3. *Isolamento sob o Header Fixo:* Ignora elementos de corpo rolados por baixo da barra fixa do header (`#site-header`).
-  4. *Moldura Circular Perfeita:* Englobamento de 9999px para ícones de WhatsApp, Instagram, caldeirão, fechar `✕` e quantidade `+`/`-`.
-  5. *Imã em Botões/Inputs:* Atração magnética de 70px e englobamento retangular flush com 1px borda dourada para botões, CTAs e formulários.
-  6. *Isolamento de Modais:* Filtro estrito que restringe a atração apenas a itens dentro do modal ativo quando algum estiver aberto.
+
 
 ### [16/09/2026] — Refinamento de Englobamento & Atração Magnética do Cursor (`CustomCursor`)
 - **Atração Magnética & Englobamento Restaurados:** Corrigida a função `getActiveOverlayOrModal()` em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro). O seletor genérico anterior `[id^='modal-']` capturava falsos positivos de elementos internos do modal (como `#modal-title`, `#modal-img`, `#modal-description`) que não possuíam a classe `.hidden` individualmente, fazendo com que a checagem considerasse um modal ativo em tempo integral. A consulta foi restrita exclusivamente aos containers de modal reais (`#modal-produto`, `#modal-pedido`, `#modal-kit`, `#modal-depoimento`, `#cart-drawer-overlay`, `#product-modal-container`, `#age-gate`), restaurando 100% o englobamento e a atração magnética ("imã") de 70px para todos os botões, links e formulários do site.

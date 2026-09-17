@@ -196,15 +196,14 @@ const {
       .pres-liquor-pick,
       .pres-single-card,
       .pres-acomp-pick,
-      .pres-box-pick,
-      .ritual-card
+      .pres-box-pick
     `;
 
     // Selectors for Enclosing targets (Buttons, CTAs, Inputs, Selects, Marked elements)
     const enclosingSelector = `
       button:not(#cart-toggle-btn):not(.ritual-card):not(.deg-product-pick):not(.pres-liquor-pick):not(.pres-acomp-pick):not(.pres-box-pick):not(#pick-degustacao-btn):not(#pick-presenteavel-btn),
       a.btn-primary, a.btn-ghost, a.btn-shimmer, a.btn-outline, a.btn-liquid, #modal-wa-btn,
-      .glass-cta-button,
+      .glass-cta-button, .potion-suggestion-link,
       .filter-tab-btn,
       input:not([type="hidden"]), select, textarea,
       [data-cursor-enclose], ${roundCircularSelector}
