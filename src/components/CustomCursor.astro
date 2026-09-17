@@ -253,6 +253,21 @@ const {
         return false;
       }
 
+      // Exclude elements inside collapsed/inactive ritual cards
+      if (el.closest('.ritual-card:not(.is-active)')) {
+        return false;
+      }
+
+      // Check if any parent element is hidden or collapsed (display:none, visibility:hidden, opacity:0)
+      let parent = el.parentElement;
+      while (parent && parent !== document.body) {
+        const pStyle = window.getComputedStyle(parent);
+        if (pStyle.display === 'none' || pStyle.visibility === 'hidden' || pStyle.opacity === '0') {
+          return false;
+        }
+        parent = parent.parentElement;
+      }
+
       const activeModal = getActiveOverlayOrModal();
       if (activeModal && !activeModal.contains(el)) {
         return false;

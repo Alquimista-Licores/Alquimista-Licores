@@ -337,7 +337,7 @@ npm run build
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
 ### [16/09/2026] — Ajuste no Cursor da Dobra Rituais de Degustação (`CustomCursor`)
-- **Ajuste de Englobamento e Opacidade em Rituais de Degustação:** Removida a classe `.ritual-card` de `cardsSelector` em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro). Agora o círculo externo dourado do cursor permanece visível e rastreando normalmente (sem englobar o card e sem ficar transparente) ao passar o mouse pelos 4 blocos de rituais, englobando magneticamente apenas os botões de sugestão de poções (`.potion-suggestion-link`) ao final de cada descrição.
+- **Proteção para Elementos Recolhidos:** Atualizada a função `isTargetActuallyVisible()` em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro) para ignorar elementos dentro de rituais recolhidos (`.ritual-card:not(.is-active)`), além de checar a opacidade/visibilidade de todos os elementos pais. O círculo externo dourado engloba apenas os botões de poção do ritual ativamente expandido.
 
 ### [16/09/2026] — Efeito de Reflexo Diagonal no Logo (`Header` & `Footer`)
 - **Reflexo Metálico em Hover:** Adicionada a classe `.logo-shimmer-wrapper` e o elemento `.logo-shimmer-sheen` em [`Header.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/Header.astro) e [`Footer.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/Footer.astro). Ao passar o mouse sobre a logo, uma faixa diagonal de luz luminosa dourada desliza da esquerda para a direita recortada com a máscara exata da logo (`-webkit-mask-image`).
