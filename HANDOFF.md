@@ -336,6 +336,9 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [16/09/2026] — Efeito de Reflexo Diagonal no Logo (`Header` & `Footer`)
+- **Reflexo Metálico em Hover:** Adicionada a classe `.logo-shimmer-wrapper` e o elemento `.logo-shimmer-sheen` em [`Header.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/Header.astro) e [`Footer.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/Footer.astro). Ao passar o mouse sobre a logo, uma faixa diagonal de luz luminosa dourada desliza da esquerda para a direita recortada com a máscara exata da logo (`-webkit-mask-image`).
+
 ### [16/09/2026] — Restauração das 6 Regras de Interatividade do Cursor (`CustomCursor`)
 - **Restabelecimento Completo das Regras**: Reativadas em [`CustomCursor.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CustomCursor.astro) todas as especificações originais:
   1. *Transparência em Cards:* Opacidade 0% (`cursor-hidden`) ao passar o ponteiro diretamente sobre qualquer card de produto ou ritual.

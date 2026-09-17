@@ -236,6 +236,69 @@
     color: var(--cream) !important;
   }
 
+  /* Diagonal Shine / Reflex Sweep on Logo Hover */
+  .logo-shimmer-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .logo-shimmer-sheen {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    mask-image: url('/assets/logo-alquimista.png');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-image: url('/assets/logo-alquimista.png');
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+  }
+
+  .logo-shimmer-sheen::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -150%;
+    width: 60%;
+    height: 200%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 25%,
+      rgba(255, 235, 180, 0.85) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 100%
+    );
+    transform: skewX(-25deg);
+    opacity: 0;
+  }
+
+  .logo-shimmer-wrapper:hover .logo-shimmer-sheen::after {
+    animation: logoReflexSweep 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes logoReflexSweep {
+    0% {
+      left: -150%;
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      left: 170%;
+      opacity: 0;
+    }
+  }
+
   /* Design System 2.0 Type Hierarchy Specs */
   h1 { 
     font-family: var(--font-serif); 
