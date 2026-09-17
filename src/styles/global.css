@@ -196,7 +196,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Deep lead gray fillable fields (Cinza chumbo profundo) */
+  /* Deep lead gray fillable fields (Cinza chumbo profundo, mais escuro que o fundo) */
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -208,7 +208,7 @@
   input[type="time"],
   select,
   textarea {
-    background-color: #1a1c23 !important;
+    background-color: #060505 !important;
     color: var(--cream) !important;
     border: 1px solid rgba(200, 169, 126, 0.25) !important;
     border-radius: 0.25rem !important;
@@ -225,14 +225,14 @@
   input[type="time"]:focus,
   select:focus,
   textarea:focus {
-    background-color: #222530 !important;
+    background-color: #0d0c0c !important;
     border-color: var(--gold) !important;
     box-shadow: 0 0 10px rgba(200, 169, 126, 0.2) !important;
     outline: none !important;
   }
 
   select option {
-    background-color: #1a1c23 !important;
+    background-color: #060505 !important;
     color: var(--cream) !important;
   }
 
