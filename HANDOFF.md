@@ -793,13 +793,27 @@ Este guia consolida todas as conexões, variáveis, tabelas, regras de seguranç
    - Origem do cálculo de frete fixada na coordenada oficial `-28.718361, -49.358579`.
    - Persistência direta em `public.site_orders` no Supabase com status `pendente` e `request_id` único.
 
-3. **Painel de Produtos ([`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro)):**
+3. **Tooltips do Modal de Produto ([`src/components/ProductModal.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/ProductModal.astro)):**
+   - Ancoragem dos tooltips de badges posicionados à direita (como `#modal-badge-prep-wrap` / "Sob Encomenda") com `right: 0; left: auto; text-align: right;` e `max-width` responsivo seguro, evitando qualquer corte visual nas bordas do modal.
+
+4. **Painel de Produtos ([`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro)):**
    - Linhas da tabela de produtos agora são 100% clicáveis (`cursor-pointer`) para abrir o modal de edição de qualquer poção.
 
-4. **Poções em Destaque Dinâmicas & Painel de Destaques ([`src/pages/admin/destaques.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/destaques.astro) e [`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro)):**
+5. **Poções em Destaque Dinâmicas & Painel de Destaques ([`src/pages/admin/destaques.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/destaques.astro) e [`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro)):**
    - **Modo Mais Populares (Automático):** As 4 poções exibidas na primeira dobra da Home são calculadas em tempo real com base nos sabores mais vendidos em pedidos com status `"pago"` no Supabase (incluindo poções avulsas, frascos individuais de kits de degustação e licores de kits presenteáveis via RPC segura `public.get_featured_potions()`).
    - **Modo Seleção Manual:** Permite ao administrador escolher exatamente até 4 poções para figurarem na vitrine.
    - O painel administrativo exibe um preview ao vivo do ranking dos mais vendidos em pedidos pagos.
+
+### [18/09/2026] — Padronização de Badges & Toasts na Área Administrativa
+1. **Badges do Design System ([`src/pages/pocoes.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/pocoes.astro) e [`src/pages/index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro)):**
+   - Substituição de classes `rounded-full` pelos tokens do design system (`badge-pill-gold`, `badge-pill-ember` com `rounded-sm`), mantendo os cantos levemente arredondados idênticos em toda a vitrine e catálogo.
+2. **Sistema Global de Toasts no Painel Administrativo ([`src/layouts/AdminLayout.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/layouts/AdminLayout.astro), [`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro), [`src/pages/admin/pedidos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/pedidos.astro), [`src/pages/admin/destaques.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/destaques.astro), [`src/pages/admin/jornada.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/jornada.astro), [`src/pages/admin/kits.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/kits.astro), [`src/pages/admin/depoimentos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/depoimentos.astro), [`src/pages/admin/backup.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/backup.astro)):**
+   - Integração do componente [`Toast.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/Toast.astro) ao layout do painel administrativo.
+   - Substituição de todos os popups `alert()` nativos de sucesso e salvamento (como "Poção e ficha técnica salvas com sucesso no Supabase!") por notificações Toast fluidas e elegantes do tema Alquimista.
+   - Alertas nativos de erro/falha crítica de rede ou arquivo foram mantidos como exceção para máxima atenção.
+3. **Upload Unificado com Drag & Drop no Modal de Produtos ([`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro)):**
+   - Criação de uma Dropzone nobre unificada: clicar abre o seletor nativo do dispositivo e arrastar arquivos sobre a área ativa o overlay visual de soltura com upload automático (múltiplas imagens com upload concorrente para o Supabase Storage ou fallback local).
+   - Remoção completa do campo e botão de inserção manual de URL externa.
 
 ---
 

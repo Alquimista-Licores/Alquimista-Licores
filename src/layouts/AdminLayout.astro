@@ -1,6 +1,7 @@
 ---
 import AdminNav from "../components/admin/AdminNav.astro";
 import CustomCursor from "../components/CustomCursor.astro";
+import Toast from "../components/Toast.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -223,5 +224,6 @@ const currentPath = activePath || Astro.url.pathname;
     </script>
 
     <CustomCursor />
+    <Toast />
   </body>
 </html>

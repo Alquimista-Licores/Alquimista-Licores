@@ -939,13 +939,15 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       ordersList.unshift(newOrder);
       closeOrderModal();
       renderOrdersTable();
-      alert(`Pedido #${codigo_pedido} criado com sucesso!`);
+      (window as any).showToast?.(`Pedido #${codigo_pedido} criado com sucesso!`) ||
+        window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: `Pedido #${codigo_pedido} criado com sucesso!` } }));
     });
 
     // Exportação CSV
     btnExportCSV?.addEventListener("click", () => {
       if (ordersList.length === 0) {
-        alert("Nenhum pedido para exportar.");
+        (window as any).showToast?.("Nenhum pedido para exportar.") ||
+          window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Nenhum pedido para exportar." } }));
         return;
       }
 

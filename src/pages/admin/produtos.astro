@@ -199,28 +199,32 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             </span>
           </div>
 
-          <!-- Upload Drop Zone & Actions -->
-          <div class="flex flex-col sm:flex-row items-center gap-3">
-            <label class="w-full sm:w-auto px-4 py-2.5 bg-[var(--surface)] border border-dashed border-[var(--gold)]/40 hover:border-[var(--gold)] rounded-sm text-center cursor-pointer transition-all hover:bg-[var(--gold)]/10 flex items-center justify-center gap-2 text-xs text-[var(--cream)] group">
-              <span class="text-base group-hover:scale-110 transition-transform">📤</span>
-              <span class="font-display tracking-wider uppercase text-[11px] font-bold text-[var(--gold)]">Carregar Fotos (Upload)</span>
-              <input type="file" id="prod-fotos-file" multiple accept="image/*" class="hidden" />
-            </label>
+          <!-- Upload Drop Zone (Click to choose or Drag & Drop) -->
+          <div
+            id="photo-dropzone"
+            class="relative w-full p-6 bg-[var(--surface)]/80 border-2 border-dashed border-[var(--gold)]/40 hover:border-[var(--gold)] rounded-md text-center cursor-pointer transition-all duration-300 hover:bg-[var(--gold)]/5 group flex flex-col items-center justify-center gap-2.5 select-none"
+          >
+            <input type="file" id="prod-fotos-file" multiple accept="image/*" class="hidden" />
+            
+            <div class="w-12 h-12 rounded-full bg-[var(--gold)]/10 border border-[var(--gold)]/30 flex items-center justify-center text-[var(--gold)] text-xl group-hover:scale-110 group-hover:bg-[var(--gold)]/20 transition-all duration-300 shadow-[0_0_15px_rgba(200,169,126,0.15)] pointer-events-none">
+              📤
+            </div>
+            
+            <div class="pointer-events-none">
+              <p class="font-display text-xs sm:text-sm text-[var(--gold)] font-bold tracking-wider uppercase">
+                Clique para selecionar fotos ou arraste as imagens aqui
+              </p>
+              <p class="text-[11px] text-[var(--cream)]/50 font-mono mt-1">
+                PNG, JPG, WEBP até 10MB · Múltiplos arquivos permitidos
+              </p>
+            </div>
 
-            <div class="flex-1 flex items-center gap-2 w-full">
-              <input
-                type="url"
-                id="prod-foto-url-input"
-                class="flex-1 bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-1.5 text-[var(--cream)] focus:border-[var(--gold)] outline-none font-mono text-[11px]"
-                placeholder="Ou cole o link de uma imagem externa (URL)..."
-              />
-              <button
-                type="button"
-                id="btn-add-url-photo"
-                class="px-3 py-1.5 border border-[var(--gold)]/30 text-[var(--gold)] hover:bg-[var(--gold)] hover:text-black text-[11px] font-display uppercase tracking-wider rounded-sm transition-all cursor-pointer whitespace-nowrap"
-              >
-                + Adicionar
-              </button>
+            <!-- Overlay de Hover Drag Ativo -->
+            <div id="dropzone-drag-overlay" class="absolute inset-0 bg-[var(--background)]/90 border-2 border-[var(--gold)] rounded-md flex flex-col items-center justify-center gap-2 pointer-events-none opacity-0 transition-opacity duration-200 z-10">
+              <span class="text-3xl animate-bounce">✨</span>
+              <p class="font-display text-sm text-[var(--gold)] font-bold uppercase tracking-widest">
+                Solte as imagens para carregar
+              </p>
             </div>
           </div>
 
@@ -277,8 +281,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     const btnSaveProduct = document.getElementById("btn-save-product");
 
     const fotosFileInput = document.getElementById("prod-fotos-file") as HTMLInputElement;
-    const fotoUrlInput = document.getElementById("prod-foto-url-input") as HTMLInputElement;
-    const btnAddUrlPhoto = document.getElementById("btn-add-url-photo");
+    const photoDropzone = document.getElementById("photo-dropzone");
+    const dropzoneDragOverlay = document.getElementById("dropzone-drag-overlay");
     const uploadStatus = document.getElementById("upload-status");
     const galleryContainer = document.getElementById("gallery-container");
 
@@ -412,7 +416,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       if (currentGallery.length === 0) {
         galleryContainer.innerHTML = `
           <div class="col-span-full py-6 text-center text-xs text-[var(--cream)]/40 font-mono">
-            Nenhuma foto adicionada ainda. Faça upload ou insira um link para começar.
+            Nenhuma foto adicionada ainda. Arraste imagens para a área acima ou clique para carregar.
           </div>
         `;
         return;
@@ -541,19 +545,40 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     fotosFileInput?.addEventListener("change", (e) => {
       const files = (e.target as HTMLInputElement).files;
-      if (files) handleFilesUpload(files);
+      if (files && files.length > 0) handleFilesUpload(files);
     });
 
-    btnAddUrlPhoto?.addEventListener("click", () => {
-      const url = fotoUrlInput?.value.trim();
-      if (!url) return;
-      if (!currentGallery.includes(url)) {
-        currentGallery.push(url);
-        if (!currentCoverUrl) currentCoverUrl = url;
-        renderGallery();
-      }
-      fotoUrlInput.value = "";
-    });
+    if (photoDropzone) {
+      photoDropzone.addEventListener("click", () => {
+        fotosFileInput?.click();
+      });
+
+      ["dragenter", "dragover"].forEach((evtName) => {
+        photoDropzone.addEventListener(evtName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (dropzoneDragOverlay) dropzoneDragOverlay.classList.remove("opacity-0");
+          photoDropzone.classList.add("border-[var(--gold)]", "bg-[var(--gold)]/10");
+        });
+      });
+
+      ["dragleave", "drop"].forEach((evtName) => {
+        photoDropzone.addEventListener(evtName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (dropzoneDragOverlay) dropzoneDragOverlay.classList.add("opacity-0");
+          photoDropzone.classList.remove("border-[var(--gold)]", "bg-[var(--gold)]/10");
+        });
+      });
+
+      photoDropzone.addEventListener("drop", (e) => {
+        const dt = (e as DragEvent).dataTransfer;
+        const files = dt?.files;
+        if (files && files.length > 0) {
+          handleFilesUpload(files);
+        }
+      });
+    }
 
     function openModal(prod: any = null) {
       currentEditingProduct = prod;
@@ -698,9 +723,11 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         }
 
         if (isSavedOnCloud) {
-          alert("Poção e ficha técnica salvas com sucesso no Supabase!");
+          (window as any).showToast?.("Poção e ficha técnica salvas com sucesso no Supabase!") ||
+            window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Poção e ficha técnica salvas com sucesso no Supabase!" } }));
         } else {
-          alert("Poção atualizada com sucesso na interface!\n\nNota: Para sincronizar permanentemente com o banco de dados da nuvem, preencha a chave PUBLIC_SUPABASE_ANON_KEY no arquivo .env ou no painel da Vercel.");
+          (window as any).showToast?.("Poção atualizada com sucesso na interface!") ||
+            window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Poção atualizada com sucesso na interface!" } }));
         }
 
         closeModal();
@@ -716,7 +743,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           allProducts.push({ ...payload, id: "pocao-" + Date.now() });
         }
         
-        alert("Poção atualizada com sucesso na interface!\n\nNota: Chave de API do Supabase pendente de configuração no .env.");
+        (window as any).showToast?.("Poção atualizada com sucesso na interface!") ||
+          window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Poção atualizada com sucesso na interface!" } }));
         closeModal();
         renderTable();
       } finally {

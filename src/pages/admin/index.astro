@@ -271,6 +271,8 @@ import MetricCard from "../../components/admin/MetricCard.astro";
       if (permission === "granted") {
         btnPush.textContent = "✓ Notificações Ativas";
         btnPush.classList.replace("bg-[var(--gold)]", "bg-emerald-700");
+        (window as any).showToast?.("Notificações ativadas com sucesso!") ||
+          window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Notificações ativadas com sucesso!" } }));
         new Notification("Alquimista Licores", {
           body: "Notificações de estoque ativadas com sucesso neste dispositivo.",
           icon: "/favicon.svg",

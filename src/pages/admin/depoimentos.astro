@@ -266,6 +266,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
       closeModal();
       renderTable();
+      (window as any).showToast?.("Depoimento salvo com sucesso!") ||
+        window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Depoimento salvo com sucesso!" } }));
     });
 
     if (document.readyState === "loading") {

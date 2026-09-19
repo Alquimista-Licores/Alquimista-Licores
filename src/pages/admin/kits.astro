@@ -259,6 +259,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
       closeModal();
       renderKitsTable();
+      (window as any).showToast?.("Preço do kit salvo com sucesso!") ||
+        window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Preço do kit salvo com sucesso!" } }));
     });
 
     if (document.readyState === "loading") {

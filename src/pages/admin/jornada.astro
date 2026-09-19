@@ -172,10 +172,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           .from("app_config")
           .upsert({ key: "codigo_runa_ativo", value: val });
 
-        alert(`Código de runa atualizado para "${val}" com sucesso!`);
+        (window as any).showToast?.(`Código de runa atualizado para "${val}" com sucesso!`) ||
+          window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: `Código de runa atualizado para "${val}" com sucesso!` } }));
       } catch (err) {
         console.warn("Erro ao salvar runa:", err);
-        alert(`Código salvo localmente: ${val}`);
+        (window as any).showToast?.(`Código salvo localmente: ${val}`) ||
+          window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: `Código salvo localmente: ${val}` } }));
       }
     });
 

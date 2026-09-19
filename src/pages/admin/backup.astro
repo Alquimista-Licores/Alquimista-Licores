@@ -105,7 +105,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         a.click();
         document.body.removeChild(a);
 
-        alert("Backup exportado com sucesso!");
+        (window as any).showToast?.("Backup exportado com sucesso!") ||
+          window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Backup exportado com sucesso!" } }));
       } catch (err: any) {
         console.error("Erro no backup:", err);
         alert("Erro ao exportar: " + err?.message);
@@ -155,7 +156,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           }
         }
 
-        alert("Restauração concluída com sucesso!");
+        (window as any).showToast?.("Restauração concluída com sucesso!") ||
+          window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Restauração concluída com sucesso!" } }));
       } catch (err: any) {
         console.error("Erro na importação:", err);
         alert("Falha na importação: " + err?.message);

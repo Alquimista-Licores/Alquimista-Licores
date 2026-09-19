@@ -325,10 +325,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           statusMsg.classList.remove("hidden");
           setTimeout(() => statusMsg.classList.add("hidden"), 3500);
         }
-        alert("Configuração de destaques salva no Supabase com sucesso!");
+        (window as any).showToast?.("Configuração de destaques salva no Supabase com sucesso!") ||
+          window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Configuração de destaques salva no Supabase com sucesso!" } }));
       } catch (err) {
         console.warn("Erro ao salvar no Supabase:", err);
-        alert("Configuração salva!");
+        (window as any).showToast?.("Configuração salva!") ||
+          window.dispatchEvent(new CustomEvent("show-toast", { detail: { message: "Configuração salva!" } }));
       } finally {
         if (btnSave) {
           btnSave.textContent = "Salvar Configuração";

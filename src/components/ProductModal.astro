@@ -332,12 +332,35 @@
     pointer-events: auto;
   }
 
-  /* Badges flex tooltip left alignment on first badge */
+  /* Badges flex tooltips */
+  .badges-flex .has-tooltip::after {
+    max-width: min(300px, calc(100vw - 4rem));
+    white-space: normal;
+    width: max-content;
+    text-align: center;
+  }
+
+  /* First badge: anchored left */
   .badges-flex .has-tooltip:first-child::after {
     left: 0;
+    right: auto;
     transform: translateY(6px);
+    text-align: left;
   }
   .badges-flex .has-tooltip:first-child:hover::after {
+    transform: translateY(0);
+  }
+
+  /* Last badge & Prep badge: anchored right so it never gets cut on the modal's edge */
+  .badges-flex .has-tooltip:last-child::after,
+  .badges-flex #modal-badge-prep-wrap::after {
+    left: auto;
+    right: 0;
+    transform: translateY(6px);
+    text-align: right;
+  }
+  .badges-flex .has-tooltip:last-child:hover::after,
+  .badges-flex #modal-badge-prep-wrap:hover::after {
     transform: translateY(0);
   }
 
