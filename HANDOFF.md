@@ -134,11 +134,22 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [20/09/2026] — Reordenação por Drag & Drop de Produtos & Remoção do Campo Ordem no Modal
+1. **Reordenação Visual por Arrasto na Tabela de Produtos ([`produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro)):**
+   - Implementado suporte nativo a Drag & Drop (HTML5) na listagem da área administrativa (`/admin/produtos`).
+   - Adicionada coluna "Ordem" com indicador numerado (`#1`, `#2`, ...) e handle de arrasto (`⠿`).
+   - Linhas exibem indicador visual de soltura superior/inferior durante o movimento e aplicam reordenação instantânea na memória e no Supabase (`products.ordem = index + 1`).
+   - Notificação Toast automática ao concluir a reorganização.
+   - Detecção de busca/filtro ativo com aviso inteligente para evitar ordenação parcial inconsistente.
+2. **Remoção do Campo "Ordem de Exibição" do Modal de Edição:**
+   - O campo manual foi removido da interface do modal, deixando a seção de estoque mais limpa e focada.
+   - Preservado input hidden para garantir compatibilidade com novos cadastros (que entram no final da fila automaticamente) e salvamentos.
+
 ### [20/09/2026] — Otimização do Modal de Edição de Produtos (Menus Recolhíveis & Hierarquia Visual)
 1. **Estrutura Modular em 4 Seções com Menus Recolhíveis (Accordions):**
    - Refatoração do modal de produto em [`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro) com ampliação para largura confortável (`max-w-4xl`), espaçamento expandido e menus dobráveis:
      - **Seção 1: 🏺 Identificação da Poção** (Nome Oficial, Sabor/Essência, Categoria, Preço Oficial e Volume da Garrafa em ml).
-     - **Seção 2: 📦 Estoque & Integração GerenciApp** (Controle de Estoque Manual vs. Automático, Código de Integração com autocompletar via `datalist`, Quantidade em Estoque sincronizada em tempo real, Ordem de Exibição e Status Ativo/Inativo).
+     - **Seção 2: 📦 Estoque & Integração GerenciApp** (Controle de Estoque Manual vs. Automático, Código de Integração com autocompletar via `datalist`, Quantidade em Estoque sincronizada em tempo real e Status Ativo/Inativo).
      - **Seção 3: 📜 Ficha Técnica & Grimório** (Graduação Alcoólica °GL, Brix, Dias de Maceração, Notas Aromáticas, Ingredientes Alquímicos, Rituais/Sugestões de Degustação e Filosofia da Criação).
      - **Seção 4: 🖼️ Fotos & Galeria de Imagens** (Dropzone expandido para upload direto no Supabase Storage / fallback resiliente, badge de Capa Principal, remoção rápida e visualização em grid).
 2. **Controle Rápido e Atalhos:**

@@ -25,6 +25,11 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         <option value="cremoso">Licores Cremosos</option>
         <option value="especial">Série Especial</option>
       </select>
+
+      <div id="drag-order-hint" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[var(--gold)]/10 border border-[var(--gold)]/20 text-[11px] font-mono text-[var(--gold)] select-none">
+        <span class="text-xs">↕</span>
+        <span>Arraste as linhas para definir a ordem na vitrine</span>
+      </div>
     </div>
 
     <button
@@ -42,6 +47,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       <table class="w-full text-left text-xs text-[var(--cream)]/80">
         <thead class="bg-[var(--surface-elevated)] border-b border-[var(--gold)]/15 text-[10px] uppercase font-display tracking-[0.2em] text-[var(--gold)]">
           <tr>
+            <th class="py-3 px-3 w-16 text-center">Ordem</th>
             <th class="py-3 px-4">Poção</th>
             <th class="py-3 px-4">Categoria</th>
             <th class="py-3 px-4">Preço</th>
@@ -53,7 +59,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         </thead>
         <tbody id="products-table-body" class="divide-y divide-[var(--gold)]/10 font-sans">
           <tr>
-            <td colspan="7" class="py-8 text-center text-xs text-[var(--cream)]/50 font-mono">
+            <td colspan="8" class="py-8 text-center text-xs text-[var(--cream)]/50 font-mono">
               <span class="inline-block animate-spin mr-2">⚗</span> Consultando catálogo no Supabase...
             </td>
           </tr>
@@ -279,7 +285,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 pt-1">
+            <div class="pt-1">
               <div>
                 <label class="block text-[11px] font-display uppercase tracking-wider text-[var(--gold-soft)] font-medium mb-1.5 flex items-center justify-between">
                   <span>Quantidade em Estoque</span>
@@ -305,21 +311,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
                   </span>
                 </div>
               </div>
-
-              <div>
-                <label class="block text-[11px] font-display uppercase tracking-wider text-[var(--gold-soft)] font-medium mb-1.5">
-                  Ordem de Exibição na Vitrine
-                </label>
-                <input
-                  type="number"
-                  id="prod-ordem"
-                  value="1"
-                  class="w-full bg-[var(--background)] border border-[var(--gold)]/25 rounded-sm px-3.5 py-2.5 text-xs text-[var(--cream)] focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)]/30 outline-none transition-all font-mono"
-                />
-                <p class="text-[10px] text-[var(--cream)]/40 font-mono mt-1">
-                  1 = primeiro item na lista de poções
-                </p>
-              </div>
+              <input type="hidden" id="prod-ordem" value="1" />
             </div>
 
             <!-- Feedback de Sincronização do GerenciApp -->
@@ -678,6 +670,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       }
     });
 
+    const dragOrderHint = document.getElementById("drag-order-hint");
+    let draggedRowId: string | null = null;
+    let isDragging = false;
+
     // Formatador de Preço
     function fmtBRL(val: number) {
       return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val || 0);
@@ -709,6 +705,17 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
       const q = searchInput?.value.toLowerCase().trim() || "";
       const cat = filterCategory?.value || "todos";
+      const isFiltered = q !== "" || cat !== "todos";
+
+      if (dragOrderHint) {
+        if (isFiltered) {
+          dragOrderHint.classList.add("opacity-50");
+          dragOrderHint.innerHTML = `<span class="text-xs">⚠️</span> <span>Limpe a busca para reorganizar a ordem geral</span>`;
+        } else {
+          dragOrderHint.classList.remove("opacity-50");
+          dragOrderHint.innerHTML = `<span class="text-xs">↕</span> <span>Arraste as linhas para definir a ordem na vitrine</span>`;
+        }
+      }
 
       const filtered = allProducts.filter((p) => {
         const matchesQuery = p.nome.toLowerCase().includes(q) || (p.sabor && p.sabor.toLowerCase().includes(q));
@@ -719,7 +726,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       if (filtered.length === 0) {
         tableBody.innerHTML = `
           <tr>
-            <td colspan="7" class="py-8 text-center text-xs text-[var(--cream)]/40 font-mono">
+            <td colspan="8" class="py-8 text-center text-xs text-[var(--cream)]/40 font-mono">
               Nenhuma poção encontrada com os filtros atuais.
             </td>
           </tr>
@@ -727,12 +734,23 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         return;
       }
 
-      tableBody.innerHTML = filtered.map((p) => {
+      tableBody.innerHTML = filtered.map((p, idx) => {
         const isZerado = p.estoque === 0 || p.estoque === "0";
         const isGerenciApp = p.stock_control_type === "gerenciapp";
+        const displayOrder = isFiltered ? (p.ordem || idx + 1) : idx + 1;
 
         return `
-          <tr data-id="${p.id}" class="product-row hover:bg-[var(--surface-elevated)]/60 transition-colors cursor-pointer group">
+          <tr 
+            data-id="${p.id}" 
+            draggable="${!isFiltered}"
+            class="product-row hover:bg-[var(--surface-elevated)]/60 transition-colors cursor-pointer group select-none border-b border-[var(--gold)]/10"
+          >
+            <td class="py-3.5 px-3 text-center ${!isFiltered ? 'cursor-grab active:cursor-grabbing drag-handle text-[var(--gold)] hover:text-[var(--gold-hover)]' : 'text-[var(--cream)]/30'} font-mono text-xs" title="${!isFiltered ? 'Arraste para reposicionar na vitrine' : 'Limpe a busca para reordenar'}">
+              <div class="flex items-center justify-center gap-1.5">
+                <span class="text-xs ${!isFiltered ? 'opacity-70 group-hover:opacity-100' : 'opacity-25'}">⠿</span>
+                <span class="font-bold text-[11px] text-[var(--gold)]">#${displayOrder}</span>
+              </div>
+            </td>
             <td class="py-3.5 px-4">
               <div class="flex items-center gap-3">
                 <img 
@@ -792,14 +810,121 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         `;
       }).join("");
 
-      // Bind clique na linha inteira do produto
-      document.querySelectorAll(".product-row").forEach((row) => {
+      setupTableEvents(!isFiltered);
+    }
+
+    function setupTableEvents(canDrag: boolean) {
+      if (!tableBody) return;
+      const rows = tableBody.querySelectorAll<HTMLTableRowElement>(".product-row");
+
+      rows.forEach((row) => {
+        // Clique para abrir modal (evita disparar se clicou no handle de arrastar ou se estava arrastando)
         row.addEventListener("click", (e) => {
-          const id = (row as HTMLElement).getAttribute("data-id");
+          if (isDragging) return;
+          const target = e.target as HTMLElement;
+          if (target.closest(".drag-handle")) return;
+          const id = row.getAttribute("data-id");
           const prod = allProducts.find((p) => String(p.id) === String(id));
           if (prod) openModal(prod);
         });
+
+        if (!canDrag) return;
+
+        // Eventos HTML5 Drag & Drop
+        row.addEventListener("dragstart", (e) => {
+          isDragging = true;
+          draggedRowId = row.getAttribute("data-id");
+          if (e.dataTransfer) {
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", draggedRowId || "");
+          }
+          row.classList.add("opacity-40", "bg-[var(--gold)]/15");
+        });
+
+        row.addEventListener("dragend", () => {
+          row.classList.remove("opacity-40", "bg-[var(--gold)]/15");
+          rows.forEach((r) => r.classList.remove("border-t-2", "border-b-2", "border-[var(--gold)]"));
+          setTimeout(() => {
+            isDragging = false;
+            draggedRowId = null;
+          }, 50);
+        });
+
+        row.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          if (!draggedRowId || row.getAttribute("data-id") === draggedRowId) return;
+          if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+
+          const rect = row.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          rows.forEach((r) => r.classList.remove("border-t-2", "border-b-2", "border-[var(--gold)]"));
+
+          if (e.clientY < midY) {
+            row.classList.add("border-t-2", "border-[var(--gold)]");
+          } else {
+            row.classList.add("border-b-2", "border-[var(--gold)]");
+          }
+        });
+
+        row.addEventListener("dragleave", () => {
+          row.classList.remove("border-t-2", "border-b-2", "border-[var(--gold)]");
+        });
+
+        row.addEventListener("drop", async (e) => {
+          e.preventDefault();
+          row.classList.remove("border-t-2", "border-b-2", "border-[var(--gold)]");
+          const targetId = row.getAttribute("data-id");
+          if (!draggedRowId || !targetId || draggedRowId === targetId) return;
+
+          const rect = row.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          const dropBefore = e.clientY < midY;
+
+          // Reordena o array principal allProducts
+          const fromIndex = allProducts.findIndex((p) => String(p.id) === String(draggedRowId));
+          if (fromIndex < 0) return;
+          const [draggedItem] = allProducts.splice(fromIndex, 1);
+
+          let toIndex = allProducts.findIndex((p) => String(p.id) === String(targetId));
+          if (toIndex < 0) return;
+          if (!dropBefore) toIndex += 1;
+
+          allProducts.splice(toIndex, 0, draggedItem);
+
+          // Atualiza índice de ordem de todos os produtos (1, 2, 3...)
+          allProducts.forEach((p, idx) => {
+            p.ordem = idx + 1;
+          });
+
+          renderTable();
+          await persistProductsOrder();
+        });
       });
+    }
+
+    async function persistProductsOrder() {
+      try {
+        const updates = allProducts.map((p, idx) => {
+          return supabase.from("products").update({ ordem: idx + 1 }).eq("id", p.id);
+        });
+
+        await Promise.all(updates);
+
+        (window as any).showToast?.("Ordem da vitrine atualizada com sucesso!") ||
+          window.dispatchEvent(
+            new CustomEvent("show-toast", {
+              detail: { message: "Ordem da vitrine atualizada com sucesso!" },
+            })
+          );
+      } catch (err) {
+        console.error("Erro ao salvar ordem das poções no Supabase:", err);
+        (window as any).showToast?.("Ordem atualizada localmente na sessão.") ||
+          window.dispatchEvent(
+            new CustomEvent("show-toast", {
+              detail: { message: "Ordem atualizada na sessão." },
+            })
+          );
+      }
     }
 
     // Renderiza os Thumbnails da Galeria de Fotos no Modal do Admin
@@ -1182,7 +1307,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       (document.getElementById("prod-estoque") as HTMLInputElement).value = prod?.estoque !== undefined ? String(prod.estoque) : "10";
       (document.getElementById("prod-stock-control-type") as HTMLSelectElement).value = prod?.stock_control_type || "manual";
       (document.getElementById("prod-codigo-integracao") as HTMLInputElement).value = prod?.codigo_integracao || "";
-      (document.getElementById("prod-ordem") as HTMLInputElement).value = prod?.ordem !== undefined ? String(prod.ordem) : "1";
+      (document.getElementById("prod-ordem") as HTMLInputElement).value = prod?.ordem !== undefined ? String(prod.ordem) : String(allProducts.length + 1);
       (document.getElementById("prod-ativo") as HTMLInputElement).checked = prod ? prod.ativo !== false : true;
 
       // Atualiza interface do estoque (manual vs gerenciapp)
