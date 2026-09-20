@@ -134,6 +134,19 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [20/09/2026] — Otimização do Modal de Edição de Produtos (Menus Recolhíveis & Hierarquia Visual)
+1. **Estrutura Modular em 4 Seções com Menus Recolhíveis (Accordions):**
+   - Refatoração do modal de produto em [`src/pages/admin/produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro) com ampliação para largura confortável (`max-w-4xl`), espaçamento expandido e menus dobráveis:
+     - **Seção 1: 🏺 Identificação da Poção** (Nome Oficial, Sabor/Essência, Categoria, Preço Oficial e Volume da Garrafa em ml).
+     - **Seção 2: 📦 Estoque & Integração GerenciApp** (Controle de Estoque Manual vs. Automático, Código de Integração com autocompletar via `datalist`, Quantidade em Estoque sincronizada em tempo real, Ordem de Exibição e Status Ativo/Inativo).
+     - **Seção 3: 📜 Ficha Técnica & Grimório** (Graduação Alcoólica °GL, Brix, Dias de Maceração, Notas Aromáticas, Ingredientes Alquímicos, Rituais/Sugestões de Degustação e Filosofia da Criação).
+     - **Seção 4: 🖼️ Fotos & Galeria de Imagens** (Dropzone expandido para upload direto no Supabase Storage / fallback resiliente, badge de Capa Principal, remoção rápida e visualização em grid).
+2. **Controle Rápido e Atalhos:**
+   - Botão de cabeçalho *"Recolher todos / Expandir todos"* (`#btn-toggle-all-sections`) para alternância instantânea de visualização.
+   - Indicadores visuais de estado ("Aberto" / "Recolhido") e setas animadas (`.section-chevron`).
+   - Fechamento com tecla `Esc` e clique no backdrop.
+   - Abertura inteligente no `openModal`: novo cadastro inicia com todas as seções abertas; edição de poção existente foca de início nas seções essenciais 1 e 2 mantendo 3 e 4 recolhidas para evitar rolagem excessiva.
+
 ### [20/09/2026] — Integração Multi-Supabase: Estoque Dinâmico do GerenciApp & Código de Integração
 1. **Conexão Multi-Supabase (`src/integrations/supabase/client.ts`):**
    - Configurada conexão simultânea com o **Supabase 1 (Site/Jornada)** (`bktegbisdaqdhpqtxqxy`) e o **Supabase 2 (Gerenciador de Pedidos & Estoque)** (`vppvryuvbhrunvucnvax`).
