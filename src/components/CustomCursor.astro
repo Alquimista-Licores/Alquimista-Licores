@@ -209,32 +209,65 @@ const {
       [data-cursor-enclose], ${roundCircularSelector}
     `;
 
-    // Helper to detect if an overlay/modal (Cart Drawer, Product Modal, Admin Modals, Dialogs) is currently active/open
+    function isElementActiveModal(el: HTMLElement): boolean {
+      if (!el || !document.body.contains(el)) return false;
+      if (el.classList.contains("hidden")) return false;
+      if (el.getAttribute("aria-hidden") === "true") return false;
+
+      const style = window.getComputedStyle(el);
+      if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") {
+        return false;
+      }
+
+      const rect = el.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return false;
+
+      return true;
+    }
+
+    // Helper to detect if any overlay/modal (Cart Drawer, Product Modal, Age Gate, Admin Modals, Dialogs) is currently active/open
     function getActiveOverlayOrModal(): HTMLElement | null {
-      const cartOverlay = document.getElementById("cart-drawer-overlay");
-      if (cartOverlay && !cartOverlay.classList.contains("hidden") && window.getComputedStyle(cartOverlay).display !== "none") {
-        return cartOverlay;
+      // 1. Specific known IDs across site & admin
+      const knownIds = [
+        "cart-drawer-overlay",
+        "cart-drawer-panel",
+        "product-modal-container",
+        "age-gate-modal",
+        "product-modal-backdrop",
+        "order-details-modal-backdrop",
+        "order-modal-backdrop",
+        "kit-modal-backdrop",
+        "testimonial-modal-backdrop",
+        "admin-auth-loading",
+        "admin-auth-denied"
+      ];
+
+      for (const id of knownIds) {
+        const el = document.getElementById(id);
+        if (el && isElementActiveModal(el)) {
+          return el;
+        }
       }
 
-      const productModal = document.getElementById("product-modal-container");
-      if (productModal && !productModal.classList.contains("hidden") && window.getComputedStyle(productModal).display !== "none") {
-        return productModal;
-      }
-
-      const ageGate = document.getElementById("age-gate");
-      if (ageGate && !ageGate.classList.contains("hidden") && window.getComputedStyle(ageGate).display !== "none") {
-        return ageGate;
-      }
-
-      const adminModals = document.querySelectorAll<HTMLElement>(
-        "#modal-produto, #modal-pedido, #modal-kit, #modal-depoimento, .modal-overlay, .admin-modal, dialog[open], [role='dialog']"
+      // 2. Generic modal selectors (site + admin)
+      const genericModalCandidates = document.querySelectorAll<HTMLElement>(
+        '[id*="modal-backdrop"], [id*="modal-container"], [id*="modal"], [id*="backdrop"], [id*="drawer"], .modal-overlay, .modal-backdrop, .admin-modal, dialog[open], [role="dialog"], [aria-modal="true"]'
       );
 
-      for (let i = 0; i < adminModals.length; i++) {
-        const el = adminModals[i];
-        if (el.classList.contains("hidden")) continue;
-        const style = window.getComputedStyle(el);
-        if (style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0") {
+      for (let i = 0; i < genericModalCandidates.length; i++) {
+        const el = genericModalCandidates[i];
+        if (isElementActiveModal(el)) {
+          return el;
+        }
+      }
+
+      // 3. Any visible fixed full-screen overlay (excluding cursor & background canvas)
+      const fixedOverlays = document.querySelectorAll<HTMLElement>(
+        '.fixed.inset-0:not(#reactbits-cursor-root):not(#particles-canvas-wrap):not([class*="pointer-events-none"])'
+      );
+      for (let i = 0; i < fixedOverlays.length; i++) {
+        const el = fixedOverlays[i];
+        if (isElementActiveModal(el)) {
           return el;
         }
       }
@@ -308,12 +341,47 @@ const {
       const activeModal = getActiveOverlayOrModal();
       const overHeader = isMouseOverHeader(x, y);
 
+      // If a modal is active in foreground, strictly limit search to elements inside activeModal
+      if (activeModal) {
+        const elUnderPoint = document.elementFromPoint(x, y) as HTMLElement | null;
+        if (elUnderPoint && activeModal.contains(elUnderPoint)) {
+          if (elUnderPoint.closest(cardsSelector) || elUnderPoint.closest(softLinksSelector)) {
+            return null;
+          }
+          const directHit = elUnderPoint.closest(enclosingSelector) as HTMLElement | null;
+          if (directHit && activeModal.contains(directHit) && isTargetActuallyVisible(directHit)) {
+            return directHit;
+          }
+        }
+
+        const modalCandidates = activeModal.querySelectorAll<HTMLElement>(`${enclosingSelector}, ${cardsSelector}`);
+        let closest: HTMLElement | null = null;
+        let minDistance = Infinity;
+
+        for (let i = 0; i < modalCandidates.length; i++) {
+          const el = modalCandidates[i];
+          if (el.closest(softLinksSelector)) continue;
+          if (!isTargetActuallyVisible(el)) continue;
+
+          const rect = el.getBoundingClientRect();
+          if (rect.bottom < -proximity || rect.top > window.innerHeight + proximity) continue;
+
+          const dx = Math.max(rect.left - x, 0, x - rect.right);
+          const dy = Math.max(rect.top - y, 0, y - rect.bottom);
+          const dist = Math.hypot(dx, dy);
+
+          if (dist <= proximity && dist < minDistance) {
+            minDistance = dist;
+            closest = el;
+          }
+        }
+
+        return closest;
+      }
+
       // 1. Direct hit check under point
       const elUnderPoint = document.elementFromPoint(x, y) as HTMLElement | null;
       if (elUnderPoint) {
-        if (activeModal && !activeModal.contains(elUnderPoint)) {
-          return null;
-        }
         if (overHeader && !elUnderPoint.closest('header, #site-header')) {
           return null;
         }
@@ -334,7 +402,6 @@ const {
 
       for (let i = 0; i < candidates.length; i++) {
         const el = candidates[i];
-        if (activeModal && !activeModal.contains(el)) continue;
         if (overHeader && !el.closest('header, #site-header')) continue;
         if (el.closest(softLinksSelector)) continue;
         if (!isTargetActuallyVisible(el)) continue;
@@ -375,24 +442,42 @@ const {
       const activeModal = getActiveOverlayOrModal();
       const overHeader = isMouseOverHeader(mouseX, mouseY);
 
-      // Release body element if mouse is over header
-      if (overHeader && hoveredEncloseEl && !hoveredEncloseEl.closest('header, #site-header')) {
+      // Release any element outside active modal or outside header immediately
+      if (activeModal) {
+        if (hoveredEncloseEl && !activeModal.contains(hoveredEncloseEl)) {
+          hoveredEncloseEl = null;
+          isDirectlyHovered = false;
+          circle.classList.remove("cursor-enclosing", "cursor-soft", "cursor-hidden");
+        }
+      } else if (overHeader && hoveredEncloseEl && !hoveredEncloseEl.closest('header, #site-header')) {
         hoveredEncloseEl = null;
+        isDirectlyHovered = false;
         circle.classList.remove("cursor-enclosing");
       }
 
       if (activeModal && target && !activeModal.contains(target)) {
         if (hoveredEncloseEl) {
           hoveredEncloseEl = null;
+          isDirectlyHovered = false;
           circle.classList.remove("cursor-enclosing", "cursor-soft", "cursor-hidden");
         }
         return;
       }
 
       if (target) {
+        // If modal is open, ensure target is inside the modal
+        if (activeModal && !activeModal.contains(target)) {
+          if (hoveredEncloseEl) {
+            hoveredEncloseEl = null;
+            isDirectlyHovered = false;
+            circle.classList.remove("cursor-enclosing", "cursor-soft", "cursor-hidden");
+          }
+          return;
+        }
+
         // PRIORITY 1: Direct hit on ANY Card -> Outer circle becomes transparent (0% opacity)
         const cardTarget = target.closest(cardsSelector) as HTMLElement | null;
-        if (cardTarget && isTargetActuallyVisible(cardTarget) && !overHeader) {
+        if (cardTarget && isTargetActuallyVisible(cardTarget) && (!activeModal || activeModal.contains(cardTarget)) && !overHeader) {
           isSoftHover = false;
           isDirectlyHovered = true;
           if (hoveredEncloseEl !== cardTarget) {
@@ -405,8 +490,8 @@ const {
 
         // PRIORITY 2: Direct hit on Enclosing target (Buttons, Inputs, Icons)
         const directEnclose = target.closest(enclosingSelector) as HTMLElement | null;
-        if (directEnclose && isTargetActuallyVisible(directEnclose)) {
-          if (!overHeader || directEnclose.closest('header, #site-header')) {
+        if (directEnclose && isTargetActuallyVisible(directEnclose) && (!activeModal || activeModal.contains(directEnclose))) {
+          if (!overHeader || directEnclose.closest('header, #site-header') || (activeModal && activeModal.contains(directEnclose))) {
             isSoftHover = false;
             isDirectlyHovered = true;
             circle.classList.remove("cursor-hidden", "cursor-soft");
