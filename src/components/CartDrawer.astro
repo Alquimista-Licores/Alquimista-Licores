@@ -91,7 +91,7 @@
       <div id="delivery-fields" class="space-y-3 pt-2">
         <div class="p-3.5 border border-[var(--gold)]/25 rounded-sm bg-[var(--surface)]/60">
           <label class="block font-display tracking-widest uppercase text-xs text-[var(--gold)] mb-2 font-bold">
-            Calcular frete motoboy
+            Calcular frete motoboy (valor aproximado)
           </label>
           <div class="relative">
             <input
@@ -496,6 +496,10 @@
       input.classList.remove("!border-red-500");
     });
 
+    indicadorNome?.addEventListener("input", () => {
+      indicadorNome.classList.remove("!border-red-500");
+    });
+
     indicadorWhats?.addEventListener("input", (e) => {
       const input = e.target as HTMLInputElement;
       input.value = formatBRPhone(input.value);
@@ -546,14 +550,23 @@
         if (suggestionsLoading) suggestionsLoading.classList.remove("hidden");
         try {
           const viewbox = "-49.95,-28.30,-48.55,-29.20";
-          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&countrycodes=br&viewbox=${viewbox}&bounded=1&q=${encodeURIComponent(q)}`, {
+          let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&countrycodes=br&viewbox=${viewbox}&bounded=1&q=${encodeURIComponent(q)}`, {
             headers: { "Accept-Language": "pt-BR" }
           });
-          const list = await res.json();
+          let list = await res.json();
+
+          // Se não encontrou dentro do bounded box estrito, tenta busca geral no Brasil
+          if ((!list || list.length === 0) && q.length >= 3) {
+            res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&countrycodes=br&q=${encodeURIComponent(q + ", Santa Catarina")}`, {
+              headers: { "Accept-Language": "pt-BR" }
+            });
+            list = await res.json();
+          }
+
           if (suggestionsLoading) suggestionsLoading.classList.add("hidden");
           if (suggestionsList) {
             suggestionsList.innerHTML = "";
-            if (list.length > 0) {
+            if (list && list.length > 0) {
               list.forEach((item: any) => {
                 const li = document.createElement("li");
                 const mainTitle = item.address?.road || item.name || item.display_name.split(",")[0];
@@ -579,11 +592,31 @@
               });
               suggestionsList.classList.remove("hidden");
             } else {
-              suggestionsList.classList.add("hidden");
+              suggestionsList.innerHTML = `
+                <li class="p-3 text-xs text-amber-300/95 bg-[var(--surface-elevated)] text-center leading-relaxed">
+                  ⚠️ <strong>Endereço não encontrado</strong><br/>
+                  <span class="text-[11px] text-[var(--text-soft)]">Verifique o nome da rua ou bairro digitado.</span>
+                </li>
+              `;
+              suggestionsList.classList.remove("hidden");
+              if (shippingStatus) {
+                shippingStatus.innerHTML = `<span class="text-xs text-amber-300/90 flex items-center gap-1.5">⚠️ <strong>Endereço não encontrado.</strong> Verifique a grafia da rua ou bairro.</span>`;
+              }
             }
           }
         } catch (err) {
           if (suggestionsLoading) suggestionsLoading.classList.add("hidden");
+          if (suggestionsList) {
+            suggestionsList.innerHTML = `
+              <li class="p-3 text-xs text-red-300 bg-[var(--surface-elevated)] text-center">
+                Não foi possível buscar os endereços no momento.
+              </li>
+            `;
+            suggestionsList.classList.remove("hidden");
+          }
+          if (shippingStatus) {
+            shippingStatus.innerHTML = `<span class="text-xs text-red-400">Falha ao buscar endereço. Tente novamente.</span>`;
+          }
         }
       }, 400);
     });
@@ -656,8 +689,23 @@
 
       const indNome = indicadorNome?.value.trim();
       const indWhats = indicadorWhats?.value.trim();
-      if (indWhats && !isValidBRPhone(indWhats)) {
-        alert("O número de WhatsApp de quem indicou parece inválido. Por favor, corrija ou deixe em branco.");
+
+      if (indNome && !indWhats) {
+        alert("Você informou o nome de quem indicou. Por favor, preencha também o WhatsApp da indicação (ou deixe ambos os campos em branco).");
+        indicadorWhats?.classList.add("!border-red-500");
+        indicadorWhats?.focus();
+        return;
+      }
+
+      if (!indNome && indWhats) {
+        alert("Você informou o WhatsApp de quem indicou. Por favor, preencha também o nome da indicação (ou deixe ambos os campos em branco).");
+        indicadorNome?.classList.add("!border-red-500");
+        indicadorNome?.focus();
+        return;
+      }
+
+      if (indNome && indWhats && !isValidBRPhone(indWhats)) {
+        alert("Por favor, informe um número de WhatsApp válido com DDD para a indicação.");
         indicadorWhats?.classList.add("!border-red-500");
         indicadorWhats?.focus();
         return;
@@ -673,6 +721,9 @@
           return;
         }
         enderecoCompleto = `${rua}, ${num}${comp ? ` (${comp})` : ""}`;
+        if (!selectedAddress && freightCost === 0) {
+          freightACombinar = true;
+        }
       }
 
       const subtotal = cartItems.reduce((acc, item) => acc + (item.preco * item.qty), 0);
