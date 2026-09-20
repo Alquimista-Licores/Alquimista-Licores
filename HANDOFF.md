@@ -134,6 +134,10 @@ npm run build
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
 
+### [20/09/2026] — Correção do SVG Oficial do Ícone de Caldeirão nos Cards
+- Substituído o SVG inline legado do caldeirão nos cards de produtos em [`pocoes.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/pocoes.astro) e [`index.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/index.astro) (tanto no layout mobile quanto desktop).
+- Aplicado o SVG oficial com geometria idêntica a [`CauldronIcon.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/components/CauldronIcon.astro), corrigindo os detalhes da alça, tripé e bocal do caldeirão alquímico.
+
 ### [20/09/2026] — Reordenação por Drag & Drop de Produtos & Remoção do Campo Ordem no Modal
 1. **Reordenação Visual por Arrasto na Tabela de Produtos ([`produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro)):**
    - Implementado suporte nativo a Drag & Drop (HTML5) na listagem da área administrativa (`/admin/produtos`).
