@@ -120,26 +120,68 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
         <!-- Bloco 2: Gestão de Estoque & Integração -->
         <div>
-          <div class="font-display text-[11px] text-[var(--gold)] uppercase tracking-widest border-b border-[var(--gold)]/10 pb-1 mb-3 flex items-center gap-1.5 font-bold">
-            <span>📦</span> Estoque & Logística
+          <div class="font-display text-[11px] text-[var(--gold)] uppercase tracking-widest border-b border-[var(--gold)]/10 pb-1 mb-3 flex items-center justify-between font-bold">
+            <span class="flex items-center gap-1.5">
+              <span>📦</span> Estoque & Logística
+            </span>
+            <span class="text-[9px] font-mono text-[var(--gold)]/70 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> GerenciApp Conectado
+            </span>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Quantidade em Estoque</label>
-              <input type="number" id="prod-estoque" min="0" required class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" />
-            </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
               <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Tipo de Controle</label>
-              <select id="prod-stock-control-type" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none">
+              <select id="prod-stock-control-type" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none text-xs">
                 <option value="manual">Manual (Painel Web)</option>
                 <option value="gerenciapp">Automático (GerenciApp)</option>
               </select>
             </div>
             <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1 flex items-center justify-between">
+                <span>Código de Integração</span>
+                <span class="text-[9px] text-[var(--gold)] font-mono">GerenciApp</span>
+              </label>
+              <input
+                type="text"
+                id="prod-codigo-integracao"
+                list="gerenciapp-codes-list"
+                placeholder="Ex: LICOR-BANANA-500ML"
+                class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none font-mono text-xs"
+              />
+              <datalist id="gerenciapp-codes-list"></datalist>
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1 flex items-center justify-between">
+                <span>Quantidade em Estoque</span>
+                <button type="button" id="btn-sync-gerenciapp-stock" class="hidden text-[9px] text-[var(--gold)] hover:underline flex items-center gap-1 font-mono cursor-pointer" title="Sincronizar estoque agora do GerenciApp">
+                  <span>🔄</span> <span>Sincronizar</span>
+                </button>
+              </label>
+              <div class="relative">
+                <input
+                  type="number"
+                  id="prod-estoque"
+                  min="0"
+                  required
+                  class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none text-xs"
+                />
+                <span id="stock-sync-indicator" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-emerald-400 font-mono pointer-events-none">
+                  ⚡ GerenciApp
+                </span>
+              </div>
+            </div>
+            <div>
               <label class="block text-[10px] uppercase tracking-wider text-[var(--cream)]/60 mb-1">Ordem na Vitrine</label>
-              <input type="number" id="prod-ordem" value="1" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none" />
+              <input type="number" id="prod-ordem" value="1" class="w-full bg-[var(--background)] border border-[var(--gold)]/20 rounded-sm px-3 py-2 text-[var(--cream)] focus:border-[var(--gold)] outline-none text-xs" />
             </div>
           </div>
+
+          <!-- Feedback de Sincronização do GerenciApp -->
+          <div id="gerenciapp-stock-status" class="hidden text-[11px] font-mono mt-2.5 p-2.5 rounded bg-[var(--surface-elevated)] border border-[var(--gold)]/20 flex items-center justify-between">
+            <span id="gerenciapp-status-text" class="flex items-center gap-1.5 text-[var(--cream)]/80"></span>
+            <span id="gerenciapp-status-badge" class="text-[9px] uppercase px-1.5 py-0.5 rounded font-bold font-mono"></span>
+          </div>
+
           <div class="mt-3 flex items-center gap-2">
             <input type="checkbox" id="prod-ativo" class="rounded border-[var(--gold)]/30 text-[var(--gold)] focus:ring-0 cursor-pointer" />
             <label for="prod-ativo" class="text-xs text-[var(--cream)]/80 cursor-pointer select-none">
@@ -262,7 +304,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
   <!-- Script de CRUD de Produtos integrado com Supabase -->
   <script>
-    import { supabase } from "../../integrations/supabase/client";
+    import { supabase, supabaseGerenciador } from "../../integrations/supabase/client";
     import { POCOES_OFICIAIS, type Pocao } from "../../lib/data";
 
     let allProducts: any[] = [];
@@ -279,6 +321,17 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     const btnCloseModal = document.getElementById("btn-close-modal");
     const btnCancelModal = document.getElementById("btn-cancel-modal");
     const btnSaveProduct = document.getElementById("btn-save-product");
+
+    // Elementos de Estoque & Integração GerenciApp
+    const stockControlType = document.getElementById("prod-stock-control-type") as HTMLSelectElement;
+    const codigoIntegracaoInput = document.getElementById("prod-codigo-integracao") as HTMLInputElement;
+    const prodEstoqueInput = document.getElementById("prod-estoque") as HTMLInputElement;
+    const btnSyncStock = document.getElementById("btn-sync-gerenciapp-stock");
+    const stockSyncIndicator = document.getElementById("stock-sync-indicator");
+    const stockStatusBox = document.getElementById("gerenciapp-stock-status");
+    const stockStatusText = document.getElementById("gerenciapp-status-text");
+    const stockStatusBadge = document.getElementById("gerenciapp-status-badge");
+    const datalistGerenciapp = document.getElementById("gerenciapp-codes-list");
 
     const fotosFileInput = document.getElementById("prod-fotos-file") as HTMLInputElement;
     const photoDropzone = document.getElementById("photo-dropzone");
@@ -352,6 +405,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
                 <div>
                   <div class="font-display font-bold text-[var(--cream)] text-xs group-hover:text-[var(--gold)] transition-colors">${p.nome}</div>
                   <div class="text-[10px] text-[var(--gold)] font-mono">${p.sabor || '—'}</div>
+                  ${p.codigo_integracao ? `<div class="text-[9px] text-[var(--cream)]/40 font-mono tracking-tight truncate max-w-[140px]" title="Código de Integração: ${p.codigo_integracao}">${p.codigo_integracao}</div>` : ''}
                 </div>
               </div>
             </td>
@@ -375,7 +429,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
                   ${p.estoque} un
                 </span>
                 ${isZerado ? '<span class="text-[9px] bg-red-950 text-red-300 border border-red-500/30 px-1 py-0.5 rounded">Esgotado</span>' : ''}
-                ${isGerenciApp ? '<span class="text-[9px] text-[var(--cream)]/40 font-mono" title="Sincronizado via GerenciApp">⚡ GerenciApp</span>' : ''}
+                ${isGerenciApp ? `<span class="text-[9px] text-emerald-400 font-mono" title="Sincronizado via GerenciApp (${p.codigo_integracao || 'automático'})">⚡ GerenciApp</span>` : ''}
               </div>
             </td>
             <td class="py-3.5 px-4 font-mono text-[10px] text-[var(--cream)]/60">
@@ -580,6 +634,185 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       });
     }
 
+    // Carrega Códigos e Variações do GerenciApp no Datalist
+    async function loadGerenciappCodes() {
+      try {
+        const { data: variacoes } = await supabaseGerenciador
+          .from("variacoes_produto")
+          .select("id, nome, codigo_integracao, produto_id")
+          .order("nome", { ascending: true });
+
+        if (datalistGerenciapp && variacoes) {
+          datalistGerenciapp.innerHTML = variacoes
+            .filter((v: any) => v.codigo_integracao || v.nome)
+            .map((v: any) => `<option value="${v.codigo_integracao || v.nome}">${v.nome} (${v.codigo_integracao || 'Sem código'})</option>`)
+            .join("");
+        }
+      } catch (e) {
+        console.warn("Aviso ao consultar variações do GerenciApp:", e);
+      }
+    }
+
+    // Sincroniza Estoque em tempo real consultando a tabela 'estoque' do GerenciApp
+    async function syncStockFromGerenciapp(forcedCode?: string) {
+      const code = (forcedCode !== undefined ? forcedCode : codigoIntegracaoInput?.value || "").trim();
+      const sabor = (document.getElementById("prod-sabor") as HTMLInputElement)?.value.trim() || "";
+      const nome = (document.getElementById("prod-nome") as HTMLInputElement)?.value.trim() || "";
+
+      if (!code && !sabor && !nome) {
+        if (stockStatusBox) {
+          stockStatusBox.classList.remove("hidden");
+          if (stockStatusText) stockStatusText.innerHTML = "⚠️ Informe o <strong>Código de Integração</strong> para puxar o estoque do GerenciApp.";
+          if (stockStatusBadge) {
+            stockStatusBadge.textContent = "Aguardando Código";
+            stockStatusBadge.className = "text-[9px] uppercase px-1.5 py-0.5 rounded font-bold font-mono bg-amber-950/80 text-amber-300 border border-amber-500/30";
+          }
+        }
+        return;
+      }
+
+      if (stockStatusBox) {
+        stockStatusBox.classList.remove("hidden");
+        if (stockStatusText) stockStatusText.innerHTML = `<span class="inline-block animate-spin mr-1">⚗</span> Consultando tabela 'estoque' no GerenciApp...`;
+        if (stockStatusBadge) {
+          stockStatusBadge.textContent = "Consultando";
+          stockStatusBadge.className = "text-[9px] uppercase px-1.5 py-0.5 rounded font-bold font-mono bg-blue-950 text-blue-300 border border-blue-500/30";
+        }
+      }
+
+      try {
+        let variacaoId: string | null = null;
+        let produtoId: string | null = null;
+        let matchLabel = "";
+
+        // 1. Tenta buscar em variacoes_produto (onde os licores ficam com codigo_integracao ex: LICOR-BANANA-500ML ou nome)
+        if (code) {
+          const { data: vList } = await supabaseGerenciador
+            .from("variacoes_produto")
+            .select("id, nome, codigo_integracao, produto_id")
+            .or(`codigo_integracao.eq.${code},nome.ilike.${code}`)
+            .limit(1);
+
+          if (vList && vList.length > 0) {
+            variacaoId = vList[0].id;
+            produtoId = vList[0].produto_id;
+            matchLabel = vList[0].codigo_integracao || vList[0].nome;
+          }
+        }
+
+        // 2. Se não achou por código estrito, tenta busca por aproximação no sabor ou código
+        if (!variacaoId && (sabor || code)) {
+          const searchTerm = code || sabor;
+          const { data: vList2 } = await supabaseGerenciador
+            .from("variacoes_produto")
+            .select("id, nome, codigo_integracao, produto_id")
+            .or(`codigo_integracao.ilike.%${searchTerm}%,nome.ilike.%${searchTerm}%`)
+            .limit(1);
+
+          if (vList2 && vList2.length > 0) {
+            variacaoId = vList2[0].id;
+            produtoId = vList2[0].produto_id;
+            matchLabel = vList2[0].codigo_integracao || vList2[0].nome;
+            if (codigoIntegracaoInput && !codigoIntegracaoInput.value && vList2[0].codigo_integracao) {
+              codigoIntegracaoInput.value = vList2[0].codigo_integracao;
+            }
+          }
+        }
+
+        // 3. Se ainda não achou em variações, tenta na tabela produtos
+        if (!variacaoId) {
+          const searchTerm = code || nome || sabor;
+          const { data: pList } = await supabaseGerenciador
+            .from("produtos")
+            .select("id, nome, sku")
+            .or(`sku.eq.${searchTerm},nome.ilike.%${searchTerm}%`)
+            .limit(1);
+
+          if (pList && pList.length > 0) {
+            produtoId = pList[0].id;
+            matchLabel = pList[0].nome;
+          }
+        }
+
+        // 4. Busca a quantidade na tabela estoque do GerenciApp
+        let quantidadeEstoque: number | null = null;
+
+        if (variacaoId) {
+          const { data: estData } = await supabaseGerenciador
+            .from("estoque")
+            .select("quantidade")
+            .eq("variacao_id", variacaoId)
+            .maybeSingle();
+
+          if (estData !== null && estData !== undefined) {
+            quantidadeEstoque = Number(estData.quantidade);
+          }
+        } else if (produtoId) {
+          const { data: estData } = await supabaseGerenciador
+            .from("estoque")
+            .select("quantidade")
+            .eq("produto_id", produtoId)
+            .is("variacao_id", null)
+            .maybeSingle();
+
+          if (estData !== null && estData !== undefined) {
+            quantidadeEstoque = Number(estData.quantidade);
+          }
+        }
+
+        if (quantidadeEstoque !== null) {
+          if (prodEstoqueInput) {
+            prodEstoqueInput.value = String(quantidadeEstoque);
+          }
+          if (stockStatusText) {
+            stockStatusText.innerHTML = `✅ Estoque sincronizado de <strong>"${matchLabel}"</strong>: <strong>${quantidadeEstoque} unidades</strong>.`;
+          }
+          if (stockStatusBadge) {
+            stockStatusBadge.textContent = "Sincronizado";
+            stockStatusBadge.className = "text-[9px] uppercase px-1.5 py-0.5 rounded font-bold font-mono bg-emerald-950 text-emerald-300 border border-emerald-500/30";
+          }
+        } else {
+          if (stockStatusText) {
+            stockStatusText.innerHTML = `⚠️ Item <strong>"${code || sabor || nome}"</strong> não localizado na tabela de estoque do GerenciApp.`;
+          }
+          if (stockStatusBadge) {
+            stockStatusBadge.textContent = "Não Encontrado";
+            stockStatusBadge.className = "text-[9px] uppercase px-1.5 py-0.5 rounded font-bold font-mono bg-red-950 text-red-300 border border-red-500/30";
+          }
+        }
+      } catch (err: any) {
+        console.error("Erro ao sincronizar estoque do GerenciApp:", err);
+        if (stockStatusText) stockStatusText.textContent = "Erro ao conectar com GerenciApp.";
+        if (stockStatusBadge) {
+          stockStatusBadge.textContent = "Erro Conexão";
+          stockStatusBadge.className = "text-[9px] uppercase px-1.5 py-0.5 rounded font-bold font-mono bg-red-950 text-red-300 border border-red-500/30";
+        }
+      }
+    }
+
+    function updateStockControlUI() {
+      const isGerenciApp = stockControlType?.value === "gerenciapp";
+      if (isGerenciApp) {
+        prodEstoqueInput?.setAttribute("readonly", "true");
+        prodEstoqueInput?.classList.add("bg-[var(--surface-elevated)]", "text-emerald-400", "font-bold");
+        stockSyncIndicator?.classList.remove("hidden");
+        btnSyncStock?.classList.remove("hidden");
+        syncStockFromGerenciapp();
+      } else {
+        prodEstoqueInput?.removeAttribute("readonly");
+        prodEstoqueInput?.classList.remove("bg-[var(--surface-elevated)]", "text-emerald-400", "font-bold");
+        stockSyncIndicator?.classList.add("hidden");
+        btnSyncStock?.classList.add("hidden");
+        if (stockStatusBox) stockStatusBox.classList.add("hidden");
+      }
+    }
+
+    stockControlType?.addEventListener("change", updateStockControlUI);
+    codigoIntegracaoInput?.addEventListener("change", () => {
+      if (stockControlType?.value === "gerenciapp") syncStockFromGerenciapp();
+    });
+    btnSyncStock?.addEventListener("click", () => syncStockFromGerenciapp());
+
     function openModal(prod: any = null) {
       currentEditingProduct = prod;
       if (modalTitle) {
@@ -595,8 +828,17 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       (document.getElementById("prod-volume") as HTMLInputElement).value = prod?.volume_ml ? String(prod.volume_ml) : "750";
       (document.getElementById("prod-estoque") as HTMLInputElement).value = prod?.estoque !== undefined ? String(prod.estoque) : "10";
       (document.getElementById("prod-stock-control-type") as HTMLSelectElement).value = prod?.stock_control_type || "manual";
+      (document.getElementById("prod-codigo-integracao") as HTMLInputElement).value = prod?.codigo_integracao || "";
       (document.getElementById("prod-ordem") as HTMLInputElement).value = prod?.ordem !== undefined ? String(prod.ordem) : "1";
       (document.getElementById("prod-ativo") as HTMLInputElement).checked = prod ? prod.ativo !== false : true;
+
+      // Atualiza interface do estoque (manual vs gerenciapp)
+      updateStockControlUI();
+      if (prod?.stock_control_type === "gerenciapp") {
+        syncStockFromGerenciapp(prod.codigo_integracao);
+      } else if (stockStatusBox) {
+        stockStatusBox.classList.add("hidden");
+      }
 
       // Ficha Técnica do Modal
       (document.getElementById("prod-graduacao") as HTMLInputElement).value = prod?.graduacao_gl ? String(prod.graduacao_gl) : "";
@@ -637,6 +879,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       currentEditingProduct = null;
       currentGallery = [];
       currentCoverUrl = "";
+      if (stockStatusBox) stockStatusBox.classList.add("hidden");
     }
 
     async function handleSave() {
@@ -648,6 +891,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       const volume_ml = Number((document.getElementById("prod-volume") as HTMLInputElement).value) || 750;
       const estoque = Number((document.getElementById("prod-estoque") as HTMLInputElement).value) || 0;
       const stock_control_type = (document.getElementById("prod-stock-control-type") as HTMLSelectElement).value;
+      const codigo_integracao = (document.getElementById("prod-codigo-integracao") as HTMLInputElement).value.trim() || null;
       const ordem = Number((document.getElementById("prod-ordem") as HTMLInputElement).value) || 1;
       const ativo = (document.getElementById("prod-ativo") as HTMLInputElement).checked;
 
@@ -678,6 +922,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         volume_ml,
         estoque,
         stock_control_type,
+        codigo_integracao,
         ordem,
         ativo,
         graduacao_gl,
@@ -760,11 +1005,18 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     searchInput?.addEventListener("input", renderTable);
     filterCategory?.addEventListener("change", renderTable);
 
-    // Carrega dados iniciais
+    // Carrega dados iniciais do catálogo e variações do GerenciApp
+    async function initAdminProducts() {
+      await Promise.all([
+        fetchProducts(),
+        loadGerenciappCodes()
+      ]);
+    }
+
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", fetchProducts);
+      document.addEventListener("DOMContentLoaded", initAdminProducts);
     } else {
-      fetchProducts();
+      initAdminProducts();
     }
   </script>
 </AdminLayout>

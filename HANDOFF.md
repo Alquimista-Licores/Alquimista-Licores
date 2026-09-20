@@ -10,8 +10,10 @@
 - **Framework:** [Astro 5](https://astro.build/) (Static Site Generation / Hybrid Rendering)
 - **Estilização:** Tailwind CSS v4 + Vanilla CSS Tokens (Custom Properties)
 - **Tipografia:** Google Fonts (`Cinzel`, `Cinzel Decorative`, `Cormorant Garamond`, `Inter`, `JetBrains Mono`, `Lato`, `Manrope`, `Playfair Display`, `Syncopate`, `Bebas Neue`) com preconnect, display=swap e fallbacks locais.
-- **Banco de Dados / Backend:** Supabase (Projeto Oficial: `https://bktegbisdaqdhpqtxqxy.supabase.co` / ID: `bktegbisdaqdhpqtxqxy`) com fallback local resiliente em `src/lib/data.ts` e módulo cliente em `src/integrations/supabase/client.ts`
-- **Integrações:** WhatsApp Checkout, GerenciApp (Sincronização de estoque e pedidos), OpenStreetMap/OSRM (Cálculo de frete)
+- **Banco de Dados / Backend:** Arquitetura Multi-Supabase via `src/integrations/supabase/client.ts`:
+  - **Supabase 1 (Site & Jornada):** `https://bktegbisdaqdhpqtxqxy.supabase.co` (`bktegbisdaqdhpqtxqxy`) — Gerencia produtos, kits, depoimentos, configurações e a Jornada do Alquimista.
+  - **Supabase 2 (Gerenciador de Pedidos & Estoque):** `https://vppvryuvbhrunvucnvax.supabase.co` (`vppvryuvbhrunvucnvax`) — Conexão com o sistema de pedidos, clientes, produtos, itens_pedido, movimentações e estoque.
+- **Integrações:** WhatsApp Checkout, Sincronização Bidirecional de Estoque/Pedidos (GerenciApp/Supabase 2), OpenStreetMap/OSRM (Cálculo de frete)
 - **Hospedagem & Build:** Node.js / Vite Static Build (`dist/`)
 
 ---
@@ -131,6 +133,15 @@ npm run build
 ---
 
 ## 7. 📜 Histórico de Alterações Importantes (Changelog)
+
+### [20/09/2026] — Integração Multi-Supabase: Estoque Dinâmico do GerenciApp & Código de Integração
+1. **Conexão Multi-Supabase (`src/integrations/supabase/client.ts`):**
+   - Configurada conexão simultânea com o **Supabase 1 (Site/Jornada)** (`bktegbisdaqdhpqtxqxy`) e o **Supabase 2 (Gerenciador de Pedidos & Estoque)** (`vppvryuvbhrunvucnvax`).
+2. **Campo "Código de Integração" no Modal de Produtos ([`produtos.astro`](file:///d:/projetos%20antigravity/site_alquimista/src/pages/admin/produtos.astro)):**
+   - Adicionado input de `Código de Integração` com `datalist` autocompletável alimentado diretamente pelas variações cadastradas no GerenciApp (ex: `LICOR-BANANA-500ML`, `LICOR-ABACAXI-500ML`, etc.).
+3. **Sincronização Automática do Estoque:**
+   - Quando o tipo de controle é definido como **"Automático (GerenciApp)"**, o campo "Quantidade em Estoque" passa a ser preenchido dinamicamente consultando a tabela `estoque` do GerenciApp (`variacao_id` / `produto_id`), bloqueando edição manual indevida e exibindo badge e status de sincronização em tempo real.
+   - Botão de sincronização manual rápida (🔄) e reflexo do badge `⚡ GerenciApp` na tabela do catálogo.
 
 ### [07/09/2026] — Sincronização Oficial de Dados do Catálogo e Rituais de Degustação
 1. **Catálogo & Base de Dados 100% Alinhados:**

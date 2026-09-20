@@ -1,15 +1,15 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 /**
- * Supabase Client Integration Oficial
- * Projeto Oficial Atual: https://bktegbisdaqdhpqtxqxy.supabase.co
+ * ============================================================================
+ * 1. SUPABASE DO SITE & JORNADA DO ALQUIMISTA (Projeto Oficial: bktegbisdaqdhpqtxqxy)
+ * ============================================================================
  */
-
-const OFFICIAL_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrdGVnYmlzZGFxZGhwcXR4cXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1Njg2NzksImV4cCI6MjEwNTE0NDY3OX0.nUbhe2vFtcnFOZPO6Nww-IjdGJAPCIC1Z82CladmjG4";
+const SITE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrdGVnYmlzZGFxZGhwcXR4cXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1Njg2NzksImV4cCI6MjEwNTE0NDY3OX0.nUbhe2vFtcnFOZPO6Nww-IjdGJAPCIC1Z82CladmjG4";
 
 export const SUPABASE_CONFIG = {
   url: import.meta.env.PUBLIC_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL || "https://bktegbisdaqdhpqtxqxy.supabase.co",
-  anonKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY || import.meta.env.SUPABASE_PUBLISHABLE_KEY || OFFICIAL_ANON_KEY,
+  anonKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY || import.meta.env.SUPABASE_PUBLISHABLE_KEY || SITE_ANON_KEY,
   projectId: import.meta.env.VITE_SUPABASE_PROJECT_ID || "bktegbisdaqdhpqtxqxy",
   storage: {
     productImages: "https://bktegbisdaqdhpqtxqxy.supabase.co/storage/v1/object/public/product-images",
@@ -18,7 +18,7 @@ export const SUPABASE_CONFIG = {
 };
 
 /**
- * Instância singleton do cliente Supabase para o navegador e SSR
+ * Instância singleton do cliente Supabase para o Site & Jornada (Padrão)
  */
 export const supabase: SupabaseClient = createClient(
   SUPABASE_CONFIG.url,
@@ -33,8 +33,56 @@ export const supabase: SupabaseClient = createClient(
   }
 );
 
+// Alias explícito para clareza
+export const supabaseSite: SupabaseClient = supabase;
+
 /**
- * Helper para chamadas REST genéricas ao Supabase
+ * ============================================================================
+ * 2. SUPABASE DO GERENCIADOR DE PEDIDOS (Projeto Externo: vppvryuvbhrunvucnvax)
+ * ============================================================================
+ */
+const GERENCIADOR_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwcHZyeXV2YmhydW52dWNudmF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwNjE3NDEsImV4cCI6MjEwMTYzNzc0MX0.wgKoYwzCq1vm5lx5IvEPPmKLzmuIare9wO1DlBAxKkA";
+const GERENCIADOR_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwcHZyeXV2YmhydW52dWNudmF4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjA2MTc0MSwiZXhwIjoyMTAxNjM3NzQxfQ.3PEgX41NwnlX3JraY-YCPocbYi_Qm9MDOJzqQYnWLLs";
+
+export const GERENCIADOR_CONFIG = {
+  url: import.meta.env.PUBLIC_GERENCIADOR_SUPABASE_URL || "https://vppvryuvbhrunvucnvax.supabase.co",
+  anonKey: import.meta.env.PUBLIC_GERENCIADOR_SUPABASE_ANON_KEY || GERENCIADOR_ANON_KEY,
+  serviceKey: import.meta.env.GERENCIADOR_SUPABASE_SERVICE_KEY || GERENCIADOR_SERVICE_KEY,
+  projectId: "vppvryuvbhrunvucnvax",
+};
+
+/**
+ * Instância do cliente Supabase para o Gerenciador de Pedidos (Anon / Client)
+ */
+export const supabaseGerenciador: SupabaseClient = createClient(
+  GERENCIADOR_CONFIG.url,
+  GERENCIADOR_CONFIG.anonKey,
+  {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      storageKey: `sb-${GERENCIADOR_CONFIG.projectId}-auth-token`,
+    }
+  }
+);
+
+/**
+ * Instância com Service Role Key para operações administrativas irrestritas
+ * (Sincronização de pedidos, estoque e movimentações)
+ */
+export const supabaseGerenciadorAdmin: SupabaseClient = createClient(
+  GERENCIADOR_CONFIG.url,
+  GERENCIADOR_CONFIG.serviceKey,
+  {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    }
+  }
+);
+
+/**
+ * Helper para chamadas REST genéricas ao Supabase do Site
  */
 export async function supabaseRestFetch<T>(
   endpoint: string,
