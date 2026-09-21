@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import alquimistaMestre from '../assets/alquimista-mestre.png';
 import AdminNav from "../components/admin/AdminNav.astro";
 import CustomCursor from "../components/CustomCursor.astro";
 import Toast from "../components/Toast.astro";
@@ -37,9 +39,11 @@ const currentPath = activePath || Astro.url.pathname;
     <div id="admin-auth-loading" class="fixed inset-0 z-[100] bg-[var(--background)] flex flex-col items-center justify-center text-center p-4 transition-opacity duration-300">
       <div class="relative flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 mb-4 animate-pulse">
         <div class="absolute inset-0 border border-[var(--gold)]/30 rounded-full animate-ping opacity-30 pointer-events-none"></div>
-        <img 
-          src="/assets/alquimista-mestre.png" 
+        <Image 
+          src={alquimistaMestre} 
           alt="Carregando Alquimista..." 
+          loading="eager"
+          fetchpriority="high"
           class="w-full h-full object-cover rounded-full border border-[var(--gold)]/40 p-1 shadow-[0_0_30px_rgba(200,169,126,0.3)] relative z-10" 
         />
       </div>

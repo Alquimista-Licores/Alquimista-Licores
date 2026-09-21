@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import caixaPremiumImg from '../assets/caixa-premium.png';
 import Layout from '../layouts/Layout.astro';
 import HeroCinematic from '../components/HeroCinematic.astro';
 import ProductCard from '../components/ProductCard.astro';
@@ -36,8 +38,8 @@ const doubledTestimonials = [...testimonials, ...testimonials];
       </div>
 
       <div id="featured-potions-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
-        {featured.map((p) => (
-          <ProductCard product={p} />
+        {featured.map((p, index) => (
+          <ProductCard product={p} eager={index < 4} />
         ))}
       </div>
     </section>
@@ -52,8 +54,8 @@ const doubledTestimonials = [...testimonials, ...testimonials];
     <section class="relative z-10 w-full min-h-[60vh] md:min-h-[75vh] flex items-center justify-center overflow-hidden [clip-path:inset(0)]">
       <!-- Fixed Background Window (Permanece fixo no viewport enquanto o scroll revela a dobra) -->
       <div class="fixed inset-0 w-full h-full pointer-events-none z-0">
-        <img
-          src="/assets/caixa-premium.png"
+        <Image
+          src={caixaPremiumImg}
           alt="Kits artesanais Alquimista para ocasiões especiais"
           class="w-full h-full object-cover object-center"
           loading="lazy"

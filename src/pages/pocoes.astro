@@ -43,9 +43,9 @@ const TABS = [
 
     <!-- PRODUCTS GRID -->
     <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 gap-5 lg:gap-7">
-      {products.map((p) => (
+      {products.map((p, index) => (
         <div class="product-item-wrap" data-category={p.categoria}>
-          <ProductCard product={p} />
+          <ProductCard product={p} eager={index < 4} />
         </div>
       ))}
     </div>

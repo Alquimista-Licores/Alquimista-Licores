@@ -1,6 +1,12 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
+
+import imgFilosofia from '../assets/sobre-filosofia.jpg';
+import imgOrigem from '../assets/sobre-origem.jpg';
+import imgProcesso from '../assets/sobre-processo.jpg';
+import imgCiclo from '../assets/sobre-ciclo.jpg';
 
 const SECTIONS = [
   {
@@ -10,7 +16,7 @@ const SECTIONS = [
       "A busca por uma resposta levou ao primeiro licor. Vieram os primeiros testes, outros sabores e, pouco a pouco, uma ideia simples começou a ganhar forma.",
       "Da vontade de misturar ingredientes, experimentar e criar algo diferente nasceu Alquimista, e com ela, um universo inteiro de poções.",
     ],
-    image: "/assets/sobre-filosofia.jpg",
+    image: imgFilosofia,
     alt: "A Origem da Alquimista",
     reverse: false,
   },
@@ -22,7 +28,7 @@ const SECTIONS = [
       "É por isso que fazemos com calma. E fazemos com alma.",
       "Feito com (C)alma.",
     ],
-    image: "/assets/sobre-origem.jpg",
+    image: imgOrigem,
     alt: "A Filosofia da Alquimista",
     reverse: true,
   },
@@ -32,7 +38,7 @@ const SECTIONS = [
       "Cada poção é produzida artesanalmente, em pequenos lotes e sem atalhos. Respeitamos o tempo de cada preparo e utilizamos ingredientes selecionados, sem corantes, conservantes ou aditivos artificiais.",
       "O sabor, a cor e o aroma vêm dos próprios ingredientes.",
     ],
-    image: "/assets/sobre-processo.jpg",
+    image: imgProcesso,
     alt: "O Processo da Alquimista",
     reverse: false,
   },
@@ -43,7 +49,7 @@ const SECTIONS = [
       "Sempre que atendem aos nossos padrões de conservação, higienização e apresentação, garrafas ganham um novo ciclo dentro da Alquimista.",
       "Uma escolha que reduz desperdícios e combina com aquilo em que acreditamos: aproveitar melhor os elementos que já temos antes de buscar novos.",
     ],
-    image: "/assets/sobre-ciclo.jpg",
+    image: imgCiclo,
     alt: "O Ciclo da Alquimista",
     reverse: true,
   },
@@ -72,15 +78,16 @@ const SECTIONS = [
 
       <!-- STORY SECTIONS / JORNADA -->
       <div id="jornada" class="space-y-24 md:space-y-36 mt-14 scroll-mt-28">
-        {SECTIONS.map((s) => (
+        {SECTIONS.map((s, index) => (
           <div class={`flex flex-col ${s.reverse ? "md:flex-row-reverse" : "md:flex-row"} gap-10 md:gap-16 items-center`}>
             <!-- VISUAL -->
             <div class="w-full md:w-1/2 sobre-reveal">
               <div class="overflow-hidden rounded-md group">
-                <img
+                <Image
                   src={s.image}
                   alt={s.alt}
-                  loading="lazy"
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchpriority={index === 0 ? "high" : "auto"}
                   decoding="async"
                   class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
                 />

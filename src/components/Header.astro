@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import logoImg from '../assets/logo-alquimista.png';
 import CauldronIcon from './CauldronIcon.astro';
 
 const currentPath = Astro.url.pathname;
@@ -24,9 +26,11 @@ const NAV = [
   <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 h-14 lg:h-16 flex items-center justify-between gap-6">
     <!-- LOGO -->
     <a href="/" class="logo-shimmer-wrapper group inline-flex items-center relative py-1">
-      <img
-        src="/assets/logo-alquimista.png"
+      <Image
+        src={logoImg}
         alt="Alquimista Licores"
+        loading="eager"
+        fetchpriority="high"
         class="h-6 md:h-7 lg:h-8 w-auto object-contain"
       />
       <span class="logo-shimmer-sheen" aria-hidden="true"></span>

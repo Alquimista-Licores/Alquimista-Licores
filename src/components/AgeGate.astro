@@ -1,14 +1,18 @@
 ---
 // Age Gate 18+ Verification Modal
+import { Image } from 'astro:assets';
+import logoAgegate from '../assets/logo-agegate.png';
 import Button from './Button.astro';
 ---
 
 <div id="age-gate-modal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-[var(--background)]/95 backdrop-blur-lg px-4">
   <div class="max-w-md w-full text-center border border-[var(--gold)]/35 bg-[var(--surface)] p-8 md:p-10 rounded-md gold-glow shadow-2xl relative">
     <div class="flex justify-center mb-6">
-      <img
-        src="/assets/logo-agegate.png"
+      <Image
+        src={logoAgegate}
         alt="Alquimista Licores"
+        loading="eager"
+        fetchpriority="high"
         class="h-16 lg:h-20 w-auto select-none"
         draggable="false"
       />

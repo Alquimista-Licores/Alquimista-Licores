@@ -1,11 +1,19 @@
 ---
 // Rituais de Degustação — Grimório Interativo Alquímico
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+import ritualPuroGelado from '../assets/rituals/ritual-puro-gelado.jpg';
+import ritualSobreGelo from '../assets/rituals/ritual-sobre-gelo.jpg';
+import ritualAMesa from '../assets/rituals/ritual-a-mesa.jpg';
+import ritualEmAlquimia from '../assets/rituals/ritual-em-alquimia.jpg';
+
 interface Ritual {
   id: string;
   numeral: string;
   title: string;
   shortDesc: string;
-  image: string;
+  image: ImageMetadata;
   alt: string;
   glyph: string;
   badgeTag: string;
@@ -22,7 +30,7 @@ const RITUALS: Ritual[] = [
     numeral: "I",
     title: "PURO & GELADO",
     shortDesc: "A forma mais pura de revelar aromas, textura e sabor.",
-    image: "/assets/rituals/ritual-puro-gelado.jpg",
+    image: ritualPuroGelado,
     alt: "Ritual Puro e Gelado — Licor servido em cálice de cristal resfriado",
     glyph: "🜄",
     badgeTag: "Servir gelado · Taça pequena",
@@ -40,7 +48,7 @@ const RITUALS: Ritual[] = [
     numeral: "II",
     title: "COM GELO",
     shortDesc: "O gelo suaviza a intensidade e revela novas camadas da poção.",
-    image: "/assets/rituals/ritual-sobre-gelo.jpg",
+    image: ritualSobreGelo,
     alt: "Ritual Com Gelo — Licor servido sobre gelo em copo baixo",
     glyph: "🜃",
     badgeTag: "Servir com gelo · Copo baixo",
@@ -58,7 +66,7 @@ const RITUALS: Ritual[] = [
     numeral: "III",
     title: "COM SOBREMESAS",
     shortDesc: "Doçura, cremosidade e contraste para encerrar a experiência.",
-    image: "/assets/rituals/ritual-a-mesa.jpg",
+    image: ritualAMesa,
     alt: "Ritual Com Sobremesas — Licor harmonizado com chocolate, café e sobremesas",
     glyph: "🜁",
     badgeTag: "Sirva junto à sobremesa · Ou use como complemento",
@@ -76,7 +84,7 @@ const RITUALS: Ritual[] = [
     numeral: "IV",
     title: "EM COQUETÉIS",
     shortDesc: "Transforme cada poção em novas combinações e experiências.",
-    image: "/assets/rituals/ritual-em-alquimia.jpg",
+    image: ritualEmAlquimia,
     alt: "Ritual Em Coquetéis — Coquetelaria autoral e releituras clássicas com poções",
     glyph: "🜂",
     badgeTag: "Combine · Bata · Misture",
@@ -135,7 +143,7 @@ const RITUALS: Ritual[] = [
 
             <!-- Preloaded Layered Image Stack for Smooth Crossfade -->
             {RITUALS.map((ritual, index) => (
-              <img
+              <Image
                 src={ritual.image}
                 alt={ritual.alt}
                 data-ritual-index={index}
@@ -143,6 +151,7 @@ const RITUALS: Ritual[] = [
                   index === 0 ? "is-active" : ""
                 }`}
                 loading={index === 0 ? "eager" : "lazy"}
+                fetchpriority={index === 0 ? "high" : "auto"}
                 decoding="async"
               />
             ))}

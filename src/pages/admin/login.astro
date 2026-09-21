@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+import alquimistaMestre from "../../assets/alquimista-mestre.png";
 import "../../styles/global.css";
 import CustomCursor from "../../components/CustomCursor.astro";
 ---
@@ -39,9 +41,11 @@ import CustomCursor from "../../components/CustomCursor.astro";
 
         <div class="text-center mb-8">
           <div class="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--surface-elevated)] border border-[var(--gold)]/40 p-1 mb-3 shadow-[0_0_25px_rgba(200,169,126,0.2)] overflow-hidden group">
-            <img 
-              src="/assets/alquimista-mestre.png" 
+            <Image 
+              src={alquimistaMestre} 
               alt="Alquimista Mestre" 
+              loading="eager"
+              fetchpriority="high"
               class="w-full h-full object-cover rounded-full transition-transform duration-300 group-hover:scale-105" 
             />
           </div>

@@ -1,8 +1,15 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Badge from '../components/Badge.astro';
 import { fetchProducts, fetchKitPrices, needsPrep } from '../lib/data';
+
+import kitsDegustacaoImg from '../assets/kits-degustacao.jpg';
+import kitsCaixaPremiumImg from '../assets/kits-caixa-premium.jpg';
+import kitsBrowniesImg from '../assets/kits-brownies.jpg';
+import kitsPaesMelImg from '../assets/kits-paes-mel.jpg';
+import kitsMdfImg from '../assets/kits-mdf.jpg';
 
 const products = await fetchProducts();
 const kitPrices = await fetchKitPrices();
@@ -25,10 +32,11 @@ const kitPrices = await fetchKitPrices();
         >
           <div>
             <div class="aspect-[4/3] mb-4 overflow-hidden rounded-md bg-[var(--surface-elevated)] border border-[var(--gold)]/10">
-              <img
-                src="/assets/kits-degustacao.jpg"
+              <Image
+                src={kitsDegustacaoImg}
                 alt="Kit Degustação"
-                loading="lazy"
+                loading="eager"
+                fetchpriority="high"
                 decoding="async"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -53,10 +61,11 @@ const kitPrices = await fetchKitPrices();
         >
           <div>
             <div class="aspect-[4/3] mb-4 overflow-hidden rounded-md bg-[var(--surface-elevated)] border border-[var(--gold)]/10">
-              <img
-                src="/assets/kits-caixa-premium.jpg"
+              <Image
+                src={kitsCaixaPremiumImg}
                 alt="Kit Presenteável"
-                loading="lazy"
+                loading="eager"
+                fetchpriority="high"
                 decoding="async"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -319,7 +328,7 @@ const kitPrices = await fetchKitPrices();
               data-label="3 Brownies Artesanais"
             >
               <div class="aspect-square mb-3 overflow-hidden rounded-md bg-[var(--surface-elevated)]">
-                <img src="/assets/kits-brownies.jpg" alt="3 Brownies" class="w-full h-full object-cover" />
+                <Image src={kitsBrowniesImg} alt="3 Brownies" class="w-full h-full object-cover" />
               </div>
               <h3 class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
                 3 Brownies
@@ -333,7 +342,7 @@ const kitPrices = await fetchKitPrices();
               data-label="3 Pães de Mel Artesanais"
             >
               <div class="aspect-square mb-3 overflow-hidden rounded-md bg-[var(--surface-elevated)]">
-                <img src="/assets/kits-paes-mel.jpg" alt="3 Pães de Mel" class="w-full h-full object-cover" />
+                <Image src={kitsPaesMelImg} alt="3 Pães de Mel" class="w-full h-full object-cover" />
               </div>
               <h3 class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
                 3 Pães de Mel
@@ -365,7 +374,7 @@ const kitPrices = await fetchKitPrices();
               data-label="Box MDF Artesanal"
             >
               <div class="aspect-square mb-3 overflow-hidden rounded-md bg-[var(--surface-elevated)]">
-                <img src="/assets/kits-mdf.jpg" alt="Box MDF" class="w-full h-full object-cover" />
+                <Image src={kitsMdfImg} alt="Box MDF" class="w-full h-full object-cover" />
               </div>
               <h3 class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
                 Box MDF
@@ -380,7 +389,7 @@ const kitPrices = await fetchKitPrices();
               data-label="Box Premium Luxo"
             >
               <div class="aspect-square mb-3 overflow-hidden rounded-md bg-[var(--surface-elevated)]">
-                <img src="/assets/kits-caixa-premium.jpg" alt="Box Premium" class="w-full h-full object-cover" />
+                <Image src={kitsCaixaPremiumImg} alt="Box Premium" class="w-full h-full object-cover" />
               </div>
               <h3 class="font-display tracking-widest uppercase text-sm md:text-base text-[var(--gold)] font-bold">
                 Box Premium

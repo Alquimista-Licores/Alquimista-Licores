@@ -6,9 +6,10 @@ import Badge from './Badge.astro';
 
 interface Props {
   product: Product;
+  eager?: boolean;
 }
 
-const { product: p } = Astro.props;
+const { product: p, eager = false } = Astro.props;
 const isOutOfStock = Number(p.estoque ?? 0) <= 0;
 const hasPrep = needsPrep(p);
 ---
@@ -32,7 +33,8 @@ const hasPrep = needsPrep(p);
       <img
         src={p.foto_url}
         alt={p.nome}
-        loading="lazy"
+        loading={eager ? "eager" : "lazy"}
+        fetchpriority={eager ? "high" : "auto"}
         decoding="async"
         class="product-img w-full h-full object-cover transition-transform duration-700"
       />
