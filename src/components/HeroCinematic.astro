@@ -2,11 +2,6 @@
 // HeroCinematic.astro - Cinematic Scroll-Driven Video Hero Experience
 ---
 
-<!-- External CDN Scripts for GSAP, ScrollTrigger, and Lenis -->
-<script is:inline src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
-<script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-
 <div class="hero-scroll" id="heroScroll">
   <section class="hero-stage" id="heroStage">
 
@@ -46,12 +41,12 @@
         <!-- 1. Initial Lettering Block (0% to 20% scroll) -->
         <div class="hero-typography-block" id="heroTypography">
           <h1 class="hero-headline" id="heroHeadline">
-            <span class="headline-line"><span class="headline-line-inner">LICORES<br class="mobile-break" /> ARTESANAIS</span></span>
-            <span class="headline-line"><span class="headline-line-inner">FEITOS COMO</span></span>
-            <span class="headline-line"><span class="headline-line-inner"><span class="text-gold-accent">Antigamente.</span></span></span>
+            <span class="headline-line"><span class="headline-line-inner" style="opacity: 0; filter: blur(10px); transform: translate3d(0, 35px, 0);">LICORES<br class="mobile-break" /> ARTESANAIS</span></span>
+            <span class="headline-line"><span class="headline-line-inner" style="opacity: 0; filter: blur(10px); transform: translate3d(0, 35px, 0);">FEITOS COMO</span></span>
+            <span class="headline-line"><span class="headline-line-inner" style="opacity: 0; filter: blur(10px); transform: translate3d(0, 35px, 0);"><span class="text-gold-accent">Antigamente.</span></span></span>
           </h1>
 
-          <p class="hero-subtitle" id="heroSubtitle">
+          <p class="hero-subtitle" id="heroSubtitle" style="opacity: 0; filter: blur(6px); transform: translate3d(0, 20px, 0);">
             Feitos à mão, em pequenos lotes,<br class="mobile-break" /> com alma e propósito.
           </p>
         </div>
@@ -59,16 +54,16 @@
         <!-- 2. Final Climax Lettering Block (Appears at 80% scroll) -->
         <div class="hero-final-block" id="finalTypographyBlock">
           <h2 class="hero-final-headline" id="finalHeadline">
-            <span class="final-line"><span class="final-line-inner">DEGUSTE</span></span>
-            <span class="final-line"><span class="final-line-inner">NOSSA</span></span>
-            <span class="final-line"><span class="final-line-inner"><span class="text-gold-accent">Alquimia</span></span></span>
+            <span class="final-line"><span class="final-line-inner" style="opacity: 0; filter: blur(18px); transform: translate3d(0, 30px, 0);">DEGUSTE</span></span>
+            <span class="final-line"><span class="final-line-inner" style="opacity: 0; filter: blur(18px); transform: translate3d(0, 30px, 0);">NOSSA</span></span>
+            <span class="final-line"><span class="final-line-inner" style="opacity: 0; filter: blur(18px); transform: translate3d(0, 30px, 0);"><span class="text-gold-accent">Alquimia</span></span></span>
           </h2>
         </div>
 
       </div>
 
       <!-- Glassmorphic Call-To-Action Button (Bottom Right, Appears at 80%) -->
-      <div class="hero-cta-wrapper" id="heroCtaWrap">
+      <div class="hero-cta-wrapper" id="heroCtaWrap" style="opacity: 0; pointer-events: none;">
         <a href="#pocoes" class="glass-cta-button" id="glassCtaBtn" aria-label="Conheça as Poções">
           <span class="cta-text">Conheça as Poções</span>
           <svg class="cta-arrow" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -80,7 +75,7 @@
 
       <!-- Bottom Bar with Pure Discreet Minimalist Arrow Indicator -->
       <div class="hero-footer-bar">
-        <div class="scroll-arrow-anchor" id="scrollArrow" aria-hidden="true">
+        <div class="scroll-arrow-anchor" id="scrollArrow" aria-hidden="true" style="opacity: 0; transform: translateX(-50%) translateY(20px);">
           <svg class="scroll-arrow-icon" viewBox="0 0 24 42" fill="none" xmlns="http://www.w3.org/2000/svg">
             <line x1="12" y1="2" x2="12" y2="30" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-opacity="0.4" />
             <path d="M6 24L12 32L18 24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
@@ -328,8 +323,8 @@
     transform-origin: left bottom;
     will-change: transform, opacity, filter;
     opacity: 0;
-    transform: translate3d(0, 55px, 0) scale(0.98);
-    filter: blur(14px);
+    transform: translate3d(0, 35px, 0);
+    filter: blur(10px);
   }
 
   .text-gold-accent {
@@ -365,8 +360,8 @@
     border-left: 1px solid var(--border-strong);
     will-change: transform, opacity, filter;
     opacity: 0;
-    transform: translate3d(0, 28px, 0);
-    filter: blur(10px);
+    transform: translate3d(0, 20px, 0);
+    filter: blur(6px);
   }
 
   .hero-final-block {
@@ -654,6 +649,8 @@
   declare const ScrollTrigger: any;
   declare const Lenis: any;
 
+  let heroEntranceTl: any = null;
+
   function initHeroExperience() {
     const video = document.getElementById('heroVideo') as HTMLVideoElement | null;
     const videoWrapper = document.getElementById('videoWrapper');
@@ -706,33 +703,55 @@
       }
     }
 
-    // Entrance Animation (Runs immediately on load without delay)
+    // Entrance Animation (0.5s delay before luxury blur & fade entrance)
     function playEntranceAnimation() {
-      const tl = gsap.timeline({
-        defaults: {
-          ease: 'power3.out'
-        },
+      if (isEntranceComplete) return;
+
+      if (heroEntranceTl) {
+        heroEntranceTl.kill();
+      }
+
+      heroEntranceTl = gsap.timeline({
+        delay: 0.5,
+        defaults: { ease: 'power3.out' },
         onComplete: () => {
           isEntranceComplete = true;
         }
       });
 
-      tl.fromTo(headlineLines,
-        { opacity: 0, y: 55, filter: 'blur(14px)', scale: 0.98 },
-        { opacity: 1, y: 0, filter: 'blur(0px)', scale: 1.0, stagger: 0.18, duration: 1.2, ease: 'power3.out' }
+      heroEntranceTl.fromTo(
+        headlineLines,
+        { opacity: 0, y: 35, filter: 'blur(10px)' },
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          stagger: 0.15,
+          duration: 1.1,
+          ease: 'power3.out'
+        }
       )
-        .fromTo(heroSubtitle,
-          { opacity: 0, y: 28, filter: 'blur(10px)' },
-          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.0 },
-          '-=0.7'
-        )
-        .fromTo(scrollArrow,
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' },
-          '-=0.5'
-        );
-
-      return tl;
+      .fromTo(
+        heroSubtitle,
+        { opacity: 0, y: 20, filter: 'blur(6px)' },
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.9
+        },
+        '-=0.6'
+      )
+      .fromTo(
+        scrollArrow,
+        { opacity: 0, y: 15 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8
+        },
+        '-=0.4'
+      );
     }
 
     // 5. High-Performance Scroll-Driven Video Scrubbing Engine
@@ -746,18 +765,22 @@
       const safeEndDuration = Math.max(0.1, videoDuration - 0.04);
       let targetVideoTime = 0;
       let renderedVideoTime = 0;
+      let lastSeekTime = -1;
       let isSeeking = false;
+      let needsSeek = false;
 
-      function requestVideoSeek() {
-        if (!video || isSeeking || video.readyState < 1) return;
+      function performSeek() {
+        if (!video || isSeeking || video.readyState < 2) return;
 
-        renderedVideoTime += (targetVideoTime - renderedVideoTime) * 0.45;
-        if (Math.abs(renderedVideoTime - targetVideoTime) < 0.006) {
+        renderedVideoTime += (targetVideoTime - renderedVideoTime) * 0.35;
+        if (Math.abs(renderedVideoTime - targetVideoTime) < 0.008) {
           renderedVideoTime = targetVideoTime;
+          needsSeek = false;
         }
 
-        if (Math.abs(video.currentTime - renderedVideoTime) > 0.025) {
+        if (Math.abs(renderedVideoTime - lastSeekTime) >= 0.033 || renderedVideoTime === targetVideoTime) {
           isSeeking = true;
+          lastSeekTime = renderedVideoTime;
           try {
             if ('fastSeek' in video && typeof (video as any).fastSeek === 'function') {
               (video as any).fastSeek(renderedVideoTime);
@@ -772,20 +795,10 @@
 
       video.addEventListener('seeked', () => {
         isSeeking = false;
-        if (video && Math.abs(video.currentTime - targetVideoTime) > 0.025) {
-          requestVideoSeek();
+        if (needsSeek) {
+          performSeek();
         }
       });
-
-      // Watchdog failsafe so isSeeking never stays permanently locked
-      setInterval(() => {
-        if (isSeeking && video) {
-          isSeeking = false;
-          if (Math.abs(video.currentTime - targetVideoTime) > 0.03) {
-            requestVideoSeek();
-          }
-        }
-      }, 70);
 
       function getSubProgress(p: number, start: number, end: number) {
         return Math.min(Math.max((p - start) / (end - start), 0), 1);
@@ -796,10 +809,41 @@
       }
 
       function updateTypographyChoreography(progress: number) {
-        if (!isEntranceComplete && progress < 0.005) {
+        if (!isEntranceComplete) {
+          if (progress > 0.02) {
+            isEntranceComplete = true;
+            if (heroEntranceTl) {
+              heroEntranceTl.kill();
+              heroEntranceTl = null;
+            }
+            gsap.killTweensOf(headlineLines);
+            if (heroSubtitle) gsap.killTweensOf(heroSubtitle);
+          } else {
+            // User is at origin and entrance animation is running/pending — do not interrupt!
+            return;
+          }
+        }
+
+        if (progress <= 0.015) {
+          headlineLines.forEach(line => {
+            line.style.opacity = '1';
+            line.style.filter = 'none';
+            line.style.transform = 'translate3d(0, 0, 0)';
+          });
+          if (heroSubtitle) {
+            heroSubtitle.style.opacity = '1';
+            heroSubtitle.style.filter = 'none';
+            heroSubtitle.style.transform = 'translate3d(0, 0, 0)';
+          }
+          finalLines.forEach(line => {
+            line.style.opacity = '0';
+          });
+          if (heroCtaWrap) {
+            heroCtaWrap.style.opacity = '0';
+            heroCtaWrap.style.pointerEvents = 'none';
+          }
           return;
         }
-        isEntranceComplete = true;
 
         if (isReducedMotion) {
           const pAll = getSubProgress(progress, 0.02, 0.18);
@@ -913,7 +957,8 @@
         onUpdate: (self: any) => {
           const progress = self.progress;
           targetVideoTime = progress * safeEndDuration;
-          requestVideoSeek();
+          needsSeek = true;
+          performSeek();
           updateTypographyChoreography(progress);
 
           if (progress > 0.018) {
@@ -942,71 +987,48 @@
         }
       });
 
-      // Ticker loop guarantees smooth frame progression between scroll events
+      // Ticker loop executes only during active scroll transitions
       gsap.ticker.add(() => {
-        if (!video) return;
-        if (Math.abs(renderedVideoTime - targetVideoTime) > 0.008 || Math.abs(video.currentTime - targetVideoTime) > 0.025) {
-          requestVideoSeek();
-        }
+        if (!video || !needsSeek) return;
+        performSeek();
       });
 
       ScrollTrigger.refresh();
     }
 
-    // Video Ready Listener & Memory Cache Bootstrap
+    // Video Ready Setup
     initLenis();
 
     video.muted = true;
     video.defaultMuted = true;
     video.playsInline = true;
     video.pause();
-    video.currentTime = 0;
 
-    // Preload video into memory Blob for zero-latency seeking
-    fetch('/video2.mp4')
-      .then(res => {
-        if (res.ok) return res.blob();
-        throw new Error('Network response not ok');
-      })
-      .then(blob => {
-        const blobUrl = URL.createObjectURL(blob);
-        video.src = blobUrl;
-        video.load();
-        video.addEventListener('loadeddata', () => {
-          if (!video) return;
-          try { video.currentTime = 0.001; } catch(e) {}
-          if (typeof ScrollTrigger !== 'undefined') {
-            ScrollTrigger.refresh();
-          }
-        }, { once: true });
-      })
-      .catch(() => {
-        // Native fallback src="/video2.mp4" is already set
-      });
-
-    function onMetadataLoaded() {
+    function renderFirstFrame() {
       if (!video) return;
-      videoDuration = video.duration || 5.0;
-      try { video.currentTime = 0.001; } catch(e) {}
-      initScrollDrivenTimeline();
-    }
-
-    if (video.readyState >= 1 && video.duration) {
-      onMetadataLoaded();
-    } else {
-      video.addEventListener('loadedmetadata', onMetadataLoaded, { once: true });
-      video.addEventListener('loadeddata', onMetadataLoaded, { once: true });
-      setTimeout(() => {
-        if (!isTimelineInitialized) {
-          onMetadataLoaded();
+      video.pause();
+      try {
+        if (video.currentTime === 0) {
+          video.currentTime = 0.001;
         }
-      }, 500);
+      } catch (e) {}
     }
 
-    // Play entrance animation immediately
+    if (video.readyState >= 1) {
+      renderFirstFrame();
+      initScrollDrivenTimeline();
+    } else {
+      video.addEventListener('loadedmetadata', () => {
+        renderFirstFrame();
+        initScrollDrivenTimeline();
+      }, { once: true });
+      video.addEventListener('canplay', () => {
+        renderFirstFrame();
+      }, { once: true });
+    }
+
+    // Trigger entrance animation immediately on load
     playEntranceAnimation();
-
-
 
     // Listen to Age Gate unlock to recalculate ScrollTrigger and Lenis dimensions
     window.addEventListener('age-gate-unlocked', () => {
@@ -1031,10 +1053,43 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initHeroExperience);
-  } else {
+  function cleanupHero() {
+    if (heroEntranceTl) {
+      heroEntranceTl.kill();
+      heroEntranceTl = null;
+    }
+    if (typeof ScrollTrigger !== 'undefined') {
+      const heroScroll = document.getElementById('heroScroll');
+      ScrollTrigger.getAll().forEach((st: any) => {
+        if (st.trigger === heroScroll || (st.vars && st.vars.trigger === heroScroll)) {
+          st.kill();
+        }
+      });
+    }
+  }
+
+  let isPageLoadRegistered = false;
+  function safeHeroInit() {
+    cleanupHero();
     initHeroExperience();
   }
-  document.addEventListener('astro:page-load', initHeroExperience);
+
+  document.addEventListener('astro:page-load', () => {
+    isPageLoadRegistered = true;
+    safeHeroInit();
+  });
+  document.addEventListener('astro:before-swap', cleanupHero);
+
+  // Fallback only if astro:page-load does not fire
+  if (document.readyState === 'complete') {
+    setTimeout(() => {
+      if (!isPageLoadRegistered) safeHeroInit();
+    }, 50);
+  } else {
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (!isPageLoadRegistered) safeHeroInit();
+      }, 50);
+    }, { once: true });
+  }
 </script>
