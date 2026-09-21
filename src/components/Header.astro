@@ -17,6 +17,7 @@ const NAV = [
 
 <header
   id="site-header"
+  transition:persist
   class="fixed top-0 inset-x-0 z-40 transition-[background-color,border-color,box-shadow] duration-500 bg-transparent border-b border-transparent select-none backdrop-blur-md"
 >
   <!-- Interactive Hover Spotlight Layers (Cursor follower) -->
@@ -251,6 +252,25 @@ const NAV = [
 
     window.addEventListener("cart-updated", updateBadge);
     updateBadge();
+
+    // 6. Update Active Navigation Links on Page Transitions
+    const currentPath = window.location.pathname;
+    header.querySelectorAll(".header-nav-link").forEach((link) => {
+      const href = link.getAttribute("href");
+      const isActive = href === "/" ? currentPath === "/" : (href && href !== "/" && currentPath.startsWith(href));
+      if (isActive) {
+        link.classList.add("active", "text-[var(--gold-light)]");
+        link.classList.remove("text-[var(--text-soft)]");
+      } else {
+        link.classList.remove("active", "text-[var(--gold-light)]");
+        link.classList.add("text-[var(--text-soft)]");
+      }
+    });
+
+    // Close mobile menu on navigation
+    mobileMenu?.classList.add("hidden");
+    hamburgerIcon?.classList.remove("hidden");
+    closeIcon?.classList.add("hidden");
   }
 
   setupHeader();
