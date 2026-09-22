@@ -28,3 +28,9 @@ pnpm-debug.log*
 # Pastas locais ignoradas
 site_antigo/
 treino antigravity/
+
+# Documentos internos e handoff
+HANDOFF.md
+handoff.md
+*HANDOFF*
+*handoff*
