@@ -42,12 +42,11 @@ export const supabaseSite: SupabaseClient = supabase;
  * ============================================================================
  */
 const GERENCIADOR_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwcHZyeXV2YmhydW52dWNudmF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwNjE3NDEsImV4cCI6MjEwMTYzNzc0MX0.wgKoYwzCq1vm5lx5IvEPPmKLzmuIare9wO1DlBAxKkA";
-const GERENCIADOR_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwcHZyeXV2YmhydW52dWNudmF4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjA2MTc0MSwiZXhwIjoyMTAxNjM3NzQxfQ.3PEgX41NwnlX3JraY-YCPocbYi_Qm9MDOJzqQYnWLLs";
 
 export const GERENCIADOR_CONFIG = {
   url: import.meta.env.PUBLIC_GERENCIADOR_SUPABASE_URL || "https://vppvryuvbhrunvucnvax.supabase.co",
   anonKey: import.meta.env.PUBLIC_GERENCIADOR_SUPABASE_ANON_KEY || GERENCIADOR_ANON_KEY,
-  serviceKey: import.meta.env.GERENCIADOR_SUPABASE_SERVICE_KEY || GERENCIADOR_SERVICE_KEY,
+  serviceKey: import.meta.env.GERENCIADOR_SUPABASE_SERVICE_KEY || "",
   projectId: "vppvryuvbhrunvucnvax",
 };
 
@@ -68,18 +67,20 @@ export const supabaseGerenciador: SupabaseClient = createClient(
 
 /**
  * Instância com Service Role Key para operações administrativas irrestritas
- * (Sincronização de pedidos, estoque e movimentações)
+ * (Apenas para contextos seguros de backend/SSR via variável de ambiente)
  */
-export const supabaseGerenciadorAdmin: SupabaseClient = createClient(
-  GERENCIADOR_CONFIG.url,
-  GERENCIADOR_CONFIG.serviceKey,
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    }
-  }
-);
+export const supabaseGerenciadorAdmin: SupabaseClient | null = GERENCIADOR_CONFIG.serviceKey
+  ? createClient(
+      GERENCIADOR_CONFIG.url,
+      GERENCIADOR_CONFIG.serviceKey,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        }
+      }
+    )
+  : null;
 
 /**
  * Helper para chamadas REST genéricas ao Supabase do Site
