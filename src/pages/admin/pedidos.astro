@@ -511,8 +511,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     btnDetailsSaveStatus?.addEventListener("click", async () => {
       if (!currentDetailOrderId || !detailsStatusSelect) return;
       const newStatus = detailsStatusSelect.value;
+      const updatePayload: Record<string, any> = { status: newStatus };
+      if (newStatus === "pago") {
+        updatePayload.pago_at = new Date().toISOString();
+      }
       try {
-        await supabase.from("site_orders").update({ status: newStatus }).eq("id", currentDetailOrderId);
+        await supabase.from("site_orders").update(updatePayload).eq("id", currentDetailOrderId);
       } catch (err) {
         console.warn("Supabase update error:", err);
       }
@@ -863,8 +867,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           // Fecha menus
           document.querySelectorAll(".order-dropdown-menu").forEach((m) => m.classList.add("hidden"));
 
+          const updatePayload: Record<string, any> = { status: action };
+          if (action === "pago") {
+            updatePayload.pago_at = new Date().toISOString();
+          }
           try {
-            await supabase.from("site_orders").update({ status: action }).eq("id", id);
+            await supabase.from("site_orders").update(updatePayload).eq("id", id);
           } catch (err) {
             console.warn("Supabase update error:", err);
           }
