@@ -61,9 +61,14 @@
             id="checkout-phone"
             type="tel"
             maxlength="15"
-            placeholder="Ex: (48) 99123-4567"
-            class="w-full bg-[var(--surface)] border border-[var(--gold)]/30 px-3.5 py-2.5 text-sm rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
+            inputmode="numeric"
+            placeholder="(48) 99123-4567"
+            class="w-full bg-[var(--surface)] border border-[var(--gold)]/30 px-3.5 py-2.5 text-sm rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)] transition-colors"
           />
+          <div id="checkout-phone-error" class="hidden text-xs text-red-400 mt-1.5 flex items-center gap-1 font-sans">
+            <span>⚠️</span>
+            <span id="checkout-phone-error-msg">Informe um celular válido no padrão (00) 00000-0000.</span>
+          </div>
         </div>
       </div>
 
@@ -136,21 +141,33 @@
 
       <!-- INDICAÇÃO -->
       <div class="p-3 border border-[var(--gold)]/20 rounded-sm bg-[var(--surface)]/40 space-y-2">
-        <div class="font-display tracking-widest uppercase text-xs text-[var(--gold)]">Indicação (opcional)</div>
+        <div class="flex items-center justify-between">
+          <div class="font-display tracking-widest uppercase text-xs text-[var(--gold)]">Indicação (opcional)</div>
+          <span class="text-[10px] text-[var(--text-faded)] font-sans">Preencha ambos ou nenhum</span>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <input
-            id="indicador-nome"
-            type="text"
-            placeholder="Nome de quem indicou"
-            class="bg-[var(--background)] border border-[var(--gold)]/30 px-2.5 py-1.5 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
-          />
-          <input
-            id="indicador-whats"
-            type="tel"
-            maxlength="15"
-            placeholder="WhatsApp de quem indicou"
-            class="bg-[var(--background)] border border-[var(--gold)]/30 px-2.5 py-1.5 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)]"
-          />
+          <div>
+            <input
+              id="indicador-nome"
+              type="text"
+              placeholder="Nome de quem indicou"
+              class="w-full bg-[var(--background)] border border-[var(--gold)]/30 px-2.5 py-1.5 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)] transition-colors"
+            />
+          </div>
+          <div>
+            <input
+              id="indicador-whats"
+              type="tel"
+              maxlength="15"
+              inputmode="numeric"
+              placeholder="WhatsApp: (00) 00000-0000"
+              class="w-full bg-[var(--background)] border border-[var(--gold)]/30 px-2.5 py-1.5 text-xs rounded-sm focus:border-[var(--gold)] outline-none text-[var(--cream)] transition-colors"
+            />
+          </div>
+        </div>
+        <div id="indicador-error" class="hidden text-xs text-red-400 mt-1 flex items-center gap-1 font-sans">
+          <span>⚠️</span>
+          <span id="indicador-error-msg">Ao informar indicação, preencha o nome e o celular no padrão (00) 00000-0000.</span>
         </div>
       </div>
     </div>
@@ -239,6 +256,8 @@
     // Form fields
     const nameInput = document.getElementById("checkout-name") as HTMLInputElement;
     const phoneInput = document.getElementById("checkout-phone") as HTMLInputElement;
+    const phoneError = document.getElementById("checkout-phone-error");
+    const phoneErrorMsg = document.getElementById("checkout-phone-error-msg");
     const btnDelivery = document.getElementById("btn-delivery");
     const btnRetirada = document.getElementById("btn-retirada");
     const deliveryFields = document.getElementById("delivery-fields");
@@ -251,6 +270,8 @@
     const addressComp = document.getElementById("address-comp") as HTMLInputElement;
     const indicadorNome = document.getElementById("indicador-nome") as HTMLInputElement;
     const indicadorWhats = document.getElementById("indicador-whats") as HTMLInputElement;
+    const indicadorError = document.getElementById("indicador-error");
+    const indicadorErrorMsg = document.getElementById("indicador-error-msg");
 
     let cartItems: any[] = [];
     let deliveryType: "delivery" | "retirada" = "delivery";
@@ -464,21 +485,27 @@
       updateTotals();
     });
 
-    // Phone formatting & validation helpers
+    // Phone formatting & validation helpers (Celular Brasileiro: DDD + 9 dígitos = (00) 00000-0000)
     function formatBRPhone(val: string) {
-      const digits = val.replace(/\D/g, "").slice(0, 11);
+      let digits = val.replace(/\D/g, "");
+      // Se colou número com +55 (12 ou 13 dígitos), remove o código do país
+      if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55")) {
+        digits = digits.slice(2);
+      }
+      digits = digits.slice(0, 11);
+
       if (digits.length === 0) return "";
       if (digits.length <= 2) return `(${digits}`;
-      if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-      if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+      if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
       return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
     }
 
-    function isValidBRPhone(phoneStr: string): boolean {
+    function isValidBRCellPhone(phoneStr: string): boolean {
       const digits = phoneStr.replace(/\D/g, "");
-      if (digits.length !== 10 && digits.length !== 11) return false;
-      // Rejeita sequências com todos os dígitos iguais (ex: 11111111111, 00000000000)
-      if (/^(\d)\1+$/.test(digits)) return false;
+      // Celular brasileiro com DDD precisa ter exatamente 11 dígitos
+      if (digits.length !== 11) return false;
+      // Rejeita sequências com todos os dígitos iguais (ex: 11111111111, 11999999999)
+      if (/^(\d)\1+$/.test(digits) || /^(\d)\1+$/.test(digits.slice(2))) return false;
 
       const ddd = parseInt(digits.slice(0, 2), 10);
       const validDDDs = [
@@ -494,10 +521,8 @@
       ];
       if (!validDDDs.includes(ddd)) return false;
 
-      // Celular (11 dígitos): o 3º dígito deve ser 9
-      if (digits.length === 11 && digits[2] !== "9") return false;
-      // Fixo (10 dígitos): o 3º dígito não pode ser 0 ou 1
-      if (digits.length === 10 && (digits[2] === "0" || digits[2] === "1")) return false;
+      // Todo celular no Brasil tem o 9 como primeiro dígito após o DDD
+      if (digits[2] !== "9") return false;
 
       return true;
     }
@@ -505,17 +530,130 @@
     phoneInput?.addEventListener("input", (e) => {
       const input = e.target as HTMLInputElement;
       input.value = formatBRPhone(input.value);
-      input.classList.remove("!border-red-500");
+      if (isValidBRCellPhone(input.value)) {
+        input.classList.remove("!border-red-500");
+        input.classList.add("!border-emerald-500/60");
+        if (phoneError) phoneError.classList.add("hidden");
+      } else {
+        input.classList.remove("!border-emerald-500/60");
+      }
     });
 
+    phoneInput?.addEventListener("blur", () => {
+      const val = phoneInput.value.trim();
+      if (val.length > 0 && !isValidBRCellPhone(val)) {
+        phoneInput.classList.add("!border-red-500");
+        phoneInput.classList.remove("!border-emerald-500/60");
+        if (phoneError) {
+          phoneError.classList.remove("hidden");
+          if (phoneErrorMsg) phoneErrorMsg.textContent = "Informe um celular válido no padrão (00) 00000-0000.";
+        }
+      }
+    });
+
+    function validateIndicadorFields(showErrors = false): boolean {
+      const nome = indicadorNome?.value.trim() || "";
+      const whats = indicadorWhats?.value.trim() || "";
+
+      // Caso 1: ambos vazios (válido, indicação é opcional)
+      if (!nome && !whats) {
+        indicadorNome?.classList.remove("!border-red-500", "!border-emerald-500/60");
+        indicadorWhats?.classList.remove("!border-red-500", "!border-emerald-500/60");
+        if (indicadorError) indicadorError.classList.add("hidden");
+        return true;
+      }
+
+      // Caso 2: preencheu nome, mas falta celular
+      if (nome && !whats) {
+        if (showErrors) {
+          indicadorNome?.classList.remove("!border-red-500");
+          indicadorNome?.classList.add("!border-emerald-500/60");
+          indicadorWhats?.classList.add("!border-red-500");
+          indicadorWhats?.classList.remove("!border-emerald-500/60");
+          if (indicadorError) {
+            indicadorError.classList.remove("hidden");
+            if (indicadorErrorMsg) indicadorErrorMsg.textContent = "Você informou o nome da indicação. Exige-se também o celular no padrão (00) 00000-0000.";
+          }
+        }
+        return false;
+      }
+
+      // Caso 3: preencheu celular, mas falta nome
+      if (!nome && whats) {
+        if (showErrors) {
+          indicadorNome?.classList.add("!border-red-500");
+          indicadorNome?.classList.remove("!border-emerald-500/60");
+          if (isValidBRCellPhone(whats)) {
+            indicadorWhats?.classList.remove("!border-red-500");
+            indicadorWhats?.classList.add("!border-emerald-500/60");
+          } else {
+            indicadorWhats?.classList.add("!border-red-500");
+            indicadorWhats?.classList.remove("!border-emerald-500/60");
+          }
+          if (indicadorError) {
+            indicadorError.classList.remove("hidden");
+            if (indicadorErrorMsg) indicadorErrorMsg.textContent = "Você informou o WhatsApp da indicação. Exige-se também o nome de quem indicou.";
+          }
+        }
+        return false;
+      }
+
+      // Caso 4: preencheu ambos, mas celular está incompleto ou inválido
+      if (nome && whats && !isValidBRCellPhone(whats)) {
+        if (showErrors) {
+          indicadorNome?.classList.remove("!border-red-500");
+          indicadorNome?.classList.add("!border-emerald-500/60");
+          indicadorWhats?.classList.add("!border-red-500");
+          indicadorWhats?.classList.remove("!border-emerald-500/60");
+          if (indicadorError) {
+            indicadorError.classList.remove("hidden");
+            if (indicadorErrorMsg) indicadorErrorMsg.textContent = "Celular de quem indicou incompleto ou inválido. Use (00) 00000-0000.";
+          }
+        }
+        return false;
+      }
+
+      // Caso 5: preencheu ambos com sucesso
+      indicadorNome?.classList.remove("!border-red-500");
+      indicadorNome?.classList.add("!border-emerald-500/60");
+      indicadorWhats?.classList.remove("!border-red-500");
+      indicadorWhats?.classList.add("!border-emerald-500/60");
+      if (indicadorError) indicadorError.classList.add("hidden");
+      return true;
+    }
+
     indicadorNome?.addEventListener("input", () => {
-      indicadorNome.classList.remove("!border-red-500");
+      if (indicadorError && !indicadorError.classList.contains("hidden")) {
+        validateIndicadorFields(true);
+      } else {
+        validateIndicadorFields(false);
+      }
+    });
+
+    indicadorNome?.addEventListener("blur", () => {
+      const nome = indicadorNome?.value.trim();
+      const whats = indicadorWhats?.value.trim();
+      if (nome || whats) {
+        validateIndicadorFields(true);
+      }
     });
 
     indicadorWhats?.addEventListener("input", (e) => {
       const input = e.target as HTMLInputElement;
       input.value = formatBRPhone(input.value);
-      input.classList.remove("!border-red-500");
+      if (indicadorError && !indicadorError.classList.contains("hidden")) {
+        validateIndicadorFields(true);
+      } else {
+        validateIndicadorFields(false);
+      }
+    });
+
+    indicadorWhats?.addEventListener("blur", () => {
+      const nome = indicadorNome?.value.trim();
+      const whats = indicadorWhats?.value.trim();
+      if (nome || whats) {
+        validateIndicadorFields(true);
+      }
     });
 
     // Helper to format Nominatim result into a readable street/address
@@ -687,41 +825,73 @@
         return;
       }
       if (!phone) {
-        alert("Por favor, informe seu telefone / WhatsApp.");
         phoneInput?.classList.add("!border-red-500");
+        phoneInput?.classList.remove("!border-emerald-500/60");
+        if (phoneError) {
+          phoneError.classList.remove("hidden");
+          if (phoneErrorMsg) phoneErrorMsg.textContent = "Por favor, informe seu celular no padrão (00) 00000-0000.";
+        }
         phoneInput?.focus();
+        if (typeof (window as any).showToast === "function") {
+          (window as any).showToast("Por favor, informe seu celular com DDD.");
+        }
         return;
       }
-      if (!isValidBRPhone(phone)) {
-        alert("Por favor, informe um número de WhatsApp válido com DDD (ex: (48) 99123-4567).");
+      if (!isValidBRCellPhone(phone)) {
         phoneInput?.classList.add("!border-red-500");
+        phoneInput?.classList.remove("!border-emerald-500/60");
+        if (phoneError) {
+          phoneError.classList.remove("hidden");
+          if (phoneErrorMsg) phoneErrorMsg.textContent = "Número incompleto ou inválido. Use o padrão (00) 00000-0000.";
+        }
         phoneInput?.focus();
+        if (typeof (window as any).showToast === "function") {
+          (window as any).showToast("Celular inválido. Use o padrão (00) 00000-0000.");
+        } else {
+          alert("Por favor, informe um número de celular válido com DDD: (00) 00000-0000.");
+        }
+        return;
+      }
+
+      if (!validateIndicadorFields(true)) {
+        const indNome = indicadorNome?.value.trim();
+        const indWhats = indicadorWhats?.value.trim();
+
+        if (indNome && !indWhats) {
+          indicadorWhats?.focus();
+          if (typeof (window as any).showToast === "function") {
+            (window as any).showToast("Informe o celular de quem indicou no padrão (00) 00000-0000.");
+          } else {
+            alert("Você informou o nome da indicação. Por favor, preencha também o WhatsApp no padrão (00) 00000-0000.");
+          }
+          return;
+        }
+
+        if (!indNome && indWhats) {
+          indicadorNome?.focus();
+          if (typeof (window as any).showToast === "function") {
+            (window as any).showToast("Informe o nome de quem indicou.");
+          } else {
+            alert("Você informou o WhatsApp da indicação. Por favor, informe também o nome de quem indicou.");
+          }
+          return;
+        }
+
+        if (indNome && indWhats && !isValidBRCellPhone(indWhats)) {
+          indicadorWhats?.focus();
+          if (typeof (window as any).showToast === "function") {
+            (window as any).showToast("Celular de indicação inválido. Padrão: (00) 00000-0000");
+          } else {
+            alert("Por favor, informe um número de WhatsApp válido com DDD para a indicação no padrão (00) 00000-0000.");
+          }
+          return;
+        }
+
         return;
       }
 
       const indNome = indicadorNome?.value.trim();
       const indWhats = indicadorWhats?.value.trim();
-
-      if (indNome && !indWhats) {
-        alert("Você informou o nome de quem indicou. Por favor, preencha também o WhatsApp da indicação (ou deixe ambos os campos em branco).");
-        indicadorWhats?.classList.add("!border-red-500");
-        indicadorWhats?.focus();
-        return;
-      }
-
-      if (!indNome && indWhats) {
-        alert("Você informou o WhatsApp de quem indicou. Por favor, preencha também o nome da indicação (ou deixe ambos os campos em branco).");
-        indicadorNome?.classList.add("!border-red-500");
-        indicadorNome?.focus();
-        return;
-      }
-
-      if (indNome && indWhats && !isValidBRPhone(indWhats)) {
-        alert("Por favor, informe um número de WhatsApp válido com DDD para a indicação.");
-        indicadorWhats?.classList.add("!border-red-500");
-        indicadorWhats?.focus();
-        return;
-      }
 
       let enderecoCompleto = "";
       if (deliveryType === "delivery") {
