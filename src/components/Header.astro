@@ -190,6 +190,53 @@ const NAV = [
 
     if (!header) return;
 
+    // Helper: Update cart badge from local storage
+    function updateBadge() {
+      try {
+        const raw = localStorage.getItem("alquimista-cart");
+        const items = raw ? JSON.parse(raw) : [];
+        const count = items.reduce((acc: number, item: any) => acc + (item.qty || 1), 0);
+        const badge = document.getElementById("cart-badge");
+        if (badge) {
+          badge.textContent = String(count);
+          if (count > 0) {
+            badge.classList.remove("hidden");
+            badge.classList.add("flex");
+          } else {
+            badge.classList.add("hidden");
+            badge.classList.remove("flex");
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Helper: Update Active Navigation Links on Page Transitions
+    function updateActiveNav() {
+      const currentPath = window.location.pathname;
+      header?.querySelectorAll(".header-nav-link").forEach((link) => {
+        const href = link.getAttribute("href");
+        const isActive = href === "/" ? currentPath === "/" : (href && href !== "/" && currentPath.startsWith(href));
+        if (isActive) {
+          link.classList.add("active", "text-[var(--gold-light)]");
+          link.classList.remove("text-[var(--text-soft)]");
+        } else {
+          link.classList.remove("active", "text-[var(--gold-light)]");
+          link.classList.add("text-[var(--text-soft)]");
+        }
+      });
+    }
+
+    // Always update visual states on navigation
+    updateActiveNav();
+    updateBadge();
+    mobileMenu?.classList.add("hidden");
+    hamburgerIcon?.classList.remove("hidden");
+    closeIcon?.classList.add("hidden");
+
+    // Only attach event listeners once
+    if (header.dataset.headerInitialized === "true") return;
+    header.dataset.headerInitialized = "true";
+
     // 1. Scroll State Management
     function handleScroll() {
       if (window.scrollY > 15) {
@@ -230,47 +277,8 @@ const NAV = [
       window.dispatchEvent(new CustomEvent("open-cart"));
     });
 
-    // 5. Update cart badge from local storage
-    function updateBadge() {
-      try {
-        const raw = localStorage.getItem("alquimista-cart");
-        const items = raw ? JSON.parse(raw) : [];
-        const count = items.reduce((acc: number, item: any) => acc + (item.qty || 1), 0);
-        const badge = document.getElementById("cart-badge");
-        if (badge) {
-          badge.textContent = String(count);
-          if (count > 0) {
-            badge.classList.remove("hidden");
-            badge.classList.add("flex");
-          } else {
-            badge.classList.add("hidden");
-            badge.classList.remove("flex");
-          }
-        }
-      } catch (e) {}
-    }
-
+    // 5. Global Cart Updated Listener
     window.addEventListener("cart-updated", updateBadge);
-    updateBadge();
-
-    // 6. Update Active Navigation Links on Page Transitions
-    const currentPath = window.location.pathname;
-    header.querySelectorAll(".header-nav-link").forEach((link) => {
-      const href = link.getAttribute("href");
-      const isActive = href === "/" ? currentPath === "/" : (href && href !== "/" && currentPath.startsWith(href));
-      if (isActive) {
-        link.classList.add("active", "text-[var(--gold-light)]");
-        link.classList.remove("text-[var(--text-soft)]");
-      } else {
-        link.classList.remove("active", "text-[var(--gold-light)]");
-        link.classList.add("text-[var(--text-soft)]");
-      }
-    });
-
-    // Close mobile menu on navigation
-    mobileMenu?.classList.add("hidden");
-    hamburgerIcon?.classList.remove("hidden");
-    closeIcon?.classList.add("hidden");
   }
 
   setupHeader();

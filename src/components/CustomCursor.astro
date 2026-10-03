@@ -113,6 +113,9 @@ const {
 
     if (!root || !dot || !circle) return;
 
+    if (root.dataset.cursorInitialized === "true") return;
+    root.dataset.cursorInitialized = "true";
+
     const baseCircleSize = parseFloat(root.getAttribute("data-circle-size") || "40");
     const delay = parseFloat(root.getAttribute("data-delay-factor") || "0.14");
     const magneticProximity = 70; // 70px magnetic pull radius
@@ -330,6 +333,7 @@ const {
 
     // Helper to detect if mouse position is within the fixed/sticky header
     function isMouseOverHeader(x: number, y: number): boolean {
+      if (getActiveOverlayOrModal()) return false;
       const header = document.querySelector('header, #site-header') as HTMLElement | null;
       if (!header) return false;
       const rect = header.getBoundingClientRect();
@@ -570,6 +574,8 @@ const {
 
     // Smooth Trailing & Morphing loop
     function loop() {
+      animId = requestAnimationFrame(loop);
+
       if (isVisible) {
         if (circle.classList.contains("cursor-hidden")) {
           circle.style.opacity = "0";
@@ -589,41 +595,40 @@ const {
             circle.style.width = `${baseCircleSize}px`;
             circle.style.height = `${baseCircleSize}px`;
             circle.style.borderRadius = "9999px";
-            return;
-          }
-
-          const isRound = hoveredEncloseEl.matches(roundCircularSelector);
-          const layout = getUntransformedLayout(hoveredEncloseEl);
-
-          if (isDirectlyHovered) {
-            circleX = layout.cx;
-            circleY = layout.cy;
           } else {
-            circleX += (layout.cx - circleX) * 0.28;
-            circleY += (layout.cy - circleY) * 0.28;
-          }
+            const isRound = hoveredEncloseEl.matches(roundCircularSelector);
+            const layout = getUntransformedLayout(hoveredEncloseEl);
 
-          if (isRound) {
-            const roundDimension = Math.max(layout.w, layout.h, 40);
-            circle.style.width = `${roundDimension}px`;
-            circle.style.height = `${roundDimension}px`;
-            circle.style.borderRadius = "9999px";
-            circle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) translate3d(-50%, -50%, 0) ${
-              isActive ? "scale(0.97)" : "scale(1)"
-            }`;
-          } else {
-            circle.style.width = `${layout.w}px`;
-            circle.style.height = `${layout.h}px`;
-            circle.style.borderRadius = layout.radius;
+            if (isDirectlyHovered) {
+              circleX = layout.cx;
+              circleY = layout.cy;
+            } else {
+              circleX += (layout.cx - circleX) * 0.28;
+              circleY += (layout.cy - circleY) * 0.28;
+            }
 
-            if (layout.transform && layout.transform !== "none") {
-              circle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) ${layout.transform} translate3d(-50%, -50%, 0) ${
-                isActive ? "scale(0.98)" : "scale(1)"
+            if (isRound) {
+              const roundDimension = Math.max(layout.w, layout.h, 40);
+              circle.style.width = `${roundDimension}px`;
+              circle.style.height = `${roundDimension}px`;
+              circle.style.borderRadius = "9999px";
+              circle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) translate3d(-50%, -50%, 0) ${
+                isActive ? "scale(0.97)" : "scale(1)"
               }`;
             } else {
-              circle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) translate3d(-50%, -50%, 0) ${
-                isActive ? "scale(0.98)" : "scale(1)"
-              }`;
+              circle.style.width = `${layout.w}px`;
+              circle.style.height = `${layout.h}px`;
+              circle.style.borderRadius = layout.radius;
+
+              if (layout.transform && layout.transform !== "none") {
+                circle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) ${layout.transform} translate3d(-50%, -50%, 0) ${
+                  isActive ? "scale(0.98)" : "scale(1)"
+                }`;
+              } else {
+                circle.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) translate3d(-50%, -50%, 0) ${
+                  isActive ? "scale(0.98)" : "scale(1)"
+                }`;
+              }
             }
           }
         } else {
@@ -643,8 +648,6 @@ const {
           }`;
         }
       }
-
-      animId = requestAnimationFrame(loop);
     }
 
     window.addEventListener("mousemove", onMouseMove, { passive: true });

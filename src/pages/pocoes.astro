@@ -60,6 +60,9 @@ const TABS = [
     const items = document.querySelectorAll(".product-item-wrap");
 
     tabs.forEach((tab) => {
+      if ((tab as HTMLElement).dataset.tabInit === "true") return;
+      (tab as HTMLElement).dataset.tabInit = "true";
+
       tab.addEventListener("click", () => {
         const cat = tab.getAttribute("data-category");
 

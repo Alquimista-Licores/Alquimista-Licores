@@ -512,6 +512,10 @@ const kitPrices = await fetchKitPrices();
 <script define:vars={{ kitPrices }}>
   function setupMonteKit() {
     const viewModeSelect = document.getElementById("view-mode-select");
+    if (!viewModeSelect) return;
+    if (viewModeSelect.dataset.monteKitInit === "true") return;
+    viewModeSelect.dataset.monteKitInit = "true";
+
     const viewWizard = document.getElementById("view-wizard");
     const wizardTitle = document.getElementById("wizard-title");
     const switchModeBtn = document.getElementById("wizard-switch-mode");

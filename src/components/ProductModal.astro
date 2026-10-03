@@ -433,6 +433,9 @@
 
     if (!container || !modalCard) return;
 
+    if (container.dataset.modalInitialized === "true") return;
+    container.dataset.modalInitialized = "true";
+
     let currentProduct: any = null;
     let currentQty = 1;
     let originCardElement: HTMLElement | null = null;

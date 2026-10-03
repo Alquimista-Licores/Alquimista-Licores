@@ -208,6 +208,16 @@
   function setupCart() {
     const overlay = document.getElementById("cart-drawer-overlay");
     const panel = document.getElementById("cart-drawer-panel");
+    if (!overlay || !panel) return;
+
+    if (overlay.dataset.cartInitialized === "true") {
+      if (typeof (overlay as any)._loadCart === "function") {
+        (overlay as any)._loadCart();
+      }
+      return;
+    }
+    overlay.dataset.cartInitialized = "true";
+
     const closeBtn = document.getElementById("cart-drawer-close");
     const title = document.getElementById("cart-drawer-title");
     const listStage = document.getElementById("cart-stage-list");
@@ -258,6 +268,7 @@
       }
       renderCart();
     }
+    (overlay as any)._loadCart = loadCart;
 
     function saveCart() {
       try {
@@ -267,6 +278,7 @@
     }
 
     function openDrawer() {
+      loadCart();
       overlay?.classList.remove("hidden");
       setTimeout(() => {
         panel?.classList.remove("translate-x-full");
@@ -832,6 +844,7 @@
     // Listen to global open / add cart events
     window.addEventListener("open-cart", openDrawer);
     window.addEventListener("add-to-cart", (e: any) => {
+      loadCart();
       const newItem = e.detail;
       const existing = cartItems.find((i) => i.id === newItem.id && i.tipo === newItem.tipo);
       if (existing && newItem.tipo === "avulso") {

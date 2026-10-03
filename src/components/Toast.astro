@@ -77,36 +77,40 @@
 </style>
 
 <script>
-  let toastTimer: number | null = null;
+  if (!(window as any)._toastInitialized) {
+    (window as any)._toastInitialized = true;
 
-  function showToast(message: string, duration = 3500) {
-    const toast = document.getElementById('alchemicalToast');
-    const text = document.getElementById('toastText');
-    if (!toast || !text) return;
+    let toastTimer: number | null = null;
 
-    text.textContent = message;
-    toast.classList.add('show');
+    function showToast(message: string, duration = 3500) {
+      const toast = document.getElementById('alchemicalToast');
+      const text = document.getElementById('toastText');
+      if (!toast || !text) return;
 
-    if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = window.setTimeout(() => {
-      toast.classList.remove('show');
-    }, duration);
-  }
+      text.textContent = message;
+      toast.classList.add('show');
 
-  // Expose to global window object
-  (window as any).showToast = showToast;
-
-  // Listen to global CustomEvent 'show-toast'
-  window.addEventListener('show-toast', ((e: CustomEvent) => {
-    const msg = e.detail?.message || e.detail?.text;
-    if (msg) {
-      showToast(msg, e.detail.duration || 3500);
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
     }
-  }) as EventListener);
 
-  // Listen to global CustomEvent 'add-to-cart'
-  window.addEventListener('add-to-cart', ((e: CustomEvent) => {
-    const name = e.detail?.nome || e.detail?.name || 'Poção';
-    showToast(`${name} adicionada ao caldeirão!`);
-  }) as EventListener);
+    // Expose to global window object
+    (window as any).showToast = showToast;
+
+    // Listen to global CustomEvent 'show-toast'
+    window.addEventListener('show-toast', ((e: CustomEvent) => {
+      const msg = e.detail?.message || e.detail?.text;
+      if (msg) {
+        showToast(msg, e.detail.duration || 3500);
+      }
+    }) as EventListener);
+
+    // Listen to global CustomEvent 'add-to-cart'
+    window.addEventListener('add-to-cart', ((e: CustomEvent) => {
+      const name = e.detail?.nome || e.detail?.name || 'Poção';
+      showToast(`${name} adicionada ao caldeirão!`);
+    }) as EventListener);
+  }
 </script>
