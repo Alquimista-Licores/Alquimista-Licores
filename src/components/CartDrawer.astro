@@ -220,7 +220,7 @@
 </div>
 
 <script>
-  import { supabase } from "../integrations/supabase/client";
+  import { supabase, syncOrderToGerenciApp } from "../integrations/supabase/client";
 
   function setupCart() {
     const overlay = document.getElementById("cart-drawer-overlay");
@@ -974,7 +974,8 @@
         `Fico no aguardo da confirmação do pedido. Obrigado!`
       );
 
-      // Salva no banco de dados do Supabase como 'pendente'
+      let siteOrderId: string | undefined;
+      // Salva no banco de dados do Supabase do Site (Supabase 1)
       try {
         const orderPayload = {
           codigo_pedido: codigoPedido,
@@ -991,12 +992,35 @@
           status: "pendente",
           status_gerenciapp: "pendente"
         };
-        const { error } = await supabase.from("site_orders").insert([orderPayload]);
+        const { data: siteOrderData, error } = await supabase.from("site_orders").insert([orderPayload]).select("id").maybeSingle();
+        if (siteOrderData?.id) {
+          siteOrderId = siteOrderData.id;
+        }
         if (error) {
-          console.warn("Aviso ao registrar pedido no Supabase:", error);
+          console.warn("Aviso ao registrar pedido no Supabase do Site:", error);
         }
       } catch (dbErr) {
-        console.warn("Falha de rede ao conectar com Supabase:", dbErr);
+        console.warn("Falha de rede ao conectar com Supabase do Site:", dbErr);
+      }
+
+      // Sincroniza cópia do pedido no GerenciApp (Supabase 2) na aba 'Aguardando Pagamento'
+      try {
+        await syncOrderToGerenciApp({
+          codigoPedido,
+          clienteNome: name,
+          clienteTelefone: phone,
+          indicadorNome: indNome || null,
+          indicadorWhatsapp: indWhats || null,
+          tipoEntrega: deliveryType,
+          enderecoCompleto: deliveryType === "delivery" ? enderecoCompleto : "",
+          cartItems: [...cartItems],
+          subtotal,
+          frete,
+          total,
+          siteOrderId,
+        });
+      } catch (gerenciAppErr) {
+        console.warn("Aviso ao sincronizar pedido com o GerenciApp:", gerenciAppErr);
       }
 
       const fullMessage = msgLines.join("\n");
