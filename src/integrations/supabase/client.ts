@@ -189,12 +189,13 @@ export async function syncOrderToGerenciApp(orderData: GerenciAppOrderSyncInput)
     if (orderData.indicadorNome || orderData.indicadorWhatsapp) {
       obsParts.push(`🌟 Indicação: ${orderData.indicadorNome || ""}${orderData.indicadorWhatsapp ? ` (${orderData.indicadorWhatsapp})` : ""}`);
     }
+    obsParts.push(`🏷️ Pedido Site #${orderData.codigoPedido}`);
 
     // 3. Cria o pedido com status 'aguardando_pagamento'
     const { data: newOrder, error: oErr } = await supabaseGerenciadorAdmin
       .from("pedidos")
       .insert({
-        numero: `#${orderData.codigoPedido}`,
+        numero: null,
         cliente_id: clientId,
         status: "aguardando_pagamento",
         data_pedido: new Date().toISOString(),
