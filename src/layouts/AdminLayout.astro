@@ -160,10 +160,23 @@ const currentPath = activePath || Astro.url.pathname;
         // Se a chave anônima ainda não estiver configurada no .env e estivermos em dev, permitir visualização com aviso amigável
         const isPlaceholderKey = !SUPABASE_CONFIG.anonKey || SUPABASE_CONFIG.anonKey === "sb_placeholder_anon_key";
 
+        // Timeout de segurança: se a verificação travar ou demorar mais de 4s, redireciona para login
+        const safetyTimer = setTimeout(() => {
+          if (loadingEl && loadingEl.style.display !== "none") {
+            console.warn("Tempo limite de verificação excedido. Redirecionando para login.");
+            window.location.href = "/admin/login?redirect=" + encodeURIComponent(window.location.pathname);
+          }
+        }, 4000);
+
         try {
-          const { data: { session } } = await supabase.auth.getSession();
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+          if (sessionError) {
+            console.warn("Erro ao obter sessão:", sessionError.message);
+          }
 
           if (!session) {
+            clearTimeout(safetyTimer);
             // Se a chave for de placeholder (em setup local), permite navegação com fallback
             if (isPlaceholderKey) {
               console.warn("Chave do Supabase pendente no .env. Modo de pré-visualização ativo.");
@@ -179,31 +192,49 @@ const currentPath = activePath || Astro.url.pathname;
           }
 
           // Atualiza o email na barra superior
-          if (userEmailEl && session.user?.email) {
-            userEmailEl.textContent = session.user.email;
+          const userEmail = (session.user?.email || "").toLowerCase().trim();
+          if (userEmailEl && userEmail) {
+            userEmailEl.textContent = userEmail;
           }
+
+          // Email mestre do Alquimista tem acesso de administrador garantido
+          const isMasterAdminEmail = userEmail === "alquimista.licoresartesanais@gmail.com";
 
           // Checa se tem a role 'admin'
-          const { data: roleData, error: roleError } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", session.user.id)
-            .eq("role", "admin")
-            .maybeSingle();
+          let hasAdminRole = isMasterAdminEmail;
+          if (!hasAdminRole) {
+            try {
+              const { data: roleData, error: roleError } = await supabase
+                .from("user_roles")
+                .select("role")
+                .eq("user_id", session.user.id)
+                .eq("role", "admin")
+                .maybeSingle();
 
-          if (roleError) {
-            console.warn("Erro ao checar user_roles:", roleError.message);
+              if (roleError) {
+                console.warn("Erro ao checar user_roles:", roleError.message);
+              }
+              if (roleData?.role === "admin") {
+                hasAdminRole = true;
+              }
+            } catch (roleCheckErr) {
+              console.warn("Exceção ao verificar user_roles:", roleCheckErr);
+            }
           }
 
-          // Se tiver a role ou se a tabela não tiver políticas restritas, liberar
-          if (!roleData && !isPlaceholderKey) {
+          // Se não tiver a role E não for o email mestre
+          if (!hasAdminRole && !isPlaceholderKey) {
+            clearTimeout(safetyTimer);
             if (loadingEl) loadingEl.style.display = "none";
-            if (deniedEl) deniedEl.classList.remove("hidden");
-            if (deniedEl) deniedEl.classList.add("flex");
+            if (deniedEl) {
+              deniedEl.classList.remove("hidden");
+              deniedEl.classList.add("flex");
+            }
             return;
           }
 
           // Autorizado!
+          clearTimeout(safetyTimer);
           if (loadingEl) {
             loadingEl.style.opacity = "0";
             setTimeout(() => { loadingEl.style.display = "none"; }, 300);
@@ -213,9 +244,9 @@ const currentPath = activePath || Astro.url.pathname;
           }
 
         } catch (err) {
+          clearTimeout(safetyTimer);
           console.error("Erro na verificação de autenticação:", err);
-          if (loadingEl) loadingEl.style.display = "none";
-          if (rootEl) rootEl.style.opacity = "1";
+          window.location.href = "/admin/login?redirect=" + encodeURIComponent(window.location.pathname);
         }
       }
 

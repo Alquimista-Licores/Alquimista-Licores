@@ -41,6 +41,7 @@ export const supabaseSite: SupabaseClient = supabase;
  * 2. SUPABASE DO GERENCIADOR DE PEDIDOS (Projeto Externo: vppvryuvbhrunvucnvax)
  * ============================================================================
  */
+const GERENCIADOR_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwcHZyeXV2YmhydW52dWNudmF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwNjE3NDEsImV4cCI6MjEwMTYzNzc0MX0.wgKoYwzCq1vm5lx5IvEPPmKLzmuIare9wO1DlBAxKkA";
 const GERENCIADOR_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwcHZyeXV2YmhydW52dWNudmF4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjA2MTc0MSwiZXhwIjoyMTAxNjM3NzQxfQ.3PEgX41NwnlX3JraY-YCPocbYi_Qm9MDOJzqQYnWLLs";
 
 export const GERENCIADOR_CONFIG = {
