@@ -508,6 +508,31 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       if (e.target === detailsModalBackdrop) closeDetailsModal();
     });
 
+    async function sincronizarIndicacaoSePago(order: any, newStatus: string) {
+      if (newStatus !== "pago" || !order?.indicador_whatsapp) return;
+      try {
+        const cleanWhats = String(order.indicador_whatsapp).replace(/\D/g, "");
+        if (cleanWhats.length < 8) return;
+        const { data: clientes } = await supabase.from("clientes").select("id, telefone");
+        const indicador = (clientes || []).find((c: any) => {
+          const cTel = String(c.telefone || "").replace(/\D/g, "");
+          return cTel && (cTel.endsWith(cleanWhats.slice(-8)) || cleanWhats.endsWith(cTel.slice(-8)));
+        });
+        if (indicador?.id) {
+          const telIndicado = String(order.cliente_telefone || "").replace(/\D/g, "");
+          await supabase.from("jornada_indicacoes").upsert({
+            indicador_id: indicador.id,
+            order_id: order.id,
+            telefone_indicado: telIndicado,
+            qualificada_at: new Date().toISOString(),
+            xp_creditado: true
+          }, { onConflict: "order_id" });
+        }
+      } catch (err) {
+        console.warn("Aviso ao qualificar indicação na Jornada:", err);
+      }
+    }
+
     btnDetailsSaveStatus?.addEventListener("click", async () => {
       if (!currentDetailOrderId || !detailsStatusSelect) return;
       const newStatus = detailsStatusSelect.value;
@@ -522,7 +547,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       }
 
       const target = ordersList.find((x) => String(x.id) === String(currentDetailOrderId));
-      if (target) target.status = newStatus;
+      if (target) {
+        target.status = newStatus;
+        await sincronizarIndicacaoSePago(target, newStatus);
+      }
       renderOrdersTable();
       openOrderDetails(currentDetailOrderId);
     });
@@ -879,7 +907,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
           // Atualiza na memória local
           const target = ordersList.find((x) => String(x.id) === String(id));
-          if (target) target.status = action;
+          if (target) {
+            target.status = action;
+            await sincronizarIndicacaoSePago(target, action);
+          }
           renderOrdersTable();
         });
       });
